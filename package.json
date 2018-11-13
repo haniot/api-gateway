@@ -5,8 +5,11 @@
   "license": "UNLICENSED",
   "version": "1.0.0",
   "main": "server.js",
+  "scripts": {
+    "init": "npm i && npm audit fix && npm start"
+  },
   "dependencies": {
-    "eg-plugin-ocariot": "file:eg-plugin-ocariot",
+    "eg-plugin-haniot": "file:eg-plugin-haniot",
     "express-gateway": "^1.10.2"
   }
 }
