@@ -1,3 +1,6 @@
+/**
+ * Policy to validate scopes
+ */
 module.exports = {
   name: 'haniot-jwtScopes-policy',
   policy: require('./haniot-jwtScopes'),

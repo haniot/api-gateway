@@ -11,19 +11,14 @@ apiEndpoints:
 ####### USER ENDPOINT ########  
   userApi:
     - host: '*'
-      paths: '/users'
-      methods: ['POST']
-      scopes: ['users:register'] 
-    
-    - host: '*'
       paths: ['/users/auth']
       methods: ['POST']
 
     - host: '*'
-      paths: ['/users/*']
-      methods: ['DELETE']
-      scopes: ['users:remove']
-
+      paths: ['/users']
+      methods: ['POST']
+      scopes: ['users:register'] 
+    
     - host: '*'
       paths: ['/users']
       methods: ['GET']
@@ -33,6 +28,11 @@ apiEndpoints:
       paths: ['/users/*']
       methods: ['GET']
       scopes: ['users:read']
+
+    - host: '*'
+      paths: ['/users/*']
+      methods: ['DELETE']
+      scopes: ['users:remove']
 
     - host: '*'
       paths: ['/users/*']
@@ -66,9 +66,16 @@ pipelines:
         - 
           condition:
             name: 'is-auth'
-            urlauthservice: '/users/auth'
+            autpath: '/users/auth'
           action:
-            urlauthservice: '/users/auth'
+            urlauthservice: 'http://localhost:5000/api/v1/users/auth'
+            secretOrPublicKey: 'mysecret'
+            iss: 'haniot'
+      - haniot-jwt-policy:
+          - action:
+              secretOrPublicKey: 'mysecret'
+              issuer: 'haniot'
+      - haniot-jwtScopes-policy:
       - proxy:
           - action:
               prependPath:  true
