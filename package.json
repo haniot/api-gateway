@@ -6,10 +6,17 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "init": "npm i && npm audit fix && npm start"
+    "init": "npm i && npm audit fix && npm start",
+    "test:unit": "SET NODE_ENV=test && mocha --opts test/**/unit/mocha.opts test/**/unit/**/*-spec.js"
   },
   "dependencies": {
     "eg-plugin-haniot": "file:eg-plugin-haniot",
     "express-gateway": "^1.10.2"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
+    "sinon": "^6.1.4",
+    "supertest": "^2.0.1"
   }
 }

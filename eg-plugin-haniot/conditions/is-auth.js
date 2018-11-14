@@ -4,16 +4,16 @@
 module.exports = {
   name: 'is-auth',
   handler: function (req, conditionConfig) {    
-    return (conditionConfig.autpath == req.url && req.method === 'POST');
+    return (conditionConfig.authpath === req.url && req.method === 'POST');
   },
   schema: {
-    $id: 'http://express-gateway.io/schemas/conditions/no-auth.json',
+    $id: 'http://express-gateway.io/schemas/conditions/is-auth.json',
     type: 'object',
     properties: {
-      autpath: {
+      authpath: {
         type: 'string'
       }
     },
-    required: ['autpath']
+    required: ['authpath']
   }
 };

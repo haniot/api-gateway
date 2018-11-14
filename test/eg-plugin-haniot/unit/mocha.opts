@@ -1,0 +1,3 @@
+--require test/eg-plugin-haniot/unit/helpers.js
+--reporter spec
+--slow 5000
