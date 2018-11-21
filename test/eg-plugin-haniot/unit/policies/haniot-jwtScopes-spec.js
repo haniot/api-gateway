@@ -28,35 +28,72 @@ describe('Policy: haniot-jwtScopes-policy',()=>{
     });
 
     describe('Functionality',()=>{
-        it('Should return a function(req,res,next)',()=>{
+        it('should return a function(req,res,next)',()=>{
             assert.typeOf(policy.policy(), 'function', '"policy" does not return a function');
+            const actionParams = {};
+            assert.equal(policy.policy(actionParams).length,3,'Function different than expected');
         });
-        it('You should get the apiendpoint scopes',()=>{
-            const req = {
-                headers : {
-                    authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Yjk5NmE5NTZjZGRlOTAwMzk5MjJkZGUiLCJpc3MiOiJoYW5pb3QiLCJpYXQiOjE1MzcyMjI4MTAsInNjb3BlIjoidXNlcnM6cmVhZEFsbDIifQ.0K8y01LStace9qQx5rMwN3hDJoy3dNxc5u91CId4I7c'
-                },
-                egContext : {
-                    apiEndpoint : {
-                        scopes: ['users:readAll','users:readAll2']
+        
+        context('should validate scopes',()=>{
+            it('when user has scope, should call next()',function(done){
+                const req = {
+                   user : {
+                    sub:'5b996a956cdde90039922dde',
+                    iss: 'haniot',
+                    scope: 'users:readAll'
+                   },
+                   egContext : {
+                        apiEndpoint : {
+                            scopes: ['users:readAll']
+                        }
                     }
-                }
-            };
-            
-            const res = {
-                send:sinon.spy(),
-                status:sinon.spy()
-            };
-            res.status.withArgs(200).returns(res);            
-            const next = sinon.spy();
-
-            // Executando a politica
-            mid_policy = policy.policy();
-            mid_policy(req,res,next);
-
-            sinon.assert.calledOnce(res.send);
-            sinon.assert.calledWith(res.status, 200);
-        });       
+                };
+                
+                const res = {};
+                
+                const next = sinon.spy();
+    
+                // Executando a politica
+                mid_policy = policy.policy();
+                mid_policy(req,res,next);
+                
+                sinon.assert.called(next);
+                
+                done();
+    
+                
+            });
+            it('when user does not have scope, should return 401',function(done){
+                const req = {
+                    user : {
+                     sub:'5b996a956cdde90039922dde',
+                     iss: 'haniot',
+                     scope: 'users:readAll'
+                    },
+                    egContext : {
+                         apiEndpoint : {
+                             scopes: ['users:register']
+                         }
+                     }
+                 };
+                 
+                 const res = {
+                     send: sinon.spy()
+                 };
+                 
+                 const next = sinon.spy();
+     
+                 // Executando a politica
+                 mid_policy = policy.policy();
+                 mid_policy(req,res,next);
+                    
+                 sinon.assert.calledWith(res.send,401);
+                 sinon.assert.notCalled(next);
+                   
+                 done();
+                 
+            });
+        });
         
     });
 });

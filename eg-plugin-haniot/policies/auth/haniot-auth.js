@@ -1,59 +1,60 @@
 /**
  * Login Policy
  */
-const authService = require('../../services/auth/auth-service');
 const jwt = require('jsonwebtoken');
-const services = require('express-gateway/lib/services');
+let authService = require('../../services/auth/auth-service');
+let services = require('express-gateway/lib/services');
 
-module.exports = function (actionParams) {
-    return (req, res, next) => {
-        console.log('executing haniot auth policy with params:');
-        console.log(actionParams);
-        return authService.auth(actionParams.urlauthservice, req.headers.authorization)
-            .then(response => {
+module.exports = function (actionParams,authServiceTest,servicesTest) {
+    return (req, res, next) => {        
+        // Contexto de teste.
+        // authService  e services são serviços mockados
+        if(authServiceTest && servicesTest){ 
+            authService = authServiceTest;
+            services = servicesTest;
+        }
+        const credentials = req.headers.authorization ? req.headers.authorization : req.headers['authorization'];
+        return authService.auth(actionParams.urlauthservice, credentials)
+            .then(response => {                
                 if (response.status === 200) {// Login realizado com sucesso, criar usuario no Gateway
                     const secretOrKey = actionParams.secretOrPublicKeyFile ? fs.readFileSync(actionParams.secretOrPublicKeyFile) : actionParams.secretOrPublicKey;
-                    jwt.verify(response.data['acess_token'], secretOrKey, function (err, jwtPayload) {
+                    jwt.verify(response.data['token'], secretOrKey, function (err, jwtPayload) {
                         if (err) {
-                            console.log('| policy auth | Error:', err);
-                            return res.status(400).send({ message: err.message });
+                            // console.error('| haniot-auth | Error in verify jwt token: ',err);                            
+                            return res.status(500).send({ messsage: 'INTERNAL SERVER ERROR' });
                         }
                         //User and issuer validation. We expect to receive the username in the jwt 'sub' field and issuer in 'issuer' field
-                        if (!jwtPayload.sub || jwtPayload.iss !== actionParams.iss) {
-                            console.error('| policy auth | User not found in jwt or issuer invalid!');
+                        if (!jwtPayload.sub || jwtPayload.iss !== actionParams.issuer) {                            
                             return res.status(400).send({ message: "User not found in jwt or issuer invalid!" });
                         }
                         // Searching for user on express gateway
                         services.user.find(jwtPayload.sub)
                             .then(user => {
-                                if(user) {
-                                    console.log('| policy auth | Found user: ' + JSON.stringify(user.username));
+                                if(user) {                                    
                                     return res.status(200).send(response.data);
                                 }
                                 let userGateway = { username: jwtPayload.sub };
                                 services.user.insert(userGateway)
-                                    .then(user => {
-                                        console.log('| policy auth | User created on API gateway: ' + JSON.stringify(user));
+                                    .then(user => { 
+                                        response.user = user;                                      
                                         return res.status(200).send(response.data);
-                                    }).catch(error => {
-                                        console.error(`| policy auth | Error creating API Gateway user: ${error.message}`);
-                                        return res.status(400).send({ messsage: error.message });
+                                    }).catch(err => { 
+                                        console.error('| haniot-auth | Error inserting user gateway: '+err.message);                                       
+                                        return res.status(500).send({ messsage: 'INTERNAL SERVER ERROR' });
                                     });
                             })
                             .catch( err => {
-                                console.error('| policy auth | Error fetching user: ' + JSON.stringify(err));
-                                return res.status(500).send({ messsage: 'Error fetching user: '+error.message });
+                                console.error('| haniot-auth | Error fetching user gateway: '+err.message);                                
+                                return res.status(500).send({ messsage: 'INTERNAL SERVER ERROR'});
                             });
-
                     });
-                } else {// Login invalido
-                    console.log('| policy auth | Invalid login!!');
-                    return res.status(400).send(response.data);
+                } else {                 
+                    return res.status(response.status).send(response.data);
                 }
             })
-            .catch(err => {
-                console.error('| policy auth | Error:', err);
-                return res.status(400).send({ message: err.message });
+            .catch(err => {   
+                console.error('| haniot-auth | Error in authService: '+err.message);                
+                return res.status(500).send({ messsage: 'INTERNAL SERVER ERROR' });
             });
 
     }

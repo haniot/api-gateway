@@ -19,11 +19,11 @@ module.exports = {
       secretOrPublicKeyFile: {
         type: 'string'
       },
-      iss: {
+      issuer: {
         type: 'string'
       }
     },
-    required: ['urlauthservice','iss'],
+    required: ['urlauthservice','issuer'],
     oneOf: [{ required: ['secretOrPublicKey'] }, { required: ['secretOrPublicKeyFile'] }]
   }
 };
