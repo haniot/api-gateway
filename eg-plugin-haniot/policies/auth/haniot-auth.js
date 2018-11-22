@@ -14,6 +14,7 @@ module.exports = function (actionParams,authServiceTest,servicesTest) {
             services = servicesTest;
         }
         const credentials = req.headers.authorization ? req.headers.authorization : req.headers['authorization'];
+        const data =  new Buffer(credentials.split(" ")[1], 'base64').toString().split(':');
         return authService.auth(actionParams.urlauthservice, credentials)
             .then(response => {                
                 if (response.status === 200) {// Login realizado com sucesso, criar usuario no Gateway

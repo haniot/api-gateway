@@ -53,7 +53,7 @@ policies:
   - haniot-jwtScopes-policy
   - haniot-jwt-policy
   - haniot-auth-policy
-  
+  - haniot-body-parser-policy
 ####### PIPELINES DEFINITION ########
 #### Pipeline no manage data coming from ACCOUNT PRIVATE and PUBLIC APIs ####
 
@@ -61,7 +61,8 @@ pipelines:
   - name: userPipeline
     apiEndpoints:
       - userApi
-    policies:      
+    policies: 
+      - haniot-body-parser-policy:     
       - haniot-auth-policy:
         - 
           condition:
