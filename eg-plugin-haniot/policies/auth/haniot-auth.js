@@ -13,9 +13,9 @@ module.exports = function (actionParams,authServiceTest,servicesTest) {
             authService = authServiceTest;
             services = servicesTest;
         }
-        const credentials = req.headers.authorization ? req.headers.authorization : req.headers['authorization'];
-        const data =  new Buffer(credentials.split(" ")[1], 'base64').toString().split(':');
-        return authService.auth(actionParams.urlauthservice, credentials)
+        // const credentials = req.headers.authorization ? req.headers.authorization : req.headers['authorization'];
+        // const data =  new Buffer(credentials.split(" ")[1], 'base64').toString().split(':');
+        return authService.auth(actionParams.urlauthservice, req.body)
             .then(response => {                
                 if (response.status === 200) {// Login realizado com sucesso, criar usuario no Gateway
                     const secretOrKey = actionParams.secretOrPublicKeyFile ? fs.readFileSync(actionParams.secretOrPublicKeyFile) : actionParams.secretOrPublicKey;

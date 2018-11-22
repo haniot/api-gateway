@@ -69,13 +69,13 @@ pipelines:
             name: 'is-auth'
             authpath: '/users/auth'
           action:
-            urlauthservice: 'http://localhost:5000/api/v1/users/auth'
-            secretOrPublicKey: 'mysecret'
-            issuer: 'haniot'
+            urlauthservice: ${USER_SERVICE}/users/auth
+            secretOrPublicKey: ${SECRET_JWT}
+            issuer: ${ISSUER}
       - haniot-jwt-policy:
           - action:
-              secretOrPublicKey: 'mysecret'
-              issuer: 'haniot'
+              secretOrPublicKey: ${SECRET_JWT}
+              issuer: ${ISSUER}
       - haniot-jwtScopes-policy:
       - proxy:
           - action:

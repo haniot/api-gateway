@@ -6,7 +6,9 @@ s.auth = function (urlservice, credentials) {
     request({
         method: 'POST',
         url: urlservice,
-        headers: {"Authorization":credentials} // "Authorization":"Basic QWRhbGNpbm86SnVuaW9y"
+        headers: {"Authorization":credentials}, // "Authorization":"Basic QWRhbGNpbm86SnVuaW9y",
+        data: credentials
+
     });
 
 }
