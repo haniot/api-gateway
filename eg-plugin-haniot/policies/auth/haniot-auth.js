@@ -40,12 +40,12 @@ module.exports = function (actionParams,authServiceTest,servicesTest) {
                                         response.user = user;                                      
                                         return res.status(200).send(response.data);
                                     }).catch(err => { 
-                                        console.error('| haniot-auth | Error inserting user gateway: '+err.message);                                       
+                                        console.error(new Date() + '| haniot-auth | Error inserting user gateway: '+err.message);                                       
                                         return res.status(500).send({ messsage: 'INTERNAL SERVER ERROR' });
                                     });
                             })
                             .catch( err => {
-                                console.error('| haniot-auth | Error fetching user gateway: '+err.message);                                
+                                console.error(new Date() + '| haniot-auth | Error fetching user gateway: '+err.message);                                
                                 return res.status(500).send({ messsage: 'INTERNAL SERVER ERROR'});
                             });
                     });
@@ -54,7 +54,7 @@ module.exports = function (actionParams,authServiceTest,servicesTest) {
                 }
             })
             .catch(err => {   
-                console.error('| haniot-auth | Error in authService: '+err.message);                
+                console.error(new Date() + '| haniot-auth | Error in authService: '+err);          
                 return res.status(500).send({ messsage: 'INTERNAL SERVER ERROR' });
             });
 

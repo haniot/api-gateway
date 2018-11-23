@@ -1,8 +1,6 @@
 const policy = require('../../../../eg-plugin-haniot/policies/authentication/haniot-jwt-policy');
 const assert = require('chai').assert;
 const sinon = require('sinon');
-const util = require('util');
-const promisify = util.promisify;
 
 describe('Policy: haniot-jwt-policy', () => {
 
@@ -53,7 +51,7 @@ describe('Policy: haniot-jwt-policy', () => {
                 secretOrPublicKey: 'mysecret',
                 issuer: 'haniot'
             };
-            const testContext = {                
+            const testContext = {
                 services: services
             }
             assert.typeOf(policy.policy(actionParams, testContext), 'function', '"policy" does not return a function');
@@ -61,11 +59,11 @@ describe('Policy: haniot-jwt-policy', () => {
         });
 
         context('should validate token', () => {
-            it('when the token and consumer is valid, should call next()', function () {
+            it('when the token and consumer is valid, should call next()', function (done) {
 
                 const req = {
-                    headers:{
-                        authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Yjk5NmE5NTZjZGRlOTAwMzk5MjJkZGUiLCJpc3MiOiJoYW5pb3QiLCJpYXQiOjE1NDI2NTIyMTExMDcsInNjb3BlIjoidXNlcnM6cmVhZEFsbDIifQ.jO75z9t35RJanZ1-Eh7Wk0nlOFd6XuAqcz4z2KmVXXU'
+                    headers: {
+                        authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Yjk5NmE5NTZjZGRlOTAwMzk5MjJkZGUiLCJpc3MiOiJoYW5pb3QiLCJpYXQiOjE1NDI2NTIyMTExMDcsInNjb3BlIjoidXNlcnM6cmVhZEFsbDIifQ.jO75z9t35RJanZ1-Eh7Wk0nlOFd6XuAqcz4z2KmVXXU'
                     }
                 };
 
@@ -91,44 +89,71 @@ describe('Policy: haniot-jwt-policy', () => {
                 const validateConsumer = sinon.stub(services.auth, 'validateConsumer');
                 validateConsumer.withArgs('5b996a956cdde90039922dde').returns(promisevalidateConsumer);
 
-                
+                const passport = {
+                    strategy: null,
+                    use(strategy) {
+                        this.strategy = strategy;
+                    },
+                    authenticate(name, opts) {
+
+                        return (req, res, next) => {
+                            const done = (opts, user, msg) => {
+                                if (user) {
+                                    next();
+                                }
+                            }
+                            this.strategy._verify({
+                                sub: "5b996a956cdde90039922dde",
+                                iss: "haniot",
+                                iat: 1542652211107,
+                                scope: "users:readAll2"
+                            }, done);
+                        }
+                    }
+                }
 
                 const actionParams = {
                     secretOrPublicKey: 'mysecret',
                     issuer: 'haniot'
                 };
-                const testContext = {
-                    isTest:true,
-                    services: services,
-                    fakeExtractor: function(req) {                    
-                        return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Yjk5NmE5NTZjZGRlOTAwMzk5MjJkZGUiLCJpc3MiOiJoYW5pb3QiLCJpYXQiOjE1NDI2NTIyMTExMDcsInNjb3BlIjoidXNlcnM6cmVhZEFsbDIifQ.jO75z9t35RJanZ1-Eh7Wk0nlOFd6XuAqcz4z2KmVXXU';
-                    } 
-                }
-                // Executando a politica
-                mid_policy = policy.policy(actionParams, testContext);
-                
-                mid_policy(req, res, next);
 
-                sinon.assert.calledWith(validateConsumer, '5b996a956cdde90039922dde');
-                sinon.assert.calledOnce(next);
-                    
+                const testContext = {
+                    isTest: true,
+                    services: services,
+                    passport: passport
+                }
+
+                // Executando a politica
+                const mid = policy.policy(actionParams, testContext);
+
+                mid(req, res, next);
+
+                return setTimeout(() => {
+                    sinon.assert.calledWith(validateConsumer, '5b996a956cdde90039922dde');
+                    sinon.assert.called(next);
+                    done();
+                }, 0);
 
             });
-            it('when the token is valid but the consumer was not found or is inactive, should not call next ()', function () {
+
+            it('when the token is valid but the consumer was not found or is inactive, should not call next ()', function (done) {
 
                 const req = {
-                    headers:{
-                        authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Yjk5NmE5NTZjZGRlOTAwMzk5MjJkZGUiLCJpc3MiOiJoYW5pb3QiLCJpYXQiOjE1NDI2NTIyMTExMDcsInNjb3BlIjoidXNlcnM6cmVhZEFsbDIifQ.jO75z9t35RJanZ1-Eh7Wk0nlOFd6XuAqcz4z2KmVXXU'
+                    headers: {
+                        authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Yjk5NmE5NTZjZGRlOTAwMzk5MjJkZGUiLCJpc3MiOiJoYW5pb3QiLCJpYXQiOjE1NDI2NTIyMTExMDcsInNjb3BlIjoidXNlcnM6cmVhZEFsbDIifQ.jO75z9t35RJanZ1-Eh7Wk0nlOFd6XuAqcz4z2KmVXXU'
                     }
                 };
 
                 const res = {
-                    statusCode: 200,
                     end: sinon.spy()
                 };
 
                 const next = sinon.spy();
 
+                const fakeConsumer = {
+                    sub: '5b996a956cdde90039922dde',
+                    username: 'fakeConsumer'
+                }
 
                 const services = {
                     auth: {
@@ -136,67 +161,132 @@ describe('Policy: haniot-jwt-policy', () => {
                     }
                 }
 
-
                 const promisevalidateConsumer = Promise.resolve(false);
 
                 const validateConsumer = sinon.stub(services.auth, 'validateConsumer');
-                validateConsumer.withArgs().returns(promisevalidateConsumer);
+                validateConsumer.withArgs('5b996a956cdde90039922dde').returns(promisevalidateConsumer);
 
-        
+                const passport = {
+                    strategy: null,
+                    use(strategy) {
+                        this.strategy = strategy;
+                    },
+                    authenticate(name, opts) {
+
+                        return (req, res, next) => {
+                            const done = (opts, user, msg) => {
+                                if (user) {
+                                    next();
+                                }
+                            }
+                            this.strategy._verify({
+                                sub: "5b996a956cdde90039922dde",
+                                iss: "haniot",
+                                iat: 1542652211107,
+                                scope: "users:readAll2"
+                            }, done);
+                        }
+                    }
+                }
+
                 const actionParams = {
                     secretOrPublicKey: 'mysecret',
                     issuer: 'haniot'
                 };
+
                 const testContext = {
-                    isTest:true,
+                    isTest: true,
                     services: services,
-                    fakeExtractor: function(req) {                    
-                        return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Yjk5NmE5NTZjZGRlOTAwMzk5MjJkZGUiLCJpc3MiOiJoYW5pb3QiLCJpYXQiOjE1NDI2NTIyMTExMDcsInNjb3BlIjoidXNlcnM6cmVhZEFsbDIifQ.jO75z9t35RJanZ1-Eh7Wk0nlOFd6XuAqcz4z2KmVXXU';
-                    } 
+                    passport: passport
                 }
+
                 // Executando a politica
-                mid_policy = policy.policy(actionParams, testContext);
-                mid_policy(req, res, next)
+                const mid = policy.policy(actionParams, testContext);
 
-                sinon.assert.notCalled(next);
+                mid(req, res, next);
 
+                return setTimeout(() => {
+                    sinon.assert.calledWith(validateConsumer, '5b996a956cdde90039922dde');
+                    sinon.assert.notCalled(next);
+                    done();
+                }, 0);
 
             });
-            it('when the token is not valid, should return Unauthorized with statusCode 401', function () {
+
+            it('when the token is not valid, should return Unauthorized with statusCode 401', function (done) {
 
                 const req = {
-                    headers:{
-                        authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Yjk5NmE5NTZjZGRlOTAwMzk5MjJkZGUiLCJpc3MiOiJoYW5pb3QiLCJpYXQiOjE1NDI2NTIyMTExMDcsInNjb3BlIjoidXNlcnM6cmVhZEFsbDIifQ.jO75z9t35RJanZ1-Eh7Wk0nlOFd6XuAqcz4z2KmVXXU'
+                    headers: {
+                        authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Yjk5NmE5NTZjZGRlOTAwMzk5MjJkZGUiLCJpc3MiOiJoYW5pb3QiLCJpYXQiOjE1NDI2NTIyMTExMDcsInNjb3BlIjoidXNlcnM6cmVhZEFsbDIifQ.jO75z9t35RJanZ1-Eh7Wk0nlOFd6XuAqcz4z2KmVXXU'
                     }
                 };
 
                 const res = {
-                    statusCode: 200,
+                    statusCode: 0,
                     end: sinon.spy()
                 };
 
                 const next = sinon.spy();
 
-                // Executando a politica
+                const fakeConsumer = {
+                    sub: '5b996a956cdde90039922dde',
+                    username: 'fakeConsumer'
+                }
+
+                const services = {
+                    auth: {
+                        validateConsumer() { }
+                    }
+                }
+
+                const promisevalidateConsumer = Promise.resolve(fakeConsumer);
+
+                const validateConsumer = sinon.stub(services.auth, 'validateConsumer');
+                validateConsumer.withArgs('5b996a956cdde90039922dde').returns(promisevalidateConsumer);
+
+                const passport = {
+                    strategy: null,
+                    use(strategy) {
+                        this.strategy = strategy;
+                    },
+                    authenticate(name, opts) {
+
+                        return (req, res, next) => {
+                            const done = (opts, user, msg) => {
+                                if (user) {
+                                    next();
+                                }
+                            }
+                            res.statusCode = 401;
+                            res.end('Unauthorized');
+                        }
+                    }
+                }
+
                 const actionParams = {
                     secretOrPublicKey: 'mysecret',
                     issuer: 'haniot'
                 };
+
                 const testContext = {
-                    isTest:true,
-                    fakeExtractor: function(req) {                    
-                        return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Yjk5NmE5NTZjZGRlOTAwMzk5MjJkZGUiLCJpc3MiOiJoYW5pb3QiLCJpYXQiOjE1NDI2NTIyMTExMDcsInNjb3BlIjoidXNlcnM6cmVhZEFsbDIifQ.jO75z9t35RJanZ1-Eh7Wk0nlOFd6XuAqcz4z2KmVXXU';
-                    }                   
+                    isTest: true,
+                    services: services,
+                    passport: passport
                 }
-                mid_policy = policy.policy(actionParams, testContext);
-                mid_policy(req, res, next)
 
-                sinon.assert.notCalled(next);
-                sinon.assert.calledWith(res.end, 'Unauthorized');
-                assert.equal(res.statusCode, 401);
+                // Executando a politica
+                const mid = policy.policy(actionParams, testContext);
 
+                mid(req, res, next);
 
+                return setTimeout(() => {
+                    sinon.assert.notCalled(next);
+                    sinon.assert.calledWith(res.end, 'Unauthorized');
+                    assert.equal(res.statusCode, 401);
+                    done();
+                },0);
             });
+
         });
 
     });
