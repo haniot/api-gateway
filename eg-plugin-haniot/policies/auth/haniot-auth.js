@@ -22,11 +22,11 @@ module.exports = function (actionParams,authServiceTest,servicesTest) {
                     jwt.verify(response.data['token'], secretOrKey, function (err, jwtPayload) {
                         if (err) {
                             // console.error('| haniot-auth | Error in verify jwt token: ',err);                            
-                            return res.status(500).send({ messsage: 'INTERNAL SERVER ERROR' });
+                            return res.status(500).send({"code": 500,"message": "INTERNAL SERVER ERROR","description": "An internal server error has occurred."});
                         }
                         //User and issuer validation. We expect to receive the username in the jwt 'sub' field and issuer in 'issuer' field
                         if (!jwtPayload.sub || jwtPayload.iss !== actionParams.issuer) {                            
-                            return res.status(400).send({ message: "User not found in jwt or issuer invalid!" });
+                            return res.status(401).send({"code": 401,"message": "UNAUTHORIZED","description": "The token user is not properly registered as a consumer at the gateway.","redirect_link": "/users/auth"});
                         }
                         // Searching for user on express gateway
                         services.user.find(jwtPayload.sub)
@@ -41,12 +41,12 @@ module.exports = function (actionParams,authServiceTest,servicesTest) {
                                         return res.status(200).send(response.data);
                                     }).catch(err => { 
                                         console.error(new Date() + '| haniot-auth | Error inserting user gateway: '+err.message);                                       
-                                        return res.status(500).send({ messsage: 'INTERNAL SERVER ERROR' });
+                                        return res.status(500).send({"code": 500,"message": "INTERNAL SERVER ERROR","description": "An internal server error has occurred."});
                                     });
                             })
                             .catch( err => {
                                 console.error(new Date() + '| haniot-auth | Error fetching user gateway: '+err.message);                                
-                                return res.status(500).send({ messsage: 'INTERNAL SERVER ERROR'});
+                                return res.status(500).send({"code": 500,"message": "INTERNAL SERVER ERROR","description": "An internal server error has occurred."});
                             });
                     });
                 } else {                 
@@ -55,7 +55,7 @@ module.exports = function (actionParams,authServiceTest,servicesTest) {
             })
             .catch(err => {   
                 console.error(new Date() + '| haniot-auth | Error in authService: '+err);          
-                return res.status(500).send({ messsage: 'INTERNAL SERVER ERROR' });
+                return res.status(500).send({"code": 500,"message": "INTERNAL SERVER ERROR","description": "An internal server error has occurred."});
             });
 
     }
