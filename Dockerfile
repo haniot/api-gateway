@@ -1,5 +1,9 @@
+# Download Node image from Docker Hub Repository
 FROM node:8.11.2 
+
+# Create a new folder in the container
 RUN mkdir -p /usr/src/ag 
+
 WORKDIR /usr/src/ag 
 
 COPY . /usr/src/ag/ 
