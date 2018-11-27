@@ -1,8 +1,12 @@
 # Core
+# db:
+#   redis:
+#     host: redis_db
+#     port: 6379
+#     namespace: EG
 db:
   redis:
-    host: redis_db
-    port: 6379
+    emulate: true
     namespace: EG
 
 #plugins:
@@ -27,5 +31,5 @@ authorizationCodes:
   timeToExpiry: 300000
 
 plugins:
-  eg-plugin-ocariot:
-    package: 'eg-plugin-ocariot/manifest.js'
+  eg-plugin-haniot:
+    package: 'eg-plugin-haniot/manifest.js'

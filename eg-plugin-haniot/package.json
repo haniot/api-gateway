@@ -1,5 +1,5 @@
 {
-  "name": "eg-plugin-ocariot",
+  "name": "eg-plugin-haniot",
   "version": "1.0.0",
   "description": "Express gateway plugin for OCARIoT project",
   "main": "manifest.js",
@@ -11,14 +11,9 @@
   "dependencies": {
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
-    "express-jwt-authz": "^1.0.0"
-  },
-  "devDependencies": {
-    "eslint": "^4.9.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "eslint-config-standard": "^10.2.1",
-    "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-node": "^5.2.1",
-    "eslint-plugin-promise": "^3.6.0"
+    "express-jwt-authz": "^1.0.0",
+    "jsonwebtoken": "^8.3.0",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0"
   }
 }

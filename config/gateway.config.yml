@@ -1,5 +1,5 @@
 http:
-  port: 8080
+  port: ${PORT}
 admin:
   port: 9876
   hostname: 0.0.0.0
@@ -7,41 +7,18 @@ admin:
 ####### API ENDPOINTS DEFINITION ########
 
 ####### ACTIVITY ENDPOINT ########
-apiEndpoints:  
-  gatewayCustomApi:
+apiEndpoints:
+####### USER ENDPOINT ########  
+  userApi:
+    - host: '*'
+      paths: ['/users/auth']
+      methods: ['POST']
+
     - host: '*'
       paths: ['/users']
       methods: ['POST']
       scopes: ['users:register'] 
-
-    - host: '*'
-      paths: ['/users/*']
-      methods: ['DELETE']
-      scopes: ['users:remove']
-
-  activityApi:
-    - host: '*'
-      paths: ['/users/*/activities', '/users/*/activities/*']
-      methods: ["GET"]
-      scopes: ['activities:read']
-
-    - host: '*'
-      paths: ['/users/*/activities']
-      methods: ["POST"]
-      scopes: ['activities:register']
-
-    - host: '*'
-      paths: ['/users/*/activities/*']
-      methods: ["DELETE"]
-      scopes: ['activities:remove']
-
-####### ACCOUNT ENDPOINT ########  
-  accountPublicApi:
-    host: '*'
-    methods: ['POST']
-    paths: ['/users/auth']
-  
-  accountPrivateApi:
+    
     - host: '*'
       paths: ['/users']
       methods: ['GET']
@@ -54,85 +31,56 @@ apiEndpoints:
 
     - host: '*'
       paths: ['/users/*']
+      methods: ['DELETE']
+      scopes: ['users:remove']
+
+    - host: '*'
+      paths: ['/users/*']
       methods: ['PUT']
-      scopes: ['users:update']  
+      scopes: ['users:update']
+    
 
 ####### SERVICE ENDPOINTS DEFINITIONS ########
 serviceEndpoints:
-  accountService:
-    url: 'http://accountservice:5000/api/v1'
-  activityService:
-    url: 'http://trackingservice:3000/api/v1'
-  gatewayService:
-    url: 'http://localhost:8080/api/v1'
+  userService:
+    url: ${USER_SERVICE}
 
 ####### POLICIES USED IN PIPELINES DEFINITION ########
 policies:
   - log
   - proxy
   - rate-limit
-  - ocariot-jwtScopes-policy
-  - ocariot-jwt-policy
-
+  - haniot-jwtScopes-policy
+  - haniot-jwt-policy
+  - haniot-auth-policy
+  - haniot-body-parser-policy
 ####### PIPELINES DEFINITION ########
 #### Pipeline no manage data coming from ACCOUNT PRIVATE and PUBLIC APIs ####
-pipelines: 
-  accountPublicPipeline:
-    apiEndpoints: ['accountPublicApi']
-    policies:
-      - proxy:
-          - action:
-              prependPath:  true
-              ignorePath:   false
-              stripPath:    false
-              changeOrigin: true
-              serviceEndpoint: accountService
 
-  accountPrivatePipeline:
-    apiEndpoints: ['accountPrivateApi']
-    policies:
-      - ocariot-jwt-policy:
+pipelines:
+  - name: userPipeline
+    apiEndpoints:
+      - userApi
+    policies: 
+      - haniot-body-parser-policy:     
+      - haniot-auth-policy:
+        - 
+          condition:
+            name: 'is-auth'
+            authpath: '/users/auth'
+          action:
+            urlauthservice: ${USER_SERVICE}/users/auth
+            secretOrPublicKey: ${SECRET_JWT}
+            issuer: ${ISSUER}
+      - haniot-jwt-policy:
           - action:
-              secretOrPublicKey: MyS3cr3tK3Y
-              issuer: 'ocariot'
-      - ocariot-jwtScopes-policy:
+              secretOrPublicKey: ${SECRET_JWT}
+              issuer: ${ISSUER}
+      - haniot-jwtScopes-policy:
       - proxy:
           - action:
               prependPath:  true
               ignorePath:   false
               stripPath:    false
-              changeOrigin: true
-              serviceEndpoint: accountService
-
-  #### Pipeline no manage data coming at ACTIVITY API ####
-  activityPipeline:
-    apiEndpoints: ['activityApi']
-    policies:
-      - ocariot-jwt-policy:
-          - action:
-              secretOrPublicKey: MyS3cr3tK3Y
-              issuer: 'ocariot'
-      - ocariot-jwtScopes-policy:
-      - proxy:
-          - action:
-              prependPath:  true
-              ignorePath:   false
-              stripPath:    false
-              changeOrigin: true
-              serviceEndpoint: activityService
-
-  gatewayPipeline:
-    apiEndpoints: ['gatewayCustomApi']
-    policies:
-      - ocariot-jwt-policy:
-          - action:
-              secretOrPublicKey: MyS3cr3tK3Y
-              issuer: 'ocariot'
-      - ocariot-jwtScopes-policy:
-      - proxy:
-          - action:
-              prependPath:  true
-              ignorePath:   false
-              stripPath:    false
-              changeOrigin: true
-              serviceEndpoint: gatewayService
+              changeOrigin: true 
+              serviceEndpoint: userService 

@@ -1,11 +1,18 @@
+/**
+ * Login Policy
+ * 
+ */
 module.exports = {
-  name: 'ocariot-jwt-policy',
-  policy: require('./ocariot-jwt'),
+  name: 'haniot-auth-policy',
+  policy: require('./haniot-auth'),
   schema: {
-    name: 'ocariot-jwt-policy',
-    $id: 'http://express-gateway.io/schemas/policies/ocariot-jwt-policy.json',
+    name: 'haniot-jwt-policy',
+    $id: 'http://express-gateway.io/schemas/policies/haniot-auth-policy.json',
     type: 'object',
     properties: {
+      urlauthservice: {
+        type: 'string'
+      },
       secretOrPublicKey: {
         type: 'string'
       },
@@ -16,7 +23,7 @@ module.exports = {
         type: 'string'
       }
     },
-    required: ['issuer'],
+    required: ['urlauthservice','issuer'],
     oneOf: [{ required: ['secretOrPublicKey'] }, { required: ['secretOrPublicKeyFile'] }]
   }
 };
