@@ -1,50 +1,60 @@
 http:
   port: ${PORT}
-  hostname: 127.0.0.1
+  hostname: 0.0.0.0
 admin:
   port: 9876
   hostname: 127.0.0.1
 
 ####### API ENDPOINTS DEFINITION ########
-
-####### ACTIVITY ENDPOINT ########
 apiEndpoints:
-####### USER ENDPOINT ########  
-  userApi:
+
+####### ACCOUNT API PUBLIC ########
+  accountPublic:  
     - host: '*'
-      paths: ['/users/auth']
+      paths: ['/api/v1/users/*/password']
+      methods: ['PATCH']
+
+####### ACCOUNT API PRIVATE ########
+  accountPrivate:
+    - host: '*'
+      paths: ['/api/v1/users/auth']
       methods: ['POST']
 
     - host: '*'
-      paths: ['/users']
+      paths: ['/api/v1/users/admin']
       methods: ['POST']
-      scopes: ['users:register'] 
+      scopes: ['adminAccount:create']
+
+    - host: '*'
+      paths: ['/api/v1/users/caregiver']
+      methods: ['POST']
+      scopes: ['adminAccount:create'] 
     
     - host: '*'
-      paths: ['/users']
+      paths: ['/api/v1/users']
       methods: ['GET']
-      scopes: ['users:readAll']
+      scopes: ['adminAccount:readAll']
 
     - host: '*'
-      paths: ['/users/*']
+      paths: ['/api/v1/users/*']
       methods: ['GET']
-      scopes: ['users:read']
+      scopes: [adminAccount:read',adminAccount:readAll,'caregiverAccount:read','caregiverAccount:readAll']
 
     - host: '*'
-      paths: ['/users/*']
+      paths: ['/api/v1/users/*']
       methods: ['DELETE']
-      scopes: ['users:remove']
+      scopes: ['adminAccount:delete','adminAccount:deleteAll',caregiverAccount:delete,'caregiverAccount:deleteAll']
 
     - host: '*'
-      paths: ['/users/*']
-      methods: ['PUT']
-      scopes: ['users:update']
-    
+      paths: ['/api/v1/users/*']
+      methods: ['PATCH']
+      scopes: [adminAccount:update,'adminAccount:updateAll',caregiverAccount:update,'caregiverAccount:updateAll']    
+  
 
 ####### SERVICE ENDPOINTS DEFINITIONS ########
 serviceEndpoints:
-  userService:
-    url: ${USER_SERVICE}
+  accountService:
+    url: ${ACCOUNT_SERVICE}
 
 ####### POLICIES USED IN PIPELINES DEFINITION ########
 policies:
@@ -59,18 +69,18 @@ policies:
 #### Pipeline no manage data coming from ACCOUNT PRIVATE and PUBLIC APIs ####
 
 pipelines:
-  - name: userPipeline
+  - name: privatePipeline
     apiEndpoints:
-      - userApi
+      - accountPrivate
     policies: 
       - haniot-body-parser-policy:     
       - haniot-auth-policy:
         - 
           condition:
             name: 'is-auth'
-            authpath: '/users/auth'
+            authpath: '/api/v1/users/auth'
           action:
-            urlauthservice: ${USER_SERVICE}/users/auth
+            urlauthservice: ${USER_SERVICE}/api/v1/users/auth
             secretOrPublicKey: ${SECRET_JWT}
             issuer: ${ISSUER}
       - haniot-jwt-policy:
@@ -84,4 +94,16 @@ pipelines:
               ignorePath:   false
               stripPath:    false
               changeOrigin: true 
-              serviceEndpoint: userService 
+              serviceEndpoint: accountService
+
+  - name: publicPipeline
+    apiEndpoints:
+      - accountPublic
+    policies:       
+      - proxy:
+          - action:
+              prependPath:  true
+              ignorePath:   false
+              stripPath:    false
+              changeOrigin: true 
+              serviceEndpoint: accountService 

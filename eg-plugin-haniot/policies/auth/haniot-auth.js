@@ -5,57 +5,114 @@ const jwt = require('jsonwebtoken');
 let authService = require('../../services/auth/auth-service');
 let services = require('express-gateway/lib/services');
 
-module.exports = function (actionParams,authServiceTest,servicesTest) {
-    return (req, res, next) => {        
-        // Contexto de teste.
-        // authService  e services são serviços mockados
-        if(authServiceTest && servicesTest){ 
+module.exports = function (actionParams, authServiceTest, servicesTest) {
+    return (req, res, next) => {     
+        /**Test Context
+         * authService and services are mockados services
+         */
+        if (authServiceTest && servicesTest) {
             authService = authServiceTest;
             services = servicesTest;
         }
-        // const credentials = req.headers.authorization ? req.headers.authorization : req.headers['authorization'];
-        // const data =  new Buffer(credentials.split(" ")[1], 'base64').toString().split(':');
+        /**
+         * Function to search for a user or create it
+         * @param {*} id User ID registered at gateway
+         */
+        const findOrCreateUserGateway = (id) => {
+            /**
+             * Searching for user on express gateway
+             */
+            return services.user.find(id)
+                .then(user => {
+                    if (user) {
+                        return user;
+                    }
+                    let userGateway = { username: id };
+                    /**
+                     * Creating user on gateway
+                     */
+                    return services.user.insert(userGateway)
+                        .then(user => {
+                            return user;
+                        })
+                        .catch(err => {
+                            console.error(new Date().toUTCString() + '| haniot-auth | Error inserting user gateway: ' + err);
+                            return false;
+                        });
+                })
+                .catch(err => {
+                    console.error(new Date().toUTCString() + '| haniot-auth | Error fetching user gateway: ' + err);
+                    return false;
+                });
+        }
+        /**
+         * Performing user authentication on the account service
+         */
         return authService.auth(actionParams.urlauthservice, req.body)
-            .then(response => {                
-                if (response.status === 200) {// Login realizado com sucesso, criar usuario no Gateway
+            .then(response => {
+                /**
+                 * Login successfully, create user on Gateway
+                 */
+                if (response.status === 200) {
                     const secretOrKey = actionParams.secretOrPublicKeyFile ? fs.readFileSync(actionParams.secretOrPublicKeyFile) : actionParams.secretOrPublicKey;
                     jwt.verify(response.data['token'], secretOrKey, function (err, jwtPayload) {
                         if (err) {
-                            // console.error('| haniot-auth | Error in verify jwt token: ',err);                            
-                            return res.status(500).send({"code": 500,"message": "INTERNAL SERVER ERROR","description": "An internal server error has occurred."});
+                            return res.status(500).send({ "code": 500, "message": "INTERNAL SERVER ERROR", "description": "An internal server error has occurred." });
                         }
-                        //User and issuer validation. We expect to receive the username in the jwt 'sub' field and issuer in 'issuer' field
-                        if (!jwtPayload.sub || jwtPayload.iss !== actionParams.issuer) {                            
-                            return res.status(401).send({"code": 401,"message": "UNAUTHORIZED","description": "The token user is not properly registered as a consumer at the gateway.","redirect_link": "/users/auth"});
+                        /**
+                         * User and issuer validation.
+                         * We expect to receive the username in the jwt 'sub' field and issuer in 'issuer' field
+                         */
+                        if (!jwtPayload.sub || jwtPayload.iss !== actionParams.issuer) {
+                            return res.status(401).send({ "code": 401, "message": "UNAUTHORIZED", "description": "The token user is not properly registered as a consumer at the gateway.", "redirect_link": "/users/auth" });
                         }
-                        // Searching for user on express gateway
-                        services.user.find(jwtPayload.sub)
+                        /**
+                         * Calls the function to fetch or create the user at the gateway
+                         */
+                        return findOrCreateUserGateway(jwtPayload.sub)
                             .then(user => {
-                                if(user) {                                    
-                                    return res.status(200).send(response.data);
+                                if (user) {
+                                    response.user = user;
+                                    return res.status(response.status).send(response.data);
+                                } else {
+                                    return res.status(500).send({ "code": 500, "message": "INTERNAL SERVER ERROR", "description": "An internal server error has occurred." });
                                 }
-                                let userGateway = { username: jwtPayload.sub };
-                                services.user.insert(userGateway)
-                                    .then(user => { 
-                                        response.user = user;                                      
-                                        return res.status(200).send(response.data);
-                                    }).catch(err => { 
-                                        console.error(new Date() + '| haniot-auth | Error inserting user gateway: '+err.message);                                       
-                                        return res.status(500).send({"code": 500,"message": "INTERNAL SERVER ERROR","description": "An internal server error has occurred."});
-                                    });
-                            })
-                            .catch( err => {
-                                console.error(new Date() + '| haniot-auth | Error fetching user gateway: '+err.message);                                
-                                return res.status(500).send({"code": 500,"message": "INTERNAL SERVER ERROR","description": "An internal server error has occurred."});
                             });
+
                     });
-                } else {                 
+                } else {
                     return res.status(response.status).send(response.data);
                 }
             })
-            .catch(err => {   
-                console.error(new Date() + '| haniot-auth | Error in authService: '+err);          
-                return res.status(500).send({"code": 500,"message": "INTERNAL SERVER ERROR","description": "An internal server error has occurred."});
+            .catch(err => {
+                /**
+                 * In case of connection errors with the microservice
+                 */
+                if (err.code === 'ECONNREFUSED' || err.code === 'ECONNRESET') {
+                    console.error(new Date().toUTCString() + '| haniot-auth | Error in authService: ', err.message);
+                    return res.status(500).send({ "code": 500, "message": "INTERNAL SERVER ERROR", "description": "An internal server error has occurred." });
+                }
+                /**
+                 * If the user needs to update the access password
+                 */
+                if (err.response && err.response.status === 403) {
+                    const index_users = err.response.data.redirect_link.indexOf('users');
+                    const id = err.response.data.redirect_link.substring(index_users).split('/')[1];                                        
+                    /**
+                     * Calls the function to fetch or create the user at the gateway
+                     */
+                    return findOrCreateUserGateway(id)
+                        .then(user => {
+                            if (user) {
+                                res.user = user;
+                                return res.status(err.response.status).send(err.response.data);
+                            } else {
+                                return res.status(500).send({ "code": 500, "message": "INTERNAL SERVER ERROR", "description": "An internal server error has occurred." });
+                            }
+                        });
+
+                }
+                return res.status(err.response.status).send(err.response.data);
             });
 
     }

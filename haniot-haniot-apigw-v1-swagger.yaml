@@ -338,8 +338,6 @@ paths:
                 $ref: '#/components/schemas/Error'
   /users/{user_id}/password:
     patch:
-      security:
-        - JWTAuth: []  
       tags:
         - users
       summary: Change user password.
@@ -366,25 +364,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        '401':
-          description: Authentication failed for lack of authentication credentials or the token user is not properly registered as a consumer at the gateway.
-          content:
-            application/json:
-              schema:
-                example:
-                  code: 401
-                  message: UNAUTHORIZED. 
-                  description: "Authentication failed for lack of authentication credentials."
-                  redirect_link: /users/auth
-        '403':
-          description: Authorization failed due to insufficient permissions.
-          content:
-            application/json:
-              schema:
-                example:
-                  code: 403
-                  message: FORBIDDEN. 
-                  description: "Authorization failed due to insufficient permissions."
         '404':
           description: >-
             Specified resource does not exist. Usually when the URI is incorrect
@@ -448,7 +427,7 @@ paths:
         Authenticate a user. User authentication is performed using JWT token generation. In generating the JWT token, there are following types of attributes:
         
         **Reserved Claims**: Non-mandatory (but recommended) attributes used in token validation by API security protocols. These are used to create a pattern and are defined in RFC-7519.
-        * sub () - Entity that the token belongs to, usually the user ID (it is good practice that this ID is not the same as the database);
+        * sub (subject) - Entity that the token belongs to, usually the user ID;
         * iss (emitter) - sets the emitter of the token;
         * exp (expiration) - Timestamp of when the token will expire;
         * iat (issued at) - Timestamp from when the token was created.
@@ -487,6 +466,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        '403':
+          description: >-
+            User password must be changed. It occours when the system requires that user change your password during the auth proccess.
+          content:
+            application/json:
+              schema:
+                example:
+                  code: 403
+                  message: Change password is necessary. 
+                  description: "To ensure information security, the user must change the access password. Access /api/v1/users/{user_id}/password to update then."
+                  redirect_link: /api/v1/users/{user_id}/password
         '404':
           description: >-
             Specified resource does not exist. Usually when the URI is incorrect

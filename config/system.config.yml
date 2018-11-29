@@ -1,17 +1,10 @@
 # Core
-# db:
-#   redis:
-#     host: redis_db
-#     port: 6379
-#     namespace: EG
 db:
   redis:
-    emulate: true
+    emulate: ${EMULATE_REDIS}
+    host: ${HOST_REDIS}
+    port: ${PORT_REDIS}
     namespace: EG
-
-#plugins:
-  # express-gateway-plugin-example:
-  #   param1: 'param from system.config'
 
 crypto:
   cipherKey: sensitiveKey

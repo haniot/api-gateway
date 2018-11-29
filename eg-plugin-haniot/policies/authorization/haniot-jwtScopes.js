@@ -1,7 +1,6 @@
 /**
  * Policy to validate scopes
  */
-//const jwtz = require('express-jwt-authz');
 function error(res) {
     return res.status(403).send({"code": 403,"message": "FORBIDDEN","description": "Authorization failed due to insufficient permissions.","redirect_link": "/users/auth"});
 }
@@ -27,9 +26,7 @@ module.exports = function (actionParams) {
                 error(res);
         }
     }
-    return (req, res, next) => {
-        // console.log('executing haniot authorization policy with params');
-        // console.log(actionParams);        
+    return (req, res, next) => {               
         jwtz(req.egContext.apiEndpoint.scopes)(req, res, next);
     }
 };
