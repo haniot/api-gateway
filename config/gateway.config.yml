@@ -65,6 +65,7 @@ policies:
   - haniot-jwt-policy
   - haniot-auth-policy
   - haniot-body-parser-policy
+  - haniot-delete-user-policy
 ####### PIPELINES DEFINITION ########
 #### Pipeline no manage data coming from ACCOUNT PRIVATE and PUBLIC APIs ####
 
@@ -80,7 +81,7 @@ pipelines:
             name: 'is-auth'
             authpath: '/api/v1/users/auth'
           action:
-            urlauthservice: ${USER_SERVICE}/api/v1/users/auth
+            urlauthservice: ${ACCOUNT_SERVICE}/api/v1/users/auth
             secretOrPublicKey: ${SECRET_JWT}
             issuer: ${ISSUER}
       - haniot-jwt-policy:
@@ -88,6 +89,14 @@ pipelines:
               secretOrPublicKey: ${SECRET_JWT}
               issuer: ${ISSUER}
       - haniot-jwtScopes-policy:
+      - haniot-delete-user-policy:
+        - 
+          condition:
+            name: 'is-delete'
+            #deletepath é uma expressão regular
+            deletepath: '/api/v1/users/\S*'
+          action:
+            urldeleteservice: ${ACCOUNT_SERVICE}/api/v1/users            
       - proxy:
           - action:
               prependPath:  true
