@@ -2,7 +2,7 @@ http:
   port: ${PORT}
   hostname: 0.0.0.0
 admin:
-  port: 9876
+  port: ${ADMIN_PORT}
   hostname: 127.0.0.1
 
 ####### API ENDPOINTS DEFINITION ########
