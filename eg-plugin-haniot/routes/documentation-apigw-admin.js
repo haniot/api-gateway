@@ -1,3 +1,6 @@
+/**
+ * Routes to expose the Express Gateway swagger documentation
+ */
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 

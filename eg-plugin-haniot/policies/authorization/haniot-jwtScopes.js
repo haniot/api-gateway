@@ -2,7 +2,7 @@
  * Policy to validate scopes
  */
 function error(res) {
-    return res.status(403).send({"code": 403,"message": "FORBIDDEN","description": "Authorization failed due to insufficient permissions.","redirect_link": "/users/auth"});
+    return res.status(403).send({ "code": 403, "message": "FORBIDDEN", "description": "Authorization failed due to insufficient permissions.", "redirect_link": "/users/auth" });
 }
 
 module.exports = function (actionParams) {
@@ -26,7 +26,7 @@ module.exports = function (actionParams) {
                 error(res);
         }
     }
-    return (req, res, next) => {               
+    return (req, res, next) => {
         jwtz(req.egContext.apiEndpoint.scopes)(req, res, next);
     }
 };

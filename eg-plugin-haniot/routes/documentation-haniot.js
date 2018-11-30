@@ -1,4 +1,6 @@
-
+/**
+ * Routes to expose HANIoT API swagger documentation
+ */
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 

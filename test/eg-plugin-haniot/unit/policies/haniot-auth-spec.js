@@ -55,14 +55,14 @@ describe('Policy: haniot-auth-policy', () => {
                 const req = {
                     body: { email: "email@mail.com", password: "password" }
                 };
-                const res = {
+                const res = {                    
                     status: sinon.stub(),
                     send: sinon.spy()
                 };
 
-                res.status.withArgs().returns(res);
+                res.status.withArgs(200).returns(res);
 
-                const next = {};
+                const next = sinon.spy();
 
                 const authService = {
                     auth() { }
@@ -107,7 +107,8 @@ describe('Policy: haniot-auth-policy', () => {
                         sinon.assert.calledOnce(auth);
                         sinon.assert.calledWith(find, '1234567890');
                         sinon.assert.calledWith(insert, { username: '1234567890' });
-                        sinon.assert.calledWith(res.status, 200);
+                        //sinon.assert.calledWith(res.status,200);
+                        sinon.assert.notCalled(next);
 
                         auth.restore();
                         find.restore();

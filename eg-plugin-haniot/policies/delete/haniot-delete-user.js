@@ -1,14 +1,23 @@
 /**
-* Delte user gateway policy
+* Delete user gateway policy
 */
 
-const userServiceGateway = require('express-gateway/lib/services').user;
-const axios = require('axios');
+let userServiceGateway = require('express-gateway/lib/services').user;
+let axios = require('axios');
 
-module.exports = function (actionParams) {
+module.exports = function (actionParams, userServiceGwTest, axiosTest) {
+  /**Test Context
+  * userServiceGwTest and axiosTest are mockados services
+  */
+  if (userServiceGwTest && axiosTest) {
+    userServiceGateway = userServiceGwTest;
+    axios = axiosTest;
+  }
+
   return (req, res, next) => {
     const index_users = req.url.indexOf('users');
     const id = req.url.substring(index_users).split('/')[1];
+
     return deleteUserAccount(actionParams.urldeleteservice, id)
       .then(result => {
         /**
@@ -17,7 +26,11 @@ module.exports = function (actionParams) {
         return res.status(204).send();
       })
       .catch(err => {
-        return res.status(err.response.status).send(err.response.data);
+        if (err.code === 'ECONNREFUSED' || err.code === 'ECONNRESET') {
+          return res.status(500).send({ "code": 500, "message": "INTERNAL SERVER ERROR", "description": "An internal server error has occurred." });
+        } else {
+          return res.status(err.response.status).send(err.response.data);
+        }
       });
   }
 };
@@ -28,22 +41,55 @@ module.exports = function (actionParams) {
  * @param {*} user_id id of the user to be excluded
  */
 const deleteUserAccount = (urldeleteservice, user_id) => {
+  /**
+   * Requires the user to be excluded from the account service
+   */
   return axios.request({
     method: 'DELETE',
     url: urldeleteservice + '/' + user_id
   }).then(response => {
-    return userServiceGateway.findByUsernameOrId(user_id).then(userSaved => {
-      if (userSaved) {
-        return userServiceGateway.remove(userSaved.id).then(result => {
-          return result;
-        }).catch(error => {
-          console.log(new Date().toUTCString() + ' | haniot-delete-user | Error removing API Gateway user: ' + error.message);
-          return Promise.reject(error);
-        });
-      }
-    });
+    /**
+     * Search by user at gateway
+     */
+    return userServiceGateway.findByUsernameOrId(user_id)
+      .then(userSaved => {
+        if (userSaved) {
+          /**
+           * Deletes gateway user
+           */
+          /**
+         * Creating routine to keep trying to delete user every second
+         */
+          const userDeleteGwInterval = setInterval(() => {
+            console.log('Tentando remover usuário do gateway!');
+            return userServiceGateway.remove(userSaved.id)
+              .then(result => {
+                clearInterval(userDeleteGwInterval);
+                return result;
+              })
+              .catch(error => {
+                console.error(new Date().toUTCString() + ' | haniot-delete-user | Error removing API Gateway user: ' + error.message);
+              });
+          }, 5000);
+          return userDeleteGwInterval;
+        } else {
+          /**
+           * Case where the excluded user was not registered at the gateway
+           * The scenario is when the deleted user had not yet logged into the platform
+           */
+          return true;
+        }
+      })
+      .catch(error => {
+        console.error(new Date().toUTCString() + ' | haniot-delete-user | User not found on gateway:' + error.message);
+        return Promise.reject(error);
+      });
+
   }).catch(error => {
-    console.error(new Date().toUTCString() + ' | haniot-delete-user | Error removing Account user:', error.message);
+    console.error(new Date().toUTCString() + ' | haniot-delete-user | Error removing Account user:' + error.message);
     return Promise.reject(error);
   });
 }
+
+
+

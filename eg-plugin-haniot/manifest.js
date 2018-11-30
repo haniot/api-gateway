@@ -1,3 +1,7 @@
+/**
+ * Plug-in export file
+ * Where all plug-in policies, conditions, and routes are logged
+ */
 module.exports = {
   version: '1.0.0',
   init: function (pluginContext) {
