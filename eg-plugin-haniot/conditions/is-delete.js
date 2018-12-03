@@ -1,5 +1,5 @@
 /**
- * Condition to verify if the requested route is to delete users
+ * Condition to verify if the requested route is to delete users and method is DELETE
  */
 module.exports = {
   name: 'is-delete',

@@ -4,6 +4,7 @@
 const jwt = require('jsonwebtoken');
 let authService = require('../../services/auth/auth-service');
 let services = require('express-gateway/lib/services');
+const HttpStatus = require('http-status');
 
 module.exports = function (actionParams, authServiceTest, servicesTest) {
     return (req, res, next) => {     
@@ -53,18 +54,18 @@ module.exports = function (actionParams, authServiceTest, servicesTest) {
                 /**
                  * Login successfully, create user on Gateway
                  */
-                if (response.status === 200) {
+                if (response.status === HttpStatus.OK) {
                     const secretOrKey = actionParams.secretOrPublicKeyFile ? fs.readFileSync(actionParams.secretOrPublicKeyFile) : actionParams.secretOrPublicKey;
-                    jwt.verify(response.data['token'], secretOrKey, function (err, jwtPayload) {
+                    jwt.verify(response.data['token'], secretOrKey, {issuer:actionParams.issuer}, function (err, jwtPayload) {
                         if (err) {
-                            return res.status(500).send({ "code": 500, "message": "INTERNAL SERVER ERROR", "description": "An internal server error has occurred." });
+                            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ "code": 500, "message": "INTERNAL SERVER ERROR", "description": "An internal server error has occurred." });
                         }
                         /**
                          * User and issuer validation.
                          * We expect to receive the username in the jwt 'sub' field and issuer in 'issuer' field
                          */
-                        if (!jwtPayload.sub || jwtPayload.iss !== actionParams.issuer) {
-                            return res.status(401).send({ "code": 401, "message": "UNAUTHORIZED", "description": "The token user is not properly registered as a consumer at the gateway.", "redirect_link": "/users/auth" });
+                        if (!jwtPayload.sub) {
+                            return res.status(HttpStatus.UNAUTHORIZED).send({ "code": 401, "message": "UNAUTHORIZED", "description": "The token user is not properly registered as a consumer at the gateway.", "redirect_link": "/api/v1/users/auth" });
                         }
                         /**
                          * Calls the function to fetch or create the user at the gateway
@@ -75,7 +76,7 @@ module.exports = function (actionParams, authServiceTest, servicesTest) {
                                     response.user = user;
                                     return res.status(response.status).send(response.data);
                                 } else {
-                                    return res.status(500).send({ "code": 500, "message": "INTERNAL SERVER ERROR", "description": "An internal server error has occurred." });
+                                    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ "code": 500, "message": "INTERNAL SERVER ERROR", "description": "An internal server error has occurred." });
                                 }
                             });
 
@@ -90,12 +91,12 @@ module.exports = function (actionParams, authServiceTest, servicesTest) {
                  */
                 if (err.code === 'ECONNREFUSED' || err.code === 'ECONNRESET') {
                     console.error(new Date().toUTCString() + '| haniot-auth | Error in authService: ', err.message);
-                    return res.status(500).send({ "code": 500, "message": "INTERNAL SERVER ERROR", "description": "An internal server error has occurred." });
+                    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ "code": 500, "message": "INTERNAL SERVER ERROR", "description": "An internal server error has occurred." });
                 }
                 /**
                  * If the user needs to update the access password
                  */
-                if (err.response && err.response.status === 403) {
+                if (err.response && err.response.status === HttpStatus.FORBIDDEN) {
                     const index_users = err.response.data.redirect_link.indexOf('users');
                     const id = err.response.data.redirect_link.substring(index_users).split('/')[1];                                        
                     /**
@@ -107,7 +108,7 @@ module.exports = function (actionParams, authServiceTest, servicesTest) {
                                 res.user = user;
                                 return res.status(err.response.status).send(err.response.data);
                             } else {
-                                return res.status(500).send({ "code": 500, "message": "INTERNAL SERVER ERROR", "description": "An internal server error has occurred." });
+                                return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ "code": 500, "message": "INTERNAL SERVER ERROR", "description": "An internal server error has occurred." });
                             }
                         });
 

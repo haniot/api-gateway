@@ -1,6 +1,7 @@
 const policy = require('../../../../eg-plugin-haniot/policies/auth/haniot-auth-policy');
 const assert = require('chai').assert;
 const sinon = require('sinon');
+const HttpStatus = require('http-status');
 
 describe('Policy: haniot-auth-policy', () => {
     describe('Integrity', () => {
@@ -60,7 +61,7 @@ describe('Policy: haniot-auth-policy', () => {
                     send: sinon.spy()
                 };
 
-                res.status.withArgs(200).returns(res);
+                res.status.withArgs(HttpStatus.OK).returns(res);
 
                 const next = sinon.spy();
 
@@ -68,7 +69,7 @@ describe('Policy: haniot-auth-policy', () => {
                     auth() { }
                 }
                 const fakeResponseAuthService = {
-                    status: 200,
+                    status: HttpStatus.OK,
                     data: {
                         "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaXNzIjoiaGFuaW90IiwiaWF0IjoxNTE2MjM5MDIyfQ.mpjuoOQ0jMYGBx6fOAi-SUkC7bZKyRPc_rEMu972mNI"
                     }
@@ -107,7 +108,7 @@ describe('Policy: haniot-auth-policy', () => {
                         sinon.assert.calledOnce(auth);
                         sinon.assert.calledWith(find, '1234567890');
                         sinon.assert.calledWith(insert, { username: '1234567890' });
-                        //sinon.assert.calledWith(res.status,200);
+                        //sinon.assert.calledWith(res.status,HttpStatus.OK);
                         sinon.assert.notCalled(next);
 
                         auth.restore();
@@ -135,7 +136,7 @@ describe('Policy: haniot-auth-policy', () => {
                     auth() { }
                 }
                 const fakeResponseAuthService = {
-                    status: 200,
+                    status: HttpStatus.OK,
                     data: {
                         "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaXNzIjoiaGFuaW90IiwiaWF0IjoxNTE2MjM5MDIyfQ.mpjuoOQ0jMYGBx6fOAi-SUkC7bZKyRPc_rEMu972mNI"
                     }
@@ -175,7 +176,7 @@ describe('Policy: haniot-auth-policy', () => {
                 sinon.assert.notCalled(insert);
                 setTimeout(() => {
                     sinon.assert.calledWith(find, '1234567890');
-                    sinon.assert.calledWith(res.status, 200);
+                    sinon.assert.calledWith(res.status, HttpStatus.OK);
                     
                     auth.restore();
                     find.restore();
@@ -187,7 +188,7 @@ describe('Policy: haniot-auth-policy', () => {
         });
 
         context('when the credentials not are valid', () => {
-            it('should return 401', function () {
+            it('should return status code 401-UNAUTHORIZED', function () {
                 const req = {
                     body: { email: "email@mail.com", password: "password" }
                 };
@@ -204,7 +205,7 @@ describe('Policy: haniot-auth-policy', () => {
                     auth() { }
                 }
                 const fakeResponseAuthService = {
-                    status: 401,
+                    status: HttpStatus.UNAUTHORIZED,
                     data: {
                         'message': 'Credentials no found or invalid'
                     }
@@ -243,7 +244,7 @@ describe('Policy: haniot-auth-policy', () => {
                         sinon.assert.calledOnce(auth);
                         sinon.assert.notCalled(find);
                         sinon.assert.notCalled(insert);
-                        sinon.assert.calledWith(res.status, 401);
+                        sinon.assert.calledWith(res.status, HttpStatus.UNAUTHORIZED);
 
                         auth.restore();
                         find.restore();

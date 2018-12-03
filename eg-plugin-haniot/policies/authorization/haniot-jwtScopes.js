@@ -1,8 +1,10 @@
 /**
  * Policy to validate scopes
  */
+const HttpStatus = require('http-status');
+
 function error(res) {
-    return res.status(403).send({ "code": 403, "message": "FORBIDDEN", "description": "Authorization failed due to insufficient permissions.", "redirect_link": "/users/auth" });
+    return res.status(HttpStatus.FORBIDDEN).send({ "code": 403, "message": "FORBIDDEN", "description": "Authorization failed due to insufficient permissions.", "redirect_link": "/api/v1/users/auth" });
 }
 
 module.exports = function (actionParams) {

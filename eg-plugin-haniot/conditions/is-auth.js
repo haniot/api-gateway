@@ -1,5 +1,5 @@
 /**
- * Condition to verify if the requested route is the login
+ * Condition to verify if the requested route is the login and method is POST
  */
 module.exports = {
   name: 'is-auth',

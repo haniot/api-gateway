@@ -1,6 +1,7 @@
 const policy = require('../../../../eg-plugin-haniot/policies/delete/haniot-delete-user-policy');
 const assert = require('chai').assert;
 const sinon = require('sinon');
+const HttpStatus = require('http-status');
 
 describe('Policy: haniot-delete-user-policy', () => {
     describe('Integrity', () => {
@@ -48,7 +49,7 @@ describe('Policy: haniot-delete-user-policy', () => {
                     send: sinon.spy()
                 };
 
-                res.status.withArgs(204).returns(res);
+                res.status.withArgs(HttpStatus.NO_CONTENT).returns(res);
 
                 const next = sinon.spy();
 
@@ -83,7 +84,7 @@ describe('Policy: haniot-delete-user-policy', () => {
                         sinon.assert.calledOnce(axiosTest.request);
                         sinon.assert.calledWith(userServiceGwTest.findByUsernameOrId,'12345');
                         
-                        sinon.assert.calledWith(res.status,204);
+                        sinon.assert.calledWith(res.status,HttpStatus.NO_CONTENT);
                         sinon.assert.notCalled(next);                        
                     });
             });
@@ -97,7 +98,7 @@ describe('Policy: haniot-delete-user-policy', () => {
                     send: sinon.spy()
                 };
 
-                res.status.withArgs(204).returns(res);
+                res.status.withArgs(HttpStatus.NO_CONTENT).returns(res);
 
                 const next = sinon.spy();
 
@@ -114,9 +115,9 @@ describe('Policy: haniot-delete-user-policy', () => {
                 const error = {
                     message: 'Error in gateway',
                     response:{
-                        status: 204,
+                        status: HttpStatus.NO_CONTENT,
                         data: {
-                           code: 204,
+                           code: HttpStatus.NO_CONTENT,
                             message: 'Messagafake',
                             description:'Descriptionfake'
                         }
@@ -144,7 +145,7 @@ describe('Policy: haniot-delete-user-policy', () => {
                         sinon.assert.calledOnce(axiosTest.request);
                         sinon.assert.calledWith(userServiceGwTest.findByUsernameOrId,'12345');
                         
-                        sinon.assert.calledWith(res.status,204);
+                        sinon.assert.calledWith(res.status,HttpStatus.NO_CONTENT);
                         sinon.assert.notCalled(next);                        
                     });
             });
@@ -161,7 +162,7 @@ describe('Policy: haniot-delete-user-policy', () => {
                     send: sinon.spy()
                 };
 
-                res.status.withArgs(404).returns(res);
+                res.status.withArgs(HttpStatus.NOT_FOUND).returns(res);
 
                 const next = sinon.spy();
 
@@ -187,9 +188,9 @@ describe('Policy: haniot-delete-user-policy', () => {
                 const error = {
                     message: 'Error in account service',
                     response:{
-                        status: 404,
+                        status: HttpStatus.NOT_FOUND,
                         data: {
-                            code: 404,
+                            code: HttpStatus.NOT_FOUND,
                             message: 'Messagafake',
                             description:'Descriptionfake'
                         }
@@ -211,7 +212,7 @@ describe('Policy: haniot-delete-user-policy', () => {
                         sinon.assert.notCalled(userServiceGwTest.remove);
                         sinon.assert.calledWith(res.status,404);
                         sinon.assert.calledWith(res.send,{
-                            code: 404,
+                            code: HttpStatus.NOT_FOUND,
                             message: 'Messagafake',
                             description:'Descriptionfake'
                         })

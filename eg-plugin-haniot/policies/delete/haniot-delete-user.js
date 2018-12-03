@@ -4,6 +4,7 @@
 
 let userServiceGateway = require('express-gateway/lib/services').user;
 let axios = require('axios');
+const HttpStatus = require('http-status');
 
 module.exports = function (actionParams, userServiceGwTest, axiosTest) {
   /**Test Context
@@ -23,11 +24,11 @@ module.exports = function (actionParams, userServiceGwTest, axiosTest) {
         /**
          * User excluded from account and gateway service
          */
-        return res.status(204).send();
+        return res.status(HttpStatus.NO_CONTENT).send();
       })
       .catch(err => {
         if (err.code === 'ECONNREFUSED' || err.code === 'ECONNRESET') {
-          return res.status(500).send({ "code": 500, "message": "INTERNAL SERVER ERROR", "description": "An internal server error has occurred." });
+          return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ "code": 500, "message": "INTERNAL SERVER ERROR", "description": "An internal server error has occurred." });
         } else {
           return res.status(err.response.status).send(err.response.data);
         }
@@ -60,8 +61,7 @@ const deleteUserAccount = (urldeleteservice, user_id) => {
           /**
          * Creating routine to keep trying to delete user every second
          */
-          const userDeleteGwInterval = setInterval(() => {
-            console.log('Tentando remover usuário do gateway!');
+          const userDeleteGwInterval = setInterval(() => {            
             return userServiceGateway.remove(userSaved.id)
               .then(result => {
                 clearInterval(userDeleteGwInterval);

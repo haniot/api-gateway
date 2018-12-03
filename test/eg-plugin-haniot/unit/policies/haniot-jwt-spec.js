@@ -1,6 +1,7 @@
 const policy = require('../../../../eg-plugin-haniot/policies/authentication/haniot-jwt-policy');
 const assert = require('chai').assert;
 const sinon = require('sinon');
+const HttpStatus = require('http-status');
 
 describe('Policy: haniot-jwt-policy', () => {
 
@@ -257,7 +258,7 @@ describe('Policy: haniot-jwt-policy', () => {
                                     next();
                                 }
                             }
-                            res.statusCode = 401;
+                            res.statusCode = HttpStatus.UNAUTHORIZED;
                             res.end('Unauthorized');
                         }
                     }
@@ -282,7 +283,7 @@ describe('Policy: haniot-jwt-policy', () => {
                 return setTimeout(() => {
                     sinon.assert.notCalled(next);
                     sinon.assert.calledWith(res.end, 'Unauthorized');
-                    assert.equal(res.statusCode, 401);
+                    assert.equal(res.statusCode, HttpStatus.UNAUTHORIZED);
                     done();
                 },0);
             });

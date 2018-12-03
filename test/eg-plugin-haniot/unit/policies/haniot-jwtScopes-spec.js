@@ -1,6 +1,7 @@
 const policy = require('../../../../eg-plugin-haniot/policies/authorization/haniot-jwtScopes-policy');
 const assert = require('chai').assert;
 const sinon = require('sinon');
+const HttpStatus = require('http-status');
 
 describe('Policy: haniot-jwtScopes-policy', () => {
     describe('Integrity', () => {
@@ -90,7 +91,7 @@ describe('Policy: haniot-jwtScopes-policy', () => {
                 mid_policy(req, res, next);
 
                 sinon.assert.calledOnce(res.send);
-                sinon.assert.calledWith(res.status, 403);
+                sinon.assert.calledWith(res.status, HttpStatus.FORBIDDEN);
                 sinon.assert.notCalled(next);
 
                 done();
