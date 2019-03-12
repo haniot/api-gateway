@@ -1,0 +1,118 @@
+http:
+  port: ${PORT}
+  hostname: 0.0.0.0
+admin:
+  port: ${ADMIN_PORT}
+  hostname: 127.0.0.1
+
+####### API ENDPOINTS DEFINITION ########
+apiEndpoints:
+
+####### ACCOUNT API PUBLIC ########
+  accountPublic:  
+    - host: '*'
+      paths: ['/api/v1/users/*/password']
+      methods: ['PATCH']
+
+####### ACCOUNT API PRIVATE ########
+  accountPrivate:
+    - host: '*'
+      paths: ['/api/v1/users/auth']
+      methods: ['POST']
+
+    - host: '*'
+      paths: ['/api/v1/users/admin']
+      methods: ['POST']
+      scopes: ['adminAccount:create']
+
+    - host: '*'
+      paths: ['/api/v1/users/caregiver']
+      methods: ['POST']
+      scopes: ['adminAccount:create'] 
+    
+    - host: '*'
+      paths: ['/api/v1/users']
+      methods: ['GET']
+      scopes: ['adminAccount:readAll']
+
+    - host: '*'
+      paths: ['/api/v1/users/*']
+      methods: ['GET']
+      scopes: [adminAccount:read',adminAccount:readAll,'caregiverAccount:read','caregiverAccount:readAll']
+
+    - host: '*'
+      paths: ['/api/v1/users/*']
+      methods: ['DELETE']
+      scopes: ['adminAccount:delete','adminAccount:deleteAll',caregiverAccount:delete,'caregiverAccount:deleteAll']
+
+    - host: '*'
+      paths: ['/api/v1/users/*']
+      methods: ['PATCH']
+      scopes: [adminAccount:update,'adminAccount:updateAll',caregiverAccount:update,'caregiverAccount:updateAll']    
+  
+
+####### SERVICE ENDPOINTS DEFINITIONS ########
+serviceEndpoints:
+  accountService:
+    url: ${ACCOUNT_SERVICE}
+
+####### POLICIES USED IN PIPELINES DEFINITION ########
+policies:
+  - log
+  - proxy
+  - rate-limit
+  - haniot-jwtScopes-policy
+  - haniot-jwt-policy
+  - haniot-auth-policy
+  - haniot-body-parser-policy
+  - haniot-delete-user-policy
+####### PIPELINES DEFINITION ########
+#### Pipeline no manage data coming from ACCOUNT PRIVATE and PUBLIC APIs ####
+
+pipelines:
+  - name: privatePipeline
+    apiEndpoints:
+      - accountPrivate
+    policies: 
+      - haniot-body-parser-policy:     
+      - haniot-auth-policy:
+        - 
+          condition:
+            name: 'is-auth'
+            authpath: '/api/v1/users/auth'
+          action:
+            urlauthservice: ${ACCOUNT_SERVICE}/api/v1/users/auth
+            secretOrPublicKey: ${SECRET_JWT}
+            issuer: ${ISSUER}
+      - haniot-jwt-policy:
+          - action:
+              secretOrPublicKey: ${SECRET_JWT}
+              issuer: ${ISSUER}
+      - haniot-jwtScopes-policy:
+      - haniot-delete-user-policy:
+        - 
+          condition:
+            name: 'is-delete'
+            #deletepath é uma expressão regular
+            deletepath: '/api/v1/users/\S*'
+          action:
+            urldeleteservice: ${ACCOUNT_SERVICE}/api/v1/users            
+      - proxy:
+          - action:
+              prependPath:  true
+              ignorePath:   false
+              stripPath:    false
+              changeOrigin: true 
+              serviceEndpoint: accountService
+
+  - name: publicPipeline
+    apiEndpoints:
+      - accountPublic
+    policies:       
+      - proxy:
+          - action:
+              prependPath:  true
+              ignorePath:   false
+              stripPath:    false
+              changeOrigin: true 
+              serviceEndpoint: accountService 
