@@ -11,44 +11,59 @@ apiEndpoints:
 ####### ACCOUNT API PUBLIC ########
   accountPublic:  
     - host: '*'
-      paths: ['/api/v1/users/*/password']
+      paths: ['/users/*/password']
       methods: ['PATCH']
 
 ####### ACCOUNT API PRIVATE ########
   accountPrivate:
     - host: '*'
-      paths: ['/api/v1/users/auth']
+      paths: ['/auth']
       methods: ['POST']
 
     - host: '*'
-      paths: ['/api/v1/users/admin']
+      paths: ['/users/admins']
       methods: ['POST']
-      scopes: ['adminAccount:create']
+      scopes: ['admin:create']
 
     - host: '*'
-      paths: ['/api/v1/users/caregiver']
+      paths: ['/users/healthprofessionals']
       methods: ['POST']
-      scopes: ['adminAccount:create'] 
+      scopes: ['healthprofessional:create'] 
     
     - host: '*'
-      paths: ['/api/v1/users']
+      paths: ['/users/admins']
       methods: ['GET']
-      scopes: ['adminAccount:readAll']
+      scopes: ['admin:readAll']
+    
+    - host: '*'
+      paths: ['/users/healthprofessionals']
+      methods: ['GET']
+      scopes: ['healthprofessional:readAll']
 
     - host: '*'
-      paths: ['/api/v1/users/*']
+      paths: ['/users/admins/*']
       methods: ['GET']
-      scopes: [adminAccount:read',adminAccount:readAll,'caregiverAccount:read','caregiverAccount:readAll']
+      scopes: ['admin:read','admin:readAll']
+    
+    - host: '*'
+      paths: ['/users/healthprofessionals/*']
+      methods: ['GET']
+      scopes: ['healthprofessional:read', 'healthprofessional:readAll']
 
     - host: '*'
-      paths: ['/api/v1/users/*']
+      paths: ['/users/*']
       methods: ['DELETE']
-      scopes: ['adminAccount:delete','adminAccount:deleteAll',caregiverAccount:delete,'caregiverAccount:deleteAll']
+      scopes: ['admin:delete','admin:deleteAll','healthprofessional:delete','healthprofessional:deleteAll']
 
     - host: '*'
-      paths: ['/api/v1/users/*']
+      paths: ['/users/admins/*']
       methods: ['PATCH']
-      scopes: [adminAccount:update,'adminAccount:updateAll',caregiverAccount:update,'caregiverAccount:updateAll']    
+      scopes: ['admin:update','admin:updateAll']    
+    
+    - host: '*'
+      paths: ['/users/healthprofessionals/*']
+      methods: ['PATCH']
+      scopes: ['healthprofessional:update', 'healthprofessional:updateAll']    
   
 
 ####### SERVICE ENDPOINTS DEFINITIONS ########
@@ -79,9 +94,9 @@ pipelines:
         - 
           condition:
             name: 'is-auth'
-            authpath: '/api/v1/users/auth'
+            authpath: '/auth'
           action:
-            urlauthservice: ${ACCOUNT_SERVICE}/api/v1/users/auth
+            urlauthservice: ${ACCOUNT_SERVICE}/auth
             secretOrPublicKey: ${SECRET_JWT}
             issuer: ${ISSUER}
       - haniot-jwt-policy:
@@ -94,9 +109,9 @@ pipelines:
           condition:
             name: 'is-delete'
             #deletepath é uma expressão regular
-            deletepath: '/api/v1/users/\S*'
+            deletepath: '^(\/users\/)[a-fA-F0-9]{24}$'
           action:
-            urldeleteservice: ${ACCOUNT_SERVICE}/api/v1/users            
+            urldeleteservice: ${ACCOUNT_SERVICE}/users            
       - proxy:
           - action:
               prependPath:  true
