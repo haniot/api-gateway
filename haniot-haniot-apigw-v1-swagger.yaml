@@ -13,7 +13,7 @@ servers:
   - description: SwaggerHub API Auto Mocking
     url: 'https://virtserver.swaggerhub.com/nutes.haniot/haniot-apigw/v1'
   - description: localhost http
-    url: 'http://localhost:8080/api/v1'
+    url: 'http://localhost:8080'
 tags:
 # - - - - - - - - - - - - Account Service - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - name: auth
