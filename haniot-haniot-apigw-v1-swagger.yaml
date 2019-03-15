@@ -10,11 +10,12 @@ info:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 servers:
+  - description: SwaggerHub API Auto Mocking
+    url: 'https://virtserver.swaggerhub.com/nutes.haniot/haniot-apigw/v1'
   - description: localhost http
     url: 'http://localhost:8080/api/v1'
-  - description: SwaggerHub API Auto Mocking
-    url: 'https://virtserver.swaggerhub.com/haniot/haniot-apigw/v1'
 tags:
+# - - - - - - - - - - - - Account Service - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - name: auth
     description: Operations for the user authentication in plataform.
   - name: users
@@ -27,7 +28,14 @@ tags:
     description: Operations for the Pilot Study resource.
   - name: pilotstudies.healthprofessionals
     description: Operations for the Health Professionals associated with a Pilot Study.
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+# - - - - - - - - - - - - Data Acquisition - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
 paths:
+# - - - - - - - - - - - - Account Service - - - - - - - - - - - - - - - - - - - - - - - - - - -
   #auth
   /auth:
     post:
@@ -1571,6 +1579,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error' 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# - - - - - - - - - - - - Data Acquisition - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 components:
   securitySchemes:
     JWTAuth:            
@@ -1703,6 +1717,7 @@ components:
             type: string
           example:
           - '5c86d00cfc25e7036d51d652'
+    # Error Schema
     Error:
       type: object
       description: >-
@@ -1835,3 +1850,21 @@ components:
         The attribute used for the query will be the registration_date.
       schema:
         type: string
+    searchParam:
+      name: 'search'
+      schema: {}
+      in: query
+      required: false
+      description: |
+        A search is a sub-resource of a collection. As such, your results may have a 
+        different format from the collection itself. The sub-resource search works just
+        like filtering and its syntax allows to make approximations. The string queries: 
+        partial responses, pagination, ordination, filtering e date, must be supported 
+        in the search. It is worth noting that not every resource should allow support 
+        to queries. The query is not case sensitive, and the available syntax may be:
+        
+        * property=value* - Search for data that begins with the value provided.
+        
+        * property=*value - Search for data that ends with the given value.
+        
+        * property=*value* - Search for data that contains the value provided in any position.
