@@ -71,27 +71,27 @@ apiEndpoints:
     - host: '*'
       paths: ['/pilotstudies']
       methods: ['POST']
+      scopes: ['pilotstudy:create']
 
-      scopes: ['']
     - host: '*'
       paths: ['/pilotstudies']
       methods: ['GET']
-      scopes: ['']
+      scopes: ['pilotstudy:readAll']
 
     - host: '*'
       paths: ['/pilotstudies/*']
       methods: ['GET']
-      scopes: ['']
+      scopes: ['pilotstudy:read','pilotstudy:readAll']
     
     - host: '*'
       paths: ['/pilotstudies/*']
       methods: ['PATCH']
-      scopes: ['']
+      scopes: ['pilotstudy:update', 'pilotstudy:updateAll']
     
     - host: '*'
       paths: ['/pilotstudies/*']
       methods: ['DELETE']
-      scopes: ['']
+      scopes: ['pilotstudy:deleteAll']
     ######################################
 
 ####### SERVICE ENDPOINTS DEFINITIONS ########
