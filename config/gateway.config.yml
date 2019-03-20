@@ -16,6 +16,7 @@ apiEndpoints:
 
 ####### ACCOUNT API PRIVATE ########
   accountPrivate:
+    ## ENDPOINTS TO MANAGE USERS ##
     - host: '*'
       paths: ['/auth']
       methods: ['POST']
@@ -64,7 +65,34 @@ apiEndpoints:
       paths: ['/users/healthprofessionals/*']
       methods: ['PATCH']
       scopes: ['healthprofessional:update', 'healthprofessional:updateAll']    
-  
+    ###############################
+
+    ## ENDPOINTS TO MANAGE PILOT STUDIES ##
+    - host: '*'
+      paths: ['/pilotstudies']
+      methods: ['POST']
+      scopes: ['pilotstudy:create']
+
+    - host: '*'
+      paths: ['/pilotstudies']
+      methods: ['GET']
+      scopes: ['pilotstudy:readAll']
+
+    - host: '*'
+      paths: ['/pilotstudies/*']
+      methods: ['GET']
+      scopes: ['pilotstudy:read','pilotstudy:readAll']
+    
+    - host: '*'
+      paths: ['/pilotstudies/*']
+      methods: ['PATCH']
+      scopes: ['pilotstudy:update', 'pilotstudy:updateAll']
+    
+    - host: '*'
+      paths: ['/pilotstudies/*']
+      methods: ['DELETE']
+      scopes: ['pilotstudy:deleteAll']
+    ######################################
 
 ####### SERVICE ENDPOINTS DEFINITIONS ########
 serviceEndpoints:
