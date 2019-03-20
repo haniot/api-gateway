@@ -152,7 +152,7 @@ serviceEndpoints:
     url: ${ACCOUNT_SERVICE}
   
   ehrService:
-    url: ${EHR_SERVICE}
+    url: ${EHR_SERVICE}e
 
 ####### POLICIES USED IN PIPELINES DEFINITION ########
 policies:
@@ -221,21 +221,21 @@ pipelines:
   ###########################################################################
 
   ##################### PIPELINE PRIVATE EHR SERVICE ####################
-    - name: privateEHRServicePipeline
-      apiEndpoints:
-        - ehrPrivate
-      policies: 
-        - haniot-body-parser-policy:          
-        - haniot-jwt-policy:
-            - action:
-                secretOrPublicKey: ${SECRET_JWT}
-                issuer: ${ISSUER}
-        - haniot-jwtScopes-policy:           
-        - proxy:
-            - action:
-                prependPath:  true
-                ignorePath:   false
-                stripPath:    false
-                changeOrigin: true 
-                serviceEndpoint: ehrService
+  - name: privateEHRServicePipeline
+    apiEndpoints:
+      - ehrPrivate
+    policies: 
+      - haniot-body-parser-policy:          
+      - haniot-jwt-policy:
+          - action:
+              secretOrPublicKey: ${SECRET_JWT}
+              issuer: ${ISSUER}
+      - haniot-jwtScopes-policy:           
+      - proxy:
+          - action:
+              prependPath:  true
+              ignorePath:   false
+              stripPath:    false
+              changeOrigin: true 
+              serviceEndpoint: ehrService
     ###########################################################################
