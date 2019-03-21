@@ -65,7 +65,7 @@ module.exports = function (actionParams, authServiceTest, servicesTest) {
                          * We expect to receive the username in the jwt 'sub' field and issuer in 'issuer' field
                          */
                         if (!jwtPayload.sub) {
-                            return res.status(HttpStatus.UNAUTHORIZED).send({ "code": 401, "message": "UNAUTHORIZED", "description": "The token user is not properly registered as a consumer at the gateway.", "redirect_link": "/api/v1/users/auth" });
+                            return res.status(HttpStatus.UNAUTHORIZED).send({ "code": 401, "message": "UNAUTHORIZED", "description": "The token user is not properly registered as a consumer at the gateway.", "redirect_link": "/auth" });
                         }
                         /**
                          * Calls the function to fetch or create the user at the gateway
