@@ -139,8 +139,7 @@ apiEndpoints:
     - host: '*'
       paths: ['/pilotstudies/*/patients/*']
       methods: ['DELETE']
-      scopes: ['patient:delete','patient:deleteAll'] 
-    
+      scopes: ['patient:delete','patient:deleteAll']     
     
     ###############################
 
@@ -152,7 +151,7 @@ serviceEndpoints:
     url: ${ACCOUNT_SERVICE}
   
   ehrService:
-    url: ${EHR_SERVICE}e
+    url: ${EHR_SERVICE}
 
 ####### POLICIES USED IN PIPELINES DEFINITION ########
 policies:

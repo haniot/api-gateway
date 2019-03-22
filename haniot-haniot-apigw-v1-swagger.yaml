@@ -13,7 +13,7 @@ servers:
   - description: SwaggerHub API Auto Mocking
     url: 'https://virtserver.swaggerhub.com/nutes.haniot/haniot-apigw/v1'
   - description: localhost http
-    url: 'http://localhost:8080'
+    url: 'http://localhost:8080/api/v1'
 tags:
 # - - - - - - - - - - - - Account Service - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - name: auth
@@ -33,13 +33,13 @@ tags:
 # - - - - - - - - - - - - EHR Service - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - name: pilotstudies.patients
     description: Operations for Patient resource.
-  - name: pilotstudies.patients.sleephabits
+  - name: patients.sleephabits
     description: Operations for the patient Sleep Habit resource.
-  - name: pilotstudies.patients.physicalactivityhabits
+  - name: patients.physicalactivityhabits
     description: Operations for the patient Physical Activity Habit resource.
-  - name: pilotstudies.patients.feedinghabitsrecords
+  - name: patients.feedinghabitsrecords
     description: Operations for the patient Feeding Habits Record resource.
-  - name: pilotstudies.patients.medicalrecords
+  - name: patients.medicalrecords
     description: Operations for the patient Medical Record resource.
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -1992,10 +1992,10 @@ paths:
                 $ref: '#/components/schemas/Error'
           
   # pilotstudies.patients.sleephabits
-  /pilotstudies/{pilotstudy_id}/patients/{patient_id}/sleephabits:
+  /patients/{patient_id}/sleephabits:
     post: 
       tags:
-      - pilotstudies.patients.sleephabits
+      - patients.sleephabits
       summary: Register sleep habit.
       description: Register a sleep habit from patient.
       operationId: addSleepHabitFromPatient
@@ -2091,7 +2091,7 @@ paths:
         required: true
     get:
       tags:
-      - pilotstudies.patients.sleephabits
+      - patients.sleephabits
       summary: Recover sleep habits.
       description: >- 
         Returns list with all sleep habits from patient. The query supports Field Selection, Paging, Sorting, and Filtering.
@@ -2169,10 +2169,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'  
-  /pilotstudies/{pilotstudy_id}/patients/{patient_id}/sleephabits/{sleephabit_id}:
+  /patients/{patient_id}/sleephabits/{sleephabit_id}:
     get:
       tags:
-      - pilotstudies.patients.sleephabits
+      - patients.sleephabits
       summary: Recover sleep habit data.
       description: Recover the patient sleep habit data. The query suports Fields param.
       operationId: getSleepDataFromPatient
@@ -2251,7 +2251,7 @@ paths:
                 $ref: '#/components/schemas/Error'
     patch:
       tags:
-      - pilotstudies.patients.sleephabits
+      - patients.sleephabits
       summary: Update sleep habit data.
       description: Update the patient sleep habit data.
       operationId: updateSleepHabitFromPatient
@@ -2352,7 +2352,7 @@ paths:
         required: true
     delete:
       tags:
-      - pilotstudies.patients.sleephabits
+      - patients.sleephabits
       summary: Delete sleep habit data.
       description: Delete the patient sleep habit data.
       operationId: deleteSleepHabitFromPatient
@@ -2427,10 +2427,10 @@ paths:
                 $ref: '#/components/schemas/Error'
   
   # pilotstudies.patients.physicalactivityhabits
-  /pilotstudies/{pilotstudy_id}/patients/{patient_id}/physicalactivityhabits:
+  /patients/{patient_id}/physicalactivityhabits:
     post: 
       tags:
-      - pilotstudies.patients.physicalactivityhabits
+      - patients.physicalactivityhabits
       summary: Register physical activity habit.
       description: Register a physical activity habit from patient.
       operationId: addPhysicalActivityHabitFromPatient
@@ -2526,7 +2526,7 @@ paths:
         required: true
     get:
       tags:
-      - pilotstudies.patients.physicalactivityhabits
+      - patients.physicalactivityhabits
       summary: Recover physical activity habits.
       description: >- 
         Returns list with all physical activity habits from patient. The query supports Field Selection, Paging, Sorting, and Filtering.
@@ -2604,10 +2604,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'  
-  /pilotstudies/{pilotstudy_id}/patients/{patient_id}/physicalactivityhabits/{physicalactivityhabits_id}:
+  /patients/{patient_id}/physicalactivityhabits/{physicalactivityhabits_id}:
     get:
       tags:
-      - pilotstudies.patients.physicalactivityhabits
+      - patients.physicalactivityhabits
       summary: Recover physical activity habits data.
       description: Recover the patient physical activity habits data. The query suports Fields param.
       operationId: getPhysicalActivityHabitsFromPacient
@@ -2686,7 +2686,7 @@ paths:
                 $ref: '#/components/schemas/Error'
     patch:
       tags:
-      - pilotstudies.patients.physicalactivityhabits
+      - patients.physicalactivityhabits
       summary: Update physical activity habits data.
       description: Update the patient physical activity habits data.
       operationId: updatePhysicalActivityHabitsFromPatient
@@ -2787,7 +2787,7 @@ paths:
         required: true
     delete:
       tags:
-      - pilotstudies.patients.physicalactivityhabits
+      - patients.physicalactivityhabits
       summary: Delete physical activity habits data.
       description: Delete the patient physical activity habits data.
       operationId: deletePhysicalActivityHabitsFromPatient
@@ -2862,10 +2862,10 @@ paths:
                 $ref: '#/components/schemas/Error'
  
   # pilotstudies.patients.feedinghabitsrecords
-  /pilotstudies/{pilotstudy_id}/patients/{patient_id}/feedinghabitsrecords:
+  /patients/{patient_id}/feedinghabitsrecords:
     post: 
       tags:
-      - pilotstudies.patients.feedinghabitsrecords
+      - patients.feedinghabitsrecords
       summary: Register feeding habits record.
       description: Register a feeding habits record from patient.
       operationId: addFeedingHabitsRecordFromPatient
@@ -2961,7 +2961,7 @@ paths:
         required: true
     get:
       tags:
-      - pilotstudies.patients.feedinghabitsrecords
+      - patients.feedinghabitsrecords
       summary: Recover feeding habits records.
       description: >- 
         Returns list with all feeding habits records from patient. The query supports Field Selection, Paging, Sorting, and Filtering.
@@ -3039,10 +3039,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'  
-  /pilotstudies/{pilotstudy_id}/patients/{patient_id}/feedinghabitsrecords/{feedinghabitsrecord_id}:
+  /patients/{patient_id}/feedinghabitsrecords/{feedinghabitsrecord_id}:
     get:
       tags:
-      - pilotstudies.patients.feedinghabitsrecords
+      - patients.feedinghabitsrecords
       summary: Recover feeding habits record data.
       description: Recover the patient feeding habits record data. The query suports Fields param.
       operationId: getFeedingHabitsRecordFromPatient
@@ -3121,7 +3121,7 @@ paths:
                 $ref: '#/components/schemas/Error'
     patch:
       tags:
-      - pilotstudies.patients.feedinghabitsrecords
+      - patients.feedinghabitsrecords
       summary: Update feeding habits record data.
       description: Update the patient feeding habits record data.
       operationId: updateFeedingHabitsRecordFromPatient
@@ -3222,7 +3222,7 @@ paths:
         required: true
     delete:
       tags:
-      - pilotstudies.patients.feedinghabitsrecords
+      - patients.feedinghabitsrecords
       summary: Delete feeding habits record data.
       description: Delete the patient feeding habits record data.
       operationId: deleteFeedingHabitsRecordFromPatient
@@ -3297,10 +3297,10 @@ paths:
                 $ref: '#/components/schemas/Error'
   
   # pilotstudies.patients.medicalrecords
-  /pilotstudies/{pilotstudy_id}/patients/{patient_id}/medicalrecords:
+  /patients/{patient_id}/medicalrecords:
     post: 
       tags:
-      - pilotstudies.patients.medicalrecords
+      - patients.medicalrecords
       summary: Register medical record.
       description: Register a medical record from patient.
       operationId: addMedicalRecordFromPacient
@@ -3396,7 +3396,7 @@ paths:
         required: true
     get:
       tags:
-      - pilotstudies.patients.medicalrecords
+      - patients.medicalrecords
       summary: Recover medical records.
       description: >- 
         Returns list with all medical records from patient. The query supports Field Selection, Paging, Sorting, and Filtering.
@@ -3474,10 +3474,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'  
-  /pilotstudies/{pilotstudy_id}/patients/{patient_id}/medicalrecords/{medicalrecord_id}:
+  /patients/{patient_id}/medicalrecords/{medicalrecord_id}:
     get:
       tags:
-      - pilotstudies.patients.medicalrecords
+      - patients.medicalrecords
       summary: Recover medical record data.
       description: Recover the patient medical record data. The query suports Fields param.
       operationId: getMedicalRecordFromPatient
@@ -3556,7 +3556,7 @@ paths:
                 $ref: '#/components/schemas/Error'
     patch:
       tags:
-      - pilotstudies.patients.medicalrecords
+      - patients.medicalrecords
       summary: Update medical record data.
       description: Update the patient medical record data.
       operationId: updateMedicalRecordFromPatient
@@ -3657,7 +3657,7 @@ paths:
         required: true
     delete:
       tags:
-      - pilotstudies.patients.medicalrecords
+      - patients.medicalrecords
       summary: Delete medical record data.
       description: Delete the patient medical record data.
       operationId: deleteMedicalRecordFromPatient
@@ -3865,8 +3865,7 @@ components:
             type: string
           example:
           - '5c86d00cfc25e7036d51d652'
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 # - - - - - - - - - - - - - - - - - - EHR Service- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     Patient:
       type: object
