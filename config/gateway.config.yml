@@ -11,7 +11,7 @@ apiEndpoints:
 ####### ACCOUNT API PUBLIC ########
   accountPublic:  
     - host: '*'
-      paths: ['/users/*/password']
+      paths: ['/users/:user_id/password']
       methods: ['PATCH']
 
 ####### ACCOUNT API PRIVATE ########
@@ -42,27 +42,27 @@ apiEndpoints:
       scopes: ['healthprofessional:readAll']
 
     - host: '*'
-      paths: ['/users/admins/*']
+      paths: ['/users/admins/:admin_id']
       methods: ['GET']
       scopes: ['admin:read','admin:readAll']
     
     - host: '*'
-      paths: ['/users/healthprofessionals/*']
+      paths: ['/users/healthprofessionals/:healthprofessional_id']
       methods: ['GET']
       scopes: ['healthprofessional:read', 'healthprofessional:readAll']
 
     - host: '*'
-      paths: ['/users/*']
+      paths: ['/users/:user_id']
       methods: ['DELETE']
       scopes: ['admin:delete','admin:deleteAll','healthprofessional:delete','healthprofessional:deleteAll']
 
     - host: '*'
-      paths: ['/users/admins/*']
+      paths: ['/users/admins/:admin_id']
       methods: ['PATCH']
       scopes: ['admin:update','admin:updateAll']    
     
     - host: '*'
-      paths: ['/users/healthprofessionals/*']
+      paths: ['/users/healthprofessionals/:healthprofessional_id']
       methods: ['PATCH']
       scopes: ['healthprofessional:update', 'healthprofessional:updateAll']    
     ###############################
@@ -79,34 +79,34 @@ apiEndpoints:
       scopes: ['pilotstudy:readAll']
 
     - host: '*'
-      paths: ['/pilotstudies/*']
+      paths: ['/pilotstudies/:pilotstudy_id']
       methods: ['GET']
       scopes: ['pilotstudy:read','pilotstudy:readAll']
     
     - host: '*'
-      paths: ['/pilotstudies/*']
+      paths: ['/pilotstudies/:pilotstudy_id']
       methods: ['PATCH']
       scopes: ['pilotstudy:update', 'pilotstudy:updateAll']
     
     - host: '*'
-      paths: ['/pilotstudies/*']
+      paths: ['/pilotstudies/:pilotstudy_id']
       methods: ['DELETE']
       scopes: ['pilotstudy:deleteAll']
     ######################################
 
     ## ENDPOINTS TO MANAGE HEALTH PROFESSIONS ASSOCIATION WITH A PILOT STUDY ##
     - host: '*'
-      paths: ['/pilotstudies/*/healthprofessionals']
+      paths: ['/pilotstudies/:pilotstudy_id/healthprofessionals']
       methods: ['GET']
       scopes: ['pilotstudy:read', 'pilotstudy:readAll']
 
     - host: '*'
-      paths: ['/pilotstudies/*/healthprofessionals/*']
+      paths: ['/pilotstudies/:pilotstudy_id/healthprofessionals/:patient_id']
       methods: ['POST']
       scopes: ['pilotstudy:create']    
 
     - host: '*'
-      paths: ['/pilotstudies/*/healthprofessionals/*']
+      paths: ['/pilotstudies/:pilotstudy_id/healthprofessionals/:patient_id']
       methods: ['DELETE']
       scopes: ['pilotstudy:delete','pilotstudy:deleteAll']
     ######################################
@@ -117,27 +117,27 @@ apiEndpoints:
   ehrPrivate:
     ## ENDPOINTS TO MANAGE PATIENTS ##
     - host: '*'
-      paths: ['/pilotstudies/*/patients']
+      paths: ['/pilotstudies/:pilotstudy_id/patients']
       methods: ['POST']
       scopes: ['patient:create']
 
     - host: '*'
-      paths: ['/pilotstudies/*/patients']
+      paths: ['/pilotstudies/:pilotstudy_id/patients']
       methods: ['GET']
       scopes: ['patient:readAll'] 
     
     - host: '*'
-      paths: ['/pilotstudies/*/patients/*']
+      paths: ['/pilotstudies/:pilotstudy_id/patients/:patient_id']
       methods: ['GET']
       scopes: ['patient:read','patient:readAll'] 
     
     - host: '*'
-      paths: ['/pilotstudies/*/patients/*']
+      paths: ['/pilotstudies/:pilotstudy_id/patients/:patient_id']
       methods: ['PATCH']
       scopes: ['patient:update','patient:updateAll'] 
     
     - host: '*'
-      paths: ['/pilotstudies/*/patients/*']
+      paths: ['/pilotstudies/:pilotstudy_id/patients/:patient_id']
       methods: ['DELETE']
       scopes: ['patient:delete','patient:deleteAll']     
     
@@ -224,12 +224,7 @@ pipelines:
     apiEndpoints:
       - ehrPrivate
     policies: 
-      - haniot-body-parser-policy:          
-      - haniot-jwt-policy:
-          - action:
-              secretOrPublicKey: ${SECRET_JWT}
-              issuer: ${ISSUER}
-      - haniot-jwtScopes-policy:           
+                
       - proxy:
           - action:
               prependPath:  true
