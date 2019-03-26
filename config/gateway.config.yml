@@ -95,7 +95,7 @@ apiEndpoints:
     - host: '*'
       paths: ['/users/healthprofessionals/:healthprofessional_id/pilotstudies']
       methods: ['GET']
-      scopes: ['']
+      scopes: ['pilotstudy:read', 'pilotstudy:readAll']
 
     ## ENDPOINTS TO MANAGE HEALTH PROFESSIONS ASSOCIATION WITH A PILOT STUDY ##
     - host: '*'
