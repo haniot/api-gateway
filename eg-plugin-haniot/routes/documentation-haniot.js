@@ -10,7 +10,11 @@ module.exports = function (expressGatewayApp) {
     customCss: '.swagger-ui .topbar { display: none }',
     customfavIcon: 'http://nutes.uepb.edu.br/wp-content/uploads/2014/01/icon.fw_.png',
     customSiteTitle: `API Reference | HANIoT`
-  }  
+  }
+  expressGatewayApp.get('/', (req, res) => {
+    res.redirect('/api/v1/reference');
+  });
+
   expressGatewayApp.use('/api/v1/reference', swaggerUi.serve, (req, res) => {
     swaggerUi.setup(documentSwagger, options)(req, res);
   });
