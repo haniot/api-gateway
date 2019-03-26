@@ -93,6 +93,12 @@ apiEndpoints:
       methods: ['DELETE']
       scopes: ['pilotstudy:deleteAll']
     ######################################
+    
+    ## ENDPOINTS TO GET PILOTSTUDIES ASSOCIED  ##
+    - host: '*'
+      paths: ['/users/healthprofessionals/:healthprofessional_id/pilotstudies']
+      methods: ['GET']
+      scopes: ['']
 
     ## ENDPOINTS TO MANAGE HEALTH PROFESSIONS ASSOCIATION WITH A PILOT STUDY ##
     - host: '*'
