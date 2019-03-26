@@ -1,10 +1,10 @@
 # Core
 db:
   redis:
-    emulate: ${EMULATE_REDIS}
-    host: ${HOST_REDIS}
-    port: ${PORT_REDIS}
-    namespace: EG
+    emulate: ${EMULATE_REDIS:-true}
+    host: ${HOST_REDIS:-localhost}
+    port: ${PORT_REDIS:-6379}
+    namespace: ocariot_gateway
 
 crypto:
   cipherKey: sensitiveKey

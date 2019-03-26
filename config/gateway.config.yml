@@ -1,9 +1,6 @@
 http:
-  port: ${PORT}
+  port: ${PORT_HTTP:-8080}
   hostname: 0.0.0.0
-admin:
-  port: ${ADMIN_PORT}
-  hostname: 127.0.0.1
 
 ####### API ENDPOINTS DEFINITION ########
 apiEndpoints:
@@ -154,10 +151,10 @@ apiEndpoints:
 ####### SERVICE ENDPOINTS DEFINITIONS ########
 serviceEndpoints:
   accountService:
-    url: ${ACCOUNT_SERVICE}
+    url: ${ACCOUNT_SERVICE:-http://localhost:5000}
   
   ehrService:
-    url: ${EHR_SERVICE}
+    url: ${EHR_SERVICE:-http://localhost:3000}
 
 ####### POLICIES USED IN PIPELINES DEFINITION ########
 policies:
@@ -186,13 +183,13 @@ pipelines:
             name: 'is-auth'
             authpath: '/auth'
           action:
-            urlauthservice: ${ACCOUNT_SERVICE}/auth
-            secretOrPublicKey: ${SECRET_JWT}
-            issuer: ${ISSUER}
+            urlauthservice: ${ACCOUNT_SERVICE:-http://localhost:5000}/auth
+            secretOrPublicKey: ${JWT_SECRET:-haniot123}
+            issuer: ${ISSUER:-haniot}
       - haniot-jwt-policy:
           - action:
-              secretOrPublicKey: ${SECRET_JWT}
-              issuer: ${ISSUER}
+              secretOrPublicKey: ${JWT_SECRET:-haniot123}
+              issuer: ${ISSUER:-haniot}
       - haniot-jwtScopes-policy:
       - haniot-delete-user-policy:
         - 
@@ -201,7 +198,7 @@ pipelines:
             #deletepath é uma expressão regular
             deletepath: '^(\/users\/)[a-fA-F0-9]{24}$'
           action:
-            urldeleteservice: ${ACCOUNT_SERVICE}/users            
+            urldeleteservice: ${ACCOUNT_SERVICE:-http://localhost:5000}/users            
       - proxy:
           - action:
               prependPath:  true
