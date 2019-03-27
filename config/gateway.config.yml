@@ -176,7 +176,7 @@ pipelines:
     apiEndpoints:
       - accountPrivate
     policies: 
-      - haniot-body-parser-policy:     
+      - haniot-body-parser-policy:
       - haniot-auth-policy:
         - 
           condition:
@@ -198,7 +198,7 @@ pipelines:
             #deletepath é uma expressão regular
             deletepath: '^(\/users\/)[a-fA-F0-9]{24}$'
           action:
-            urldeleteservice: ${ACCOUNT_SERVICE:-http://localhost:5000}/users            
+            urldeleteservice: ${ACCOUNT_SERVICE:-http://localhost:5000}/users
       - proxy:
           - action:
               prependPath:  true
@@ -212,7 +212,7 @@ pipelines:
   - name: publicAccountServicePipeline
     apiEndpoints:
       - accountPublic
-    policies:       
+    policies:
       - proxy:
           - action:
               prependPath:  true
@@ -227,7 +227,11 @@ pipelines:
     apiEndpoints:
       - ehrPrivate
     policies: 
-                
+      - haniot-jwt-policy:
+          - action:
+              secretOrPublicKey: ${JWT_SECRET:-haniot123}
+              issuer: ${ISSUER:-haniot}
+      - haniot-jwtScopes-policy:    
       - proxy:
           - action:
               prependPath:  true

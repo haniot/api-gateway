@@ -4,6 +4,7 @@
 const swaggerUi = require('swagger-ui-express');
 
 module.exports = function (expressGatewayApp) {
+
   const options = {
     swaggerUrl: 'https://api.swaggerhub.com/apis/haniot/haniot-apigw/v1/swagger.json',
     customCss: `.swagger-ui .topbar { 
@@ -42,4 +43,5 @@ module.exports = function (expressGatewayApp) {
   expressGatewayApp.use('/api/v1/reference', swaggerUi.serve, (req, res) => {
     swaggerUi.setup(null, options)(req, res);
   });
+
 };
