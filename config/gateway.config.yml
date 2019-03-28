@@ -146,6 +146,114 @@ apiEndpoints:
     
     ###############################
 
+    ## ENDPOINTS TO MANAGE SLEEPHABITS ##
+    - host: '*'
+      paths: ['/patients/:patient_id/sleephabits']
+      methods: ['POST']
+      scopes: []
+
+    - host: '*'
+      paths: ['/patients/:patient_id/sleephabits']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/sleephabits/:sleephabit_id']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/sleephabits/:sleephabit_id']
+      methods: ['PATCH']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/sleephabits/:sleephabit_id']
+      methods: ['DELETE']
+      scopes: []
+    ###############################
+
+    ## ENDPOINTS TO MANAGE PHYSICALACTIVITYHABITS ##
+    - host: '*'
+      paths: ['/patients/:patient_id/physicalactivityhabits']
+      methods: ['POST']
+      scopes: []
+
+    - host: '*'
+      paths: ['/patients/:patient_id/physicalactivityhabits']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/physicalactivityhabits/:physicalactivityhabits_id']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/physicalactivityhabits/:physicalactivityhabits_id']
+      methods: ['PATCH']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/physicalactivityhabits/:physicalactivityhabits_id']
+      methods: ['DELETE']
+      scopes: []
+    ###############################
+
+    ## ENDPOINTS TO MANAGE FEEDINGHABITSRECORDS ##
+    - host: '*'
+      paths: ['/patients/:patient_id/feedinghabitsrecords']
+      methods: ['POST']
+      scopes: []
+
+    - host: '*'
+      paths: ['/patients/:patient_id/feedinghabitsrecords']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/feedinghabitsrecords/:feedinghabitsrecord_id']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/feedinghabitsrecords/:feedinghabitsrecord_id']
+      methods: ['PATCH']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/feedinghabitsrecords/:feedinghabitsrecord_id']
+      methods: ['DELETE']
+      scopes: []
+    ###############################
+
+    ## ENDPOINTS TO MANAGE MEDICALRECORDS ##
+    - host: '*'
+      paths: ['/patients/:patient_id/medicalrecords']
+      methods: ['POST']
+      scopes: []
+
+    - host: '*'
+      paths: ['/patients/:patient_id/medicalrecords']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/medicalrecords/:medicalrecord_id']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/medicalrecords/:medicalrecord_id']
+      methods: ['PATCH']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/medicalrecords/:medicalrecord_id']
+      methods: ['DELETE']
+      scopes: []
+    ###############################
+
 ############### EHR API PRIVATE END ##########################################
 
 ####### SERVICE ENDPOINTS DEFINITIONS ########
@@ -204,6 +312,7 @@ pipelines:
     apiEndpoints:
       - accountPublic
     policies:
+      - haniot-body-parser-policy:
       - haniot-auth-policy:
         - 
           condition:
