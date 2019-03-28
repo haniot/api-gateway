@@ -12,7 +12,8 @@ module.exports = {
     pluginContext.registerPolicy(require('./policies/delete/haniot-delete-user-policy'));
     pluginContext.registerCondition(require('./conditions/is-auth'));
     pluginContext.registerCondition(require('./conditions/is-delete'));
-    pluginContext.registerGatewayRoute(require('./routes/documentation-haniot'));
+    pluginContext.registerGatewayRoute(require('./routes/haniot-middlewares'));
+    pluginContext.registerGatewayRoute(require('./routes/haniot-documentation'));
   },
   policies:['haniot-jwt-policy', 'haniot-jwtScopes-policy', 'haniot-auth-policy','haniot-body-parser-policy','haniot-delete-user-policy']
 };

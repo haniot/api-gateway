@@ -24,14 +24,25 @@ tags:
     description: Operations for the User Admin resource.
   - name: users.healthprofessionals
     description: Operations for the User HealthProfessional resource.
+  - name: users.healthprofessionals.pilotstudies
+    description: Operations for the User HealthProfessional Pilot Studies resource.
   - name: pilotstudies
     description: Operations for the Pilot Study resource.
   - name: pilotstudies.healthprofessionals
     description: Operations for the Health Professionals associated with a Pilot Study.
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-# - - - - - - - - - - - - Data Acquisition - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
+# - - - - - - - - - - - - EHR Service - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - name: pilotstudies.patients
+    description: Operations for Patient resource.
+  - name: patients.sleephabits
+    description: Operations for the patient Sleep Habit resource.
+  - name: patients.physicalactivityhabits
+    description: Operations for the patient Physical Activity Habit resource.
+  - name: patients.feedinghabitsrecords
+    description: Operations for the patient Feeding Habits Record resource.
+  - name: patients.medicalrecords
+    description: Operations for the patient Medical Record resource.
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 paths:
@@ -961,7 +972,107 @@ paths:
               $ref: '#/components/schemas/HealthProfessional'
         description: Data of the health professional to be updated.
         required: true
-
+# users.healthprofessionals.pilotstudies
+  /users/healthprofessionals/{healthprofessional_id}/pilotstudies:
+    get:
+      security:
+        - JWTAuth: []  
+      tags:
+        -  users.healthprofessionals.pilotstudies
+      summary: Recover all pilot studies from health professional.
+      description: >- 
+        Returns list with pilot studies that health professional is associated. The query supports Field Selection, Paging,
+        Sorting, and Filtering.
+      operationId: getAllPilotStudiesFromHealthProfessional
+      parameters:
+        - name: healthprofessional_id
+          in: path
+          required: true
+          description: Id of health professional.
+          example: '5c86d00cfc25e7036d51d652'
+          schema:
+            type: string
+        - $ref: '#/components/parameters/fieldsParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/sortParam'
+        - $ref: '#/components/parameters/filterParam'
+      responses:
+        '200':
+          description: List of pilot studies.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      readOnly: true
+                      type: string
+                      format: uuid
+                      description: Automatically generated key field.
+                      example: '5c86d00c2239a48ea20a0134'
+                    name:
+                      type: string
+                      description: Name of pilot study.
+                      example: 'Pilot Odonto 01'
+                    is_active:
+                      type: boolean
+                      description: Status of pilot study. The value is true if it is active, false otherwise.
+                      example: true
+                    start:
+                      type: string
+                      description: Start of pilot study in UTC format, according to ISO 8601.
+                      example: '2018-11-19T14:40:00'
+                    end:
+                      type: string
+                      description: End of pilot study in UTC format, according to ISO 8601.
+                      example: '2019-01-23T18:00:00'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to get pilot studies.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            Specified resource does not exist. Usually when the URI is incorrect
+            or the resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client 
+            for the application response. Only application/json is currently 
+            accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to
+            provide a correct request, the server encountered an unexpected 
+            condition that prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   # pilotstudies
   /pilotstudies:
     post:
@@ -1581,8 +1692,2146 @@ paths:
                 $ref: '#/components/schemas/Error' 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-# - - - - - - - - - - - - Data Acquisition - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
+# - - - - - - - - - - - - EHR Service - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# pilotstudies.patients
+  /pilotstudies/{pilotstudy_id}/patients:
+    post: 
+      tags:
+      - pilotstudies.patients
+      summary: Register patient.
+      description: Register a new patient.
+      operationId: addPatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Patient successfully registered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        '400':
+          description: >-
+            Request can not be met, syntactically incorrect or violates the 
+            schema. Normally it occurs due to validation issues, such as 
+            fields that are expected in the request body and not passed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to register patients.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            Specified resource does not exist. Usually when the URI is incorrect
+            or the resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client
+            for the application response. Only application/json is currently 
+            accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: >-
+           The server does not support the requested payload format. Only 
+           application/json is accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to
+            provide a correct request, the server encountered an unexpected
+            condition that prevented it from responding to the request."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Patient'
+        description: Data of the patient to be saved.
+        required: true
+    get:
+      tags:
+      - pilotstudies.patients
+      summary: Recover patients.
+      description: >- 
+        Returns list with all patients. The query supports Field Selection, Paging, Sorting, and Filtering.
+      operationId: getAllPatients
+      parameters:
+        - name: pilotstudy_id
+          in: path
+          required: true
+          description: Id of pilot study.
+          example: '5c86d00c2239a48ea20a0134'
+          schema:
+            type: string
+        - $ref: '#/components/parameters/fieldsParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/sortParam'
+        - $ref: '#/components/parameters/filterParam'
+      responses:
+        '200':
+          description: List of patients.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Patient'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to get patients list.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            Specified resource does not exist. Usually when the URI is incorrect
+            or the resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client 
+            for the application response. Only application/json is currently 
+            accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to
+            provide a correct request, the server encountered an unexpected 
+            condition that prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'  
+  /pilotstudies/{pilotstudy_id}/patients/{patient_id}:
+    get:
+      tags:
+      - pilotstudies.patients
+      summary: Recover patient data.
+      description: Recover the patient data. The query suports Fields param.
+      operationId: getPatientById
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      - $ref: '#/components/parameters/fieldsParam'
+      responses:
+        '200':
+          description: Requested patient data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to get patient data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+           Specified resource does not exist. Usually when the URI is incorrect or the
+           resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client for
+            the application response. Only application/json is currently accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to provide a
+            correct request, the server encountered an unexpected condition that
+            prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      tags:
+      - pilotstudies.patients
+      summary: Update patient data.
+      description: Update the patient data.
+      operationId: updatePatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Updated patient data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to update patient data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            Specified resource does not exist. Usually when the URI is incorrect
+            or the resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client 
+            for the application response. Only application/json is currently 
+            accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: ->
+            Conflicts have probably occurred with data that can not be duplicated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: >-
+            The server does not support the requested payload format. Only 
+            application/json is accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to
+            provide a correct request, the server encountered an unexpected 
+            condition that prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Patient'
+        description: Data of the patient to be updated.
+        required: true
+    delete:
+      tags:
+      - pilotstudies.patients
+      summary: Delete patient data.
+      description: Delete the patient data.
+      operationId: deletePatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      responses:  
+        '204':
+          description: >- 
+            Operation performed successfully. There is no data to be returned
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to delete patients.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+           Specified resource does not exist. Usually when the URI is incorrect or the
+           resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client for
+            the application response. Only application/json is currently accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to provide a
+            correct request, the server encountered an unexpected condition that
+            prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          
+  # pilotstudies.patients.sleephabits
+  /patients/{patient_id}/sleephabits:
+    post: 
+      tags:
+      - patients.sleephabits
+      summary: Register sleep habit.
+      description: Register a sleep habit from patient.
+      operationId: addSleepHabitFromPatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Sleep habit successfully registered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SleepHabit'
+        '400':
+          description: >-
+            Request can not be met, syntactically incorrect or violates the 
+            schema. Normally it occurs due to validation issues, such as 
+            fields that are expected in the request body and not passed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to register sleep habits.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            Specified resource does not exist. Usually when the URI is incorrect
+            or the resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client
+            for the application response. Only application/json is currently 
+            accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: >-
+           The server does not support the requested payload format. Only 
+           application/json is accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to
+            provide a correct request, the server encountered an unexpected
+            condition that prevented it from responding to the request."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SleepHabit'
+        description: Data of the sleep habit to be saved.
+        required: true
+    get:
+      tags:
+      - patients.sleephabits
+      summary: Recover sleep habits.
+      description: >- 
+        Returns list with all sleep habits from patient. The query supports Field Selection, Paging, Sorting, and Filtering.
+      operationId: getAllSleepHabitsFromPatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      - $ref: '#/components/parameters/fieldsParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/sortParam'
+      - $ref: '#/components/parameters/filterParam'
+      responses:
+        '200':
+          description: List of sleep habits.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SleepHabit'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to get sleep habits list.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            Specified resource does not exist. Usually when the URI is incorrect
+            or the resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client 
+            for the application response. Only application/json is currently 
+            accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to
+            provide a correct request, the server encountered an unexpected 
+            condition that prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'  
+  /patients/{patient_id}/sleephabits/{sleephabit_id}:
+    get:
+      tags:
+      - patients.sleephabits
+      summary: Recover sleep habit data.
+      description: Recover the patient sleep habit data. The query suports Fields param.
+      operationId: getSleepDataFromPatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      - name: sleephabit_id
+        in: path  
+        required: true
+        description: Id of sleep habit.
+        example: '5c9137f2f6d3dba533e4cb36'
+        schema:
+          type: string  
+      - $ref: '#/components/parameters/fieldsParam'
+      responses:
+        '200':
+          description: Requested sleep habit data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SleepHabit'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to get patient sleep habit data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+           Specified resource does not exist. Usually when the URI is incorrect or the
+           resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client for
+            the application response. Only application/json is currently accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to provide a
+            correct request, the server encountered an unexpected condition that
+            prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      tags:
+      - patients.sleephabits
+      summary: Update sleep habit data.
+      description: Update the patient sleep habit data.
+      operationId: updateSleepHabitFromPatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      - name: sleephabit_id
+        in: path  
+        required: true
+        description: Id of sleep habit.
+        example: '5c9137f2f6d3dba533e4cb36'
+        schema:
+          type: string  
+      responses:
+        '200':
+          description: Updated sleep habit data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SleepHabit'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to update sleep habit data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            Specified resource does not exist. Usually when the URI is incorrect
+            or the resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client 
+            for the application response. Only application/json is currently 
+            accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: ->
+            Conflicts have probably occurred with data that can not be duplicated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: >-
+            The server does not support the requested payload format. Only 
+            application/json is accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to
+            provide a correct request, the server encountered an unexpected 
+            condition that prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SleepHabit'
+        description: Data of the sleep habit to be updated.
+        required: true
+    delete:
+      tags:
+      - patients.sleephabits
+      summary: Delete sleep habit data.
+      description: Delete the patient sleep habit data.
+      operationId: deleteSleepHabitFromPatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      - name: sleephabit_id
+        in: path  
+        required: true
+        description: Id of sleep habit.
+        example: '5c9137f2f6d3dba533e4cb36'
+        schema:
+          type: string  
+      responses:  
+        '204':
+          description: >- 
+            Operation performed successfully. There is no data to be returned
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to delete sleep habit from patient.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+           Specified resource does not exist. Usually when the URI is incorrect or the
+           resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client for
+            the application response. Only application/json is currently accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to provide a
+            correct request, the server encountered an unexpected condition that
+            prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  # pilotstudies.patients.physicalactivityhabits
+  /patients/{patient_id}/physicalactivityhabits:
+    post: 
+      tags:
+      - patients.physicalactivityhabits
+      summary: Register physical activity habit.
+      description: Register a physical activity habit from patient.
+      operationId: addPhysicalActivityHabitFromPatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Physical Activity habit successfully registered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhysicalActivityHabits'
+        '400':
+          description: >-
+            Request can not be met, syntactically incorrect or violates the 
+            schema. Normally it occurs due to validation issues, such as 
+            fields that are expected in the request body and not passed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to register physical activity habits.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            Specified resource does not exist. Usually when the URI is incorrect
+            or the resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client
+            for the application response. Only application/json is currently 
+            accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: >-
+           The server does not support the requested payload format. Only 
+           application/json is accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to
+            provide a correct request, the server encountered an unexpected
+            condition that prevented it from responding to the request."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PhysicalActivityHabits'
+        description: Data of the physical activity habit to be saved.
+        required: true
+    get:
+      tags:
+      - patients.physicalactivityhabits
+      summary: Recover physical activity habits.
+      description: >- 
+        Returns list with all physical activity habits from patient. The query supports Field Selection, Paging, Sorting, and Filtering.
+      operationId: getAllPhysicalActivityHabitsFromPatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      - $ref: '#/components/parameters/fieldsParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/sortParam'
+      - $ref: '#/components/parameters/filterParam'
+      responses:
+        '200':
+          description: List of physical activity habits.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PhysicalActivityHabits'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to get physical activity habits list.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            Specified resource does not exist. Usually when the URI is incorrect
+            or the resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client 
+            for the application response. Only application/json is currently 
+            accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to
+            provide a correct request, the server encountered an unexpected 
+            condition that prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'  
+  /patients/{patient_id}/physicalactivityhabits/{physicalactivityhabits_id}:
+    get:
+      tags:
+      - patients.physicalactivityhabits
+      summary: Recover physical activity habits data.
+      description: Recover the patient physical activity habits data. The query suports Fields param.
+      operationId: getPhysicalActivityHabitsFromPacient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      - name: physicalactivityhabits_id
+        in: path  
+        required: true
+        description: Id of physical activity habits
+        example: '5c9137f2cdff19618c05cf31'
+        schema:
+          type: string  
+      - $ref: '#/components/parameters/fieldsParam'
+      responses:
+        '200':
+          description: Requested physical ativity habits data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhysicalActivityHabits'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to get patient physical activity habits data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+           Specified resource does not exist. Usually when the URI is incorrect or the
+           resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client for
+            the application response. Only application/json is currently accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to provide a
+            correct request, the server encountered an unexpected condition that
+            prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      tags:
+      - patients.physicalactivityhabits
+      summary: Update physical activity habits data.
+      description: Update the patient physical activity habits data.
+      operationId: updatePhysicalActivityHabitsFromPatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      - name: physicalactivityhabits_id
+        in: path  
+        required: true
+        description: Id of physical activity habits
+        example: '5c9137f2cdff19618c05cf31'
+        schema:
+          type: string  
+      responses:
+        '200':
+          description: Updated physical activity habits data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhysicalActivityHabits'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to update physical activity habits data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            Specified resource does not exist. Usually when the URI is incorrect
+            or the resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client 
+            for the application response. Only application/json is currently 
+            accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: ->
+            Conflicts have probably occurred with data that can not be duplicated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: >-
+            The server does not support the requested payload format. Only 
+            application/json is accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to
+            provide a correct request, the server encountered an unexpected 
+            condition that prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PhysicalActivityHabits'
+        description: Data of the physical activity habits to be updated.
+        required: true
+    delete:
+      tags:
+      - patients.physicalactivityhabits
+      summary: Delete physical activity habits data.
+      description: Delete the patient physical activity habits data.
+      operationId: deletePhysicalActivityHabitsFromPatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      - name: physicalactivityhabits_id
+        in: path  
+        required: true
+        description: Id of physical activity habits
+        example: '5c9137f2cdff19618c05cf31'
+        schema:
+          type: string  
+      responses:  
+        '204':
+          description: >- 
+            Operation performed successfully. There is no data to be returned
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to delete physical activity habits from patient.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+           Specified resource does not exist. Usually when the URI is incorrect or the
+           resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client for
+            the application response. Only application/json is currently accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to provide a
+            correct request, the server encountered an unexpected condition that
+            prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+ 
+  # pilotstudies.patients.feedinghabitsrecords
+  /patients/{patient_id}/feedinghabitsrecords:
+    post: 
+      tags:
+      - patients.feedinghabitsrecords
+      summary: Register feeding habits record.
+      description: Register a feeding habits record from patient.
+      operationId: addFeedingHabitsRecordFromPatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Feeding habits record successfully registered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedingHabitsRecord'
+        '400':
+          description: >-
+            Request can not be met, syntactically incorrect or violates the 
+            schema. Normally it occurs due to validation issues, such as 
+            fields that are expected in the request body and not passed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to register feeding habits records.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            Specified resource does not exist. Usually when the URI is incorrect
+            or the resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client
+            for the application response. Only application/json is currently 
+            accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: >-
+           The server does not support the requested payload format. Only 
+           application/json is accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to
+            provide a correct request, the server encountered an unexpected
+            condition that prevented it from responding to the request."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedingHabitsRecord'
+        description: Data of the feeding habits record to be saved.
+        required: true
+    get:
+      tags:
+      - patients.feedinghabitsrecords
+      summary: Recover feeding habits records.
+      description: >- 
+        Returns list with all feeding habits records from patient. The query supports Field Selection, Paging, Sorting, and Filtering.
+      operationId: getAllFeedingHabitsRecordsFromPatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      - $ref: '#/components/parameters/fieldsParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/sortParam'
+      - $ref: '#/components/parameters/filterParam'
+      responses:
+        '200':
+          description: List of feeding habits records.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FeedingHabitsRecord'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to get feeding habits records list.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            Specified resource does not exist. Usually when the URI is incorrect
+            or the resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client 
+            for the application response. Only application/json is currently 
+            accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to
+            provide a correct request, the server encountered an unexpected 
+            condition that prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'  
+  /patients/{patient_id}/feedinghabitsrecords/{feedinghabitsrecord_id}:
+    get:
+      tags:
+      - patients.feedinghabitsrecords
+      summary: Recover feeding habits record data.
+      description: Recover the patient feeding habits record data. The query suports Fields param.
+      operationId: getFeedingHabitsRecordFromPatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      - name: feedinghabitsrecord_id
+        in: path  
+        required: true
+        description: Id of feeding habits record.
+        example: '5c9137f233b9b49d1c881189'
+        schema:
+          type: string  
+      - $ref: '#/components/parameters/fieldsParam'
+      responses:
+        '200':
+          description: Requested feeding habits record data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedingHabitsRecord'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to get patient feeding habits record data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+           Specified resource does not exist. Usually when the URI is incorrect or the
+           resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client for
+            the application response. Only application/json is currently accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to provide a
+            correct request, the server encountered an unexpected condition that
+            prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      tags:
+      - patients.feedinghabitsrecords
+      summary: Update feeding habits record data.
+      description: Update the patient feeding habits record data.
+      operationId: updateFeedingHabitsRecordFromPatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      - name: feedinghabitsrecord_id
+        in: path  
+        required: true
+        description: Id of feeding habits record.
+        example: '5c9137f233b9b49d1c881189'
+        schema:
+          type: string  
+      responses:
+        '200':
+          description: Updated feeding habits record data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedingHabitsRecord'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to update feeding habits record data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            Specified resource does not exist. Usually when the URI is incorrect
+            or the resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client 
+            for the application response. Only application/json is currently 
+            accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: ->
+            Conflicts have probably occurred with data that can not be duplicated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: >-
+            The server does not support the requested payload format. Only 
+            application/json is accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to
+            provide a correct request, the server encountered an unexpected 
+            condition that prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedingHabitsRecord'
+        description: Data of the feeding habits record to be updated.
+        required: true
+    delete:
+      tags:
+      - patients.feedinghabitsrecords
+      summary: Delete feeding habits record data.
+      description: Delete the patient feeding habits record data.
+      operationId: deleteFeedingHabitsRecordFromPatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      - name: feedinghabitsrecord_id
+        in: path  
+        required: true
+        description: Id of feeding habits record.
+        example: '5c9137f233b9b49d1c881189'
+        schema:
+          type: string  
+      responses:  
+        '204':
+          description: >- 
+            Operation performed successfully. There is no data to be returned
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to delete feeding habits record from patient.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+           Specified resource does not exist. Usually when the URI is incorrect or the
+           resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client for
+            the application response. Only application/json is currently accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to provide a
+            correct request, the server encountered an unexpected condition that
+            prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  # pilotstudies.patients.medicalrecords
+  /patients/{patient_id}/medicalrecords:
+    post: 
+      tags:
+      - patients.medicalrecords
+      summary: Register medical record.
+      description: Register a medical record from patient.
+      operationId: addMedicalRecordFromPacient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Medical record successfully registered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicalRecord'
+        '400':
+          description: >-
+            Request can not be met, syntactically incorrect or violates the 
+            schema. Normally it occurs due to validation issues, such as 
+            fields that are expected in the request body and not passed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to register medical records.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            Specified resource does not exist. Usually when the URI is incorrect
+            or the resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client
+            for the application response. Only application/json is currently 
+            accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: >-
+           The server does not support the requested payload format. Only 
+           application/json is accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to
+            provide a correct request, the server encountered an unexpected
+            condition that prevented it from responding to the request."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MedicalRecord'
+        description: Data of the medical record to be saved.
+        required: true
+    get:
+      tags:
+      - patients.medicalrecords
+      summary: Recover medical records.
+      description: >- 
+        Returns list with all medical records from patient. The query supports Field Selection, Paging, Sorting, and Filtering.
+      operationId: getAllMedicalRecordsFromPatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      - $ref: '#/components/parameters/fieldsParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/sortParam'
+      - $ref: '#/components/parameters/filterParam'
+      responses:
+        '200':
+          description: List of medical records.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FeedingHabitsRecord'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to get medical records list.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            Specified resource does not exist. Usually when the URI is incorrect
+            or the resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client 
+            for the application response. Only application/json is currently 
+            accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to
+            provide a correct request, the server encountered an unexpected 
+            condition that prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'  
+  /patients/{patient_id}/medicalrecords/{medicalrecord_id}:
+    get:
+      tags:
+      - patients.medicalrecords
+      summary: Recover medical record data.
+      description: Recover the patient medical record data. The query suports Fields param.
+      operationId: getMedicalRecordFromPatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      - name: medicalrecord_id
+        in: path  
+        required: true
+        description: Id of medical record.
+        example: '5c9137f29293b51a067711c8'
+        schema:
+          type: string  
+      - $ref: '#/components/parameters/fieldsParam'
+      responses:
+        '200':
+          description: Requested feeding habits record data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicalRecord'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to get patient medical record record data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+           Specified resource does not exist. Usually when the URI is incorrect or the
+           resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client for
+            the application response. Only application/json is currently accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to provide a
+            correct request, the server encountered an unexpected condition that
+            prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      tags:
+      - patients.medicalrecords
+      summary: Update medical record data.
+      description: Update the patient medical record data.
+      operationId: updateMedicalRecordFromPatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      - name: medicalrecord_id
+        in: path  
+        required: true
+        description: Id of medical record.
+        example: '5c9137f29293b51a067711c8'
+        schema:
+          type: string  
+      responses:
+        '200':
+          description: Updated medical record data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicalRecord'
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to update medical record data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            Specified resource does not exist. Usually when the URI is incorrect
+            or the resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client 
+            for the application response. Only application/json is currently 
+            accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: ->
+            Conflicts have probably occurred with data that can not be duplicated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: >-
+            The server does not support the requested payload format. Only 
+            application/json is accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to
+            provide a correct request, the server encountered an unexpected 
+            condition that prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MedicalRecord'
+        description: Data of the medical record to be updated.
+        required: true
+    delete:
+      tags:
+      - patients.medicalrecords
+      summary: Delete medical record data.
+      description: Delete the patient medical record data.
+      operationId: deleteMedicalRecordFromPatient
+      parameters:
+      - name: pilotstudy_id
+        in: path
+        required: true
+        description: Id of pilot study.
+        example: '5c86d00c2239a48ea20a0134'
+        schema:
+          type: string
+      - name: patient_id
+        in: path  
+        required: true
+        description: Id of patient.
+        example: '5c9137f2b8d3921ff3028378'
+        schema:
+          type: string
+      - name: medicalrecord_id
+        in: path  
+        required: true
+        description: Id of medical record.
+        example: '5c9137f29293b51a067711c8'
+        schema:
+          type: string  
+      responses:  
+        '204':
+          description: >- 
+            Operation performed successfully. There is no data to be returned
+        '401':
+          description: Authentication failed due to invalid authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to delete medical record from patient.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+           Specified resource does not exist. Usually when the URI is incorrect or the
+           resource is not found, or even no longer exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: >-
+            The server is not implementing the media type requested by the client for
+            the application response. Only application/json is currently accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: The rate limit for requests exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: >-
+            An internal server error occurred. Although the client appears to provide a
+            correct request, the server encountered an unexpected condition that
+            prevented it from responding to the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 components:
@@ -1592,6 +3841,7 @@ components:
       scheme: bearer
       bearerFormat: JWT   
   schemas:
+# - - - - - - - - - - - - - Account Service - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     Admin:
       type: object
       required:
@@ -1717,6 +3967,228 @@ components:
             type: string
           example:
           - '5c86d00cfc25e7036d51d652'
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+# - - - - - - - - - - - - - - - - - - EHR Service- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    Patient:
+      type: object
+      required:
+      - id
+      - pilotstudy_id
+      - first_name
+      - last_name
+      - gender
+      - birth_date
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Automatically generated key field. 
+          example: '5c9137f2b8d3921ff3028378'
+        pilotstudy_id:
+          type: string
+          format: uuid
+          description: Id of pilot study that patient is associated.
+          example: '5c86d00c2239a48ea20a0134'
+        first_name:
+          type: string
+          description: First name of patient.
+          example: Elvis 
+        last_name:
+          type: string
+          description: Last name of patient.
+          example: Aaron 
+        gender: 
+          type: string
+          description: Gender of patient.
+          enum: ['male', 'female']
+        birth_date:
+          type: string
+          description: Date of patient birth, according to ISO format.
+          example: '1935-01-08'
+    SleepHabit:
+      type: object
+      required:
+      - id
+      - patient_id
+      - created_at
+      - week_day_sleep
+      - week_day_wake_up
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Automatically generated key field. 
+          example: '5c9137f2f6d3dba533e4cb36'
+        patient_id:
+          type: string
+          format: uuid
+          description: Id of patient from feeding habits record.
+          example: '5c9137f2b8d3921ff3028378'
+        created_at:
+          type: string
+          description: Date of feeding habits record register in UTC format, according to ISO 8601.
+          example: '2018-11-19T14:40:00'  
+        week_day_sleep:
+          type: number
+          description: Approximate time the patient sleeps every day of the week.
+          example: 22
+        week_day_wake_up: 
+          type: number
+          description: Approximate time the patient wake up every day of the week.
+          example: 22
+    PhysicalActivityHabits:
+      type: object
+      required:
+      - id
+      - patient_id
+      - created_at
+      - school_activity_freq
+      - weekly_activities
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Automatically generated key field. 
+          example: '5c9137f2cdff19618c05cf31'
+        patient_id:
+          type: string
+          format: uuid
+          description: Id of patient from feeding habits record.
+          example: '5c9137f2b8d3921ff3028378'
+        created_at:
+          type: string
+          description: Date of feeding habits record register in UTC format, according to ISO 8601.
+          example: '2018-11-19T14:40:00' 
+        school_activity_freq:
+          type: string
+          description: School activity frequency from patient.
+          enum: ['one_per_week', 'two_per_week','three_per_week', 'four_more_per_week', 'none']
+          example: 'four_more_per_week'
+        weekly_activities:
+          type: array
+          description: List of physical activities practiced by the patient.
+          items:
+            type: string
+          example:
+          - run
+          - swim
+    FeedingHabitsRecord:
+      type: object
+      required:
+      - id
+      - patient_id
+      - created_at
+      - weekly_feeding_habits
+      - daily_water_glasses
+      - six_month_breast_feeding
+      - food_allergy_intolerance
+      - breakfast_daily_frequency
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Automatically generated key field. 
+          example: '5c9137f233b9b49d1c881189'
+        patient_id:
+          type: string
+          format: uuid
+          description: Id of patient from feeding habits record.
+          example: '5c9137f2b8d3921ff3028378'
+        created_at:
+          type: string
+          description: Date of feeding habits record register in UTC format, according to ISO 8601.
+          example: '2018-11-19T14:40:00'
+        weekly_feeding_habits:
+          type: array
+          description: List of weekly foods and consumption frequency from patient.
+          items:
+            $ref: '#/components/schemas/WeeklyFoodRecord'
+        daily_water_glasses:
+          type: string
+          description: Quantity of daily water glass consumption from patient. 
+          enum: ['none', 'one_two', 'three_four', 'five_more', 'undefined']
+          example: 'five_more'
+        six_month_breast_feeding:
+          type: string
+          description: Breastfeeding level from patient in your first six months of life.
+          enum: ['exclusive', 'complementary' ,'infant_formulas', 'other', 'undefined']
+          example: 'complementary'
+        food_allergy_intolerance:
+          type: array
+          description: Food allergy intolerance from patient.
+          items:
+            type: string
+            enum: ['gluten', 'aplv', 'lactose', 'dye', 'egg', 'peanut', 'other', 'undefined' ]
+          example:
+          - gluten
+          - other
+        breakfast_daily_frequency:
+          type: string
+          description: Breakfast daily frequency from patient.
+          enum: ['never', 'sometimes', 'almost_everyday', 'everyday', 'undefined']
+          example: 'everyday'
+    WeeklyFoodRecord:
+      type: object
+      required:
+      - food
+      - seven_days_freq
+      properties:
+        food:
+          type: string
+          description: Name of food.
+          example: 'bread'
+        seven_days_freq:
+          type: string
+          description: Weekly frequency of food consumption.
+          enum: ['never', 'no_day', 'one_two_days', 'three_four_days', 'five_six_days', 'all_days', 'undefined']
+          example: 'all_days'
+    MedicalRecord:
+      type: object
+      required:
+      - id
+      - patient_id
+      - created_at
+      - chronic_diseases
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Automatically generated key field. 
+          example: '5c9137f29293b51a067711c8'
+        patient_id:
+          type: string
+          format: uuid
+          description: Id of patient from medical record.
+          example: '5c9137f2b8d3921ff3028378'
+        created_at:
+          type: string
+          description: Date of medical record register in UTC format, according to ISO 8601.
+          example: '2018-11-19T14:40:00'
+        chronic_diseases:
+          type: array
+          description: List of chronic diseases from patient.
+          items:
+            $ref: '#/components/schemas/ChronicDisease'
+    ChronicDisease:
+      type: object
+      required:
+      - type
+      - disease_history
+      properties:
+        type:
+          type: string
+          description: Type of chronic disease from pacient.
+          enum: ['hipertension', 'blood_fat', 'diabetes']
+        disease_history:
+          type: string
+          description: Disease history from pacient.
+          enum: ['yes', 'no', 'undefined']
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Error Schema
     Error:
       type: object
