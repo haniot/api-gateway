@@ -11,13 +11,13 @@ apiEndpoints:
       paths: ['/users/:user_id/password']
       methods: ['PATCH']
 
-####### ACCOUNT API PRIVATE ########
-  accountPrivate:
-    ## ENDPOINTS TO MANAGE USERS ##
     - host: '*'
       paths: ['/auth']
       methods: ['POST']
 
+####### ACCOUNT API PRIVATE ########
+  accountPrivate:
+    ## ENDPOINTS TO MANAGE USERS ##
     - host: '*'
       paths: ['/users/admins']
       methods: ['POST']
@@ -177,15 +177,6 @@ pipelines:
       - accountPrivate
     policies: 
       - haniot-body-parser-policy:
-      - haniot-auth-policy:
-        - 
-          condition:
-            name: 'is-auth'
-            authpath: '/auth'
-          action:
-            urlauthservice: ${ACCOUNT_SERVICE:-http://localhost:5000}/auth
-            secretOrPublicKey: ${JWT_SECRET:-haniot123}
-            issuer: ${ISSUER:-haniot}
       - haniot-jwt-policy:
           - action:
               secretOrPublicKey: ${JWT_SECRET:-haniot123}
@@ -213,6 +204,15 @@ pipelines:
     apiEndpoints:
       - accountPublic
     policies:
+      - haniot-auth-policy:
+        - 
+          condition:
+            name: 'is-auth'
+            authpath: '/auth'
+          action:
+            urlauthservice: ${ACCOUNT_SERVICE:-http://localhost:5000}/auth
+            secretOrPublicKey: ${JWT_SECRET:-haniot123}
+            issuer: ${ISSUER:-haniot}
       - proxy:
           - action:
               prependPath:  true
