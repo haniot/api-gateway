@@ -11,6 +11,7 @@
     "test:integration": "SET NODE_ENV=test && mocha --opts test/eg-plugin-haniot/integration/mocha.opts test/**/integration/**/eg-plugin-haniot-spec.js"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "eg-plugin-haniot": "file:eg-plugin-haniot",
     "express-gateway": "^1.10.2",
     "http-status": "^1.3.1"

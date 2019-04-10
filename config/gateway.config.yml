@@ -1,9 +1,6 @@
 http:
-  port: ${PORT}
+  port: ${PORT_HTTP:-8080}
   hostname: 0.0.0.0
-admin:
-  port: ${ADMIN_PORT}
-  hostname: 127.0.0.1
 
 ####### API ENDPOINTS DEFINITION ########
 apiEndpoints:
@@ -11,50 +8,261 @@ apiEndpoints:
 ####### ACCOUNT API PUBLIC ########
   accountPublic:  
     - host: '*'
-      paths: ['/api/v1/users/*/password']
+      paths: ['/users/:user_id/password']
       methods: ['PATCH']
+
+    - host: '*'
+      paths: ['/auth']
+      methods: ['POST']
 
 ####### ACCOUNT API PRIVATE ########
   accountPrivate:
+    ## ENDPOINTS TO MANAGE USERS ##
     - host: '*'
-      paths: ['/api/v1/users/auth']
+      paths: ['/users/admins']
       methods: ['POST']
+      scopes: ['admin:create']
 
     - host: '*'
-      paths: ['/api/v1/users/admin']
+      paths: ['/users/healthprofessionals']
       methods: ['POST']
-      scopes: ['adminAccount:create']
-
-    - host: '*'
-      paths: ['/api/v1/users/caregiver']
-      methods: ['POST']
-      scopes: ['adminAccount:create'] 
+      scopes: ['healthprofessional:create'] 
     
     - host: '*'
-      paths: ['/api/v1/users']
+      paths: ['/users/admins']
       methods: ['GET']
-      scopes: ['adminAccount:readAll']
+      scopes: ['admin:readAll']
+    
+    - host: '*'
+      paths: ['/users/healthprofessionals']
+      methods: ['GET']
+      scopes: ['healthprofessional:readAll']
 
     - host: '*'
-      paths: ['/api/v1/users/*']
+      paths: ['/users/admins/:admin_id']
       methods: ['GET']
-      scopes: [adminAccount:read',adminAccount:readAll,'caregiverAccount:read','caregiverAccount:readAll']
+      scopes: ['admin:read','admin:readAll']
+    
+    - host: '*'
+      paths: ['/users/healthprofessionals/:healthprofessional_id']
+      methods: ['GET']
+      scopes: ['healthprofessional:read', 'healthprofessional:readAll']
 
     - host: '*'
-      paths: ['/api/v1/users/*']
+      paths: ['/users/:user_id']
       methods: ['DELETE']
-      scopes: ['adminAccount:delete','adminAccount:deleteAll',caregiverAccount:delete,'caregiverAccount:deleteAll']
+      scopes: ['admin:delete','admin:deleteAll','healthprofessional:delete','healthprofessional:deleteAll']
 
     - host: '*'
-      paths: ['/api/v1/users/*']
+      paths: ['/users/admins/:admin_id']
       methods: ['PATCH']
-      scopes: [adminAccount:update,'adminAccount:updateAll',caregiverAccount:update,'caregiverAccount:updateAll']    
-  
+      scopes: ['admin:update','admin:updateAll']    
+    
+    - host: '*'
+      paths: ['/users/healthprofessionals/:healthprofessional_id']
+      methods: ['PATCH']
+      scopes: ['healthprofessional:update', 'healthprofessional:updateAll']    
+    ###############################
+
+    ## ENDPOINTS TO MANAGE PILOT STUDIES ##
+    - host: '*'
+      paths: ['/pilotstudies']
+      methods: ['POST']
+      scopes: ['pilotstudy:create']
+
+    - host: '*'
+      paths: ['/pilotstudies']
+      methods: ['GET']
+      scopes: ['pilotstudy:readAll']
+
+    - host: '*'
+      paths: ['/pilotstudies/:pilotstudy_id']
+      methods: ['GET']
+      scopes: ['pilotstudy:read','pilotstudy:readAll']
+    
+    - host: '*'
+      paths: ['/pilotstudies/:pilotstudy_id']
+      methods: ['PATCH']
+      scopes: ['pilotstudy:update', 'pilotstudy:updateAll']
+    
+    - host: '*'
+      paths: ['/pilotstudies/:pilotstudy_id']
+      methods: ['DELETE']
+      scopes: ['pilotstudy:deleteAll']
+    ######################################
+    
+    ## ENDPOINTS TO GET PILOTSTUDIES ASSOCIED  ##
+    - host: '*'
+      paths: ['/users/healthprofessionals/:healthprofessional_id/pilotstudies']
+      methods: ['GET']
+      scopes: ['pilotstudy:read', 'pilotstudy:readAll']
+
+    ## ENDPOINTS TO MANAGE HEALTH PROFESSIONS ASSOCIATION WITH A PILOT STUDY ##
+    - host: '*'
+      paths: ['/pilotstudies/:pilotstudy_id/healthprofessionals']
+      methods: ['GET']
+      scopes: ['pilotstudy:read', 'pilotstudy:readAll']
+
+    - host: '*'
+      paths: ['/pilotstudies/:pilotstudy_id/healthprofessionals/:patient_id']
+      methods: ['POST']
+      scopes: ['pilotstudy:create']    
+
+    - host: '*'
+      paths: ['/pilotstudies/:pilotstudy_id/healthprofessionals/:patient_id']
+      methods: ['DELETE']
+      scopes: ['pilotstudy:delete','pilotstudy:deleteAll']
+    ######################################
+
+################ ACCOUNT API PRIVATE END #####################################
+
+####### EHR API PRIVATE ########
+  ehrPrivate:
+    ## ENDPOINTS TO MANAGE PATIENTS ##
+    - host: '*'
+      paths: ['/pilotstudies/:pilotstudy_id/patients']
+      methods: ['POST']
+      scopes: ['patient:create']
+
+    - host: '*'
+      paths: ['/pilotstudies/:pilotstudy_id/patients']
+      methods: ['GET']
+      scopes: ['patient:readAll'] 
+    
+    - host: '*'
+      paths: ['/pilotstudies/:pilotstudy_id/patients/:patient_id']
+      methods: ['GET']
+      scopes: ['patient:read','patient:readAll'] 
+    
+    - host: '*'
+      paths: ['/pilotstudies/:pilotstudy_id/patients/:patient_id']
+      methods: ['PATCH']
+      scopes: ['patient:update','patient:updateAll'] 
+    
+    - host: '*'
+      paths: ['/pilotstudies/:pilotstudy_id/patients/:patient_id']
+      methods: ['DELETE']
+      scopes: ['patient:delete','patient:deleteAll']     
+    
+    ###############################
+
+    ## ENDPOINTS TO MANAGE SLEEPHABITS ##
+    - host: '*'
+      paths: ['/patients/:patient_id/sleephabits']
+      methods: ['POST']
+      scopes: []
+
+    - host: '*'
+      paths: ['/patients/:patient_id/sleephabits']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/sleephabits/:sleephabit_id']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/sleephabits/:sleephabit_id']
+      methods: ['PATCH']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/sleephabits/:sleephabit_id']
+      methods: ['DELETE']
+      scopes: []
+    ###############################
+
+    ## ENDPOINTS TO MANAGE PHYSICALACTIVITYHABITS ##
+    - host: '*'
+      paths: ['/patients/:patient_id/physicalactivityhabits']
+      methods: ['POST']
+      scopes: []
+
+    - host: '*'
+      paths: ['/patients/:patient_id/physicalactivityhabits']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/physicalactivityhabits/:physicalactivityhabits_id']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/physicalactivityhabits/:physicalactivityhabits_id']
+      methods: ['PATCH']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/physicalactivityhabits/:physicalactivityhabits_id']
+      methods: ['DELETE']
+      scopes: []
+    ###############################
+
+    ## ENDPOINTS TO MANAGE FEEDINGHABITSRECORDS ##
+    - host: '*'
+      paths: ['/patients/:patient_id/feedinghabitsrecords']
+      methods: ['POST']
+      scopes: []
+
+    - host: '*'
+      paths: ['/patients/:patient_id/feedinghabitsrecords']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/feedinghabitsrecords/:feedinghabitsrecord_id']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/feedinghabitsrecords/:feedinghabitsrecord_id']
+      methods: ['PATCH']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/feedinghabitsrecords/:feedinghabitsrecord_id']
+      methods: ['DELETE']
+      scopes: []
+    ###############################
+
+    ## ENDPOINTS TO MANAGE MEDICALRECORDS ##
+    - host: '*'
+      paths: ['/patients/:patient_id/medicalrecords']
+      methods: ['POST']
+      scopes: []
+
+    - host: '*'
+      paths: ['/patients/:patient_id/medicalrecords']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/medicalrecords/:medicalrecord_id']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/medicalrecords/:medicalrecord_id']
+      methods: ['PATCH']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/medicalrecords/:medicalrecord_id']
+      methods: ['DELETE']
+      scopes: []
+    ###############################
+
+############### EHR API PRIVATE END ##########################################
 
 ####### SERVICE ENDPOINTS DEFINITIONS ########
 serviceEndpoints:
   accountService:
-    url: ${ACCOUNT_SERVICE}
+    url: ${ACCOUNT_SERVICE:-http://localhost:5000}
+  
+  ehrService:
+    url: ${EHR_SERVICE:-http://localhost:3000}
 
 ####### POLICIES USED IN PIPELINES DEFINITION ########
 policies:
@@ -66,37 +274,30 @@ policies:
   - haniot-auth-policy
   - haniot-body-parser-policy
   - haniot-delete-user-policy
+
 ####### PIPELINES DEFINITION ########
 #### Pipeline no manage data coming from ACCOUNT PRIVATE and PUBLIC APIs ####
-
 pipelines:
-  - name: privatePipeline
+
+  ##################### PIPELINE PRIVATE ACCOUNT SERVICE ####################
+  - name: privateAcountServicePipeline
     apiEndpoints:
       - accountPrivate
     policies: 
-      - haniot-body-parser-policy:     
-      - haniot-auth-policy:
-        - 
-          condition:
-            name: 'is-auth'
-            authpath: '/api/v1/users/auth'
-          action:
-            urlauthservice: ${ACCOUNT_SERVICE}/api/v1/users/auth
-            secretOrPublicKey: ${SECRET_JWT}
-            issuer: ${ISSUER}
+      - haniot-body-parser-policy:
       - haniot-jwt-policy:
           - action:
-              secretOrPublicKey: ${SECRET_JWT}
-              issuer: ${ISSUER}
+              secretOrPublicKey: ${JWT_SECRET:-haniot123}
+              issuer: ${ISSUER:-haniot}
       - haniot-jwtScopes-policy:
       - haniot-delete-user-policy:
         - 
           condition:
             name: 'is-delete'
             #deletepath é uma expressão regular
-            deletepath: '/api/v1/users/\S*'
+            deletepath: '^(\/users\/)[a-fA-F0-9]{24}$'
           action:
-            urldeleteservice: ${ACCOUNT_SERVICE}/api/v1/users            
+            urldeleteservice: ${ACCOUNT_SERVICE:-http://localhost:5000}/users
       - proxy:
           - action:
               prependPath:  true
@@ -104,15 +305,47 @@ pipelines:
               stripPath:    false
               changeOrigin: true 
               serviceEndpoint: accountService
+  ###########################################################################
 
-  - name: publicPipeline
+  ##################### PIPELINE PUBLIC ACCOUNT SERVICE ####################
+  - name: publicAccountServicePipeline
     apiEndpoints:
       - accountPublic
-    policies:       
+    policies:
+      - haniot-body-parser-policy:
+      - haniot-auth-policy:
+        - 
+          condition:
+            name: 'is-auth'
+            authpath: '/auth'
+          action:
+            urlauthservice: ${ACCOUNT_SERVICE:-http://localhost:5000}/auth
+            secretOrPublicKey: ${JWT_SECRET:-haniot123}
+            issuer: ${ISSUER:-haniot}
       - proxy:
           - action:
               prependPath:  true
               ignorePath:   false
               stripPath:    false
               changeOrigin: true 
-              serviceEndpoint: accountService 
+              serviceEndpoint: accountService
+  ###########################################################################
+
+  ##################### PIPELINE PRIVATE EHR SERVICE ####################
+  - name: privateEHRServicePipeline
+    apiEndpoints:
+      - ehrPrivate
+    policies: 
+      - haniot-jwt-policy:
+          - action:
+              secretOrPublicKey: ${JWT_SECRET:-haniot123}
+              issuer: ${ISSUER:-haniot}
+      - haniot-jwtScopes-policy:    
+      - proxy:
+          - action:
+              prependPath:  true
+              ignorePath:   false
+              stripPath:    false
+              changeOrigin: true 
+              serviceEndpoint: ehrService
+    ###########################################################################
