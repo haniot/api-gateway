@@ -294,29 +294,110 @@ apiEndpoints:
 
     - host: '*'
       paths: ['/users/:user_id/measurements']
+      methods: ['GET']
+      scopes: ['measurement:read','measurement:readAll']     
+    ###############################
+
+    ## ENDPOINTS TO MANAGE WEIGHT TYPE MEASUREMENTS ##
+    - host: '*'
+      paths: ['/users/:user_id/measurements/weight']
       methods: ['POST']
       scopes: ['measurement:create']
-
+    
     - host: '*'
-      paths: ['/users/:user_id/measurements']
+      paths: ['/users/:user_id/measurements/weight/:weight_id']
       methods: ['GET']
-      scopes: ['measurement:readAll'] 
+      scopes: ['measurement:read','measurement:readAll']
     
     - host: '*'
-      paths: ['/users/:user_id/measurements/:measurement_id']
-      methods: ['GET']
-      scopes: ['measurement:read','measurement:readAll'] 
-    
-    - host: '*'
-      paths: ['/users/:user_id/measurements/:measurement_id']
-      methods: ['PATCH']
-      scopes: ['measurement:update','measurement:updateAll'] 
-    
-    - host: '*'
-      paths: ['/users/:user_id/measurements/:measurement_id']
+      paths: ['/users/:user_id/measurements/weight/:weight_id']
       methods: ['DELETE']
-      scopes: ['measurement:delete','measurement:deleteAll']     
+      scopes: ['measurement:delete','measurement:deleteAll']  
+    ###############################
+
+    ## ENDPOINTS TO MANAGE BLOODGLUCOSE TYPE MEASUREMENTS ##
+    - host: '*'
+      paths: ['/users/:user_id/measurements/bloodglucose']
+      methods: ['POST']
+      scopes: ['measurement:create']
     
+    - host: '*'
+      paths: ['/users/:user_id/measurements/bloodglucose/:bloodglucose_id']
+      methods: ['GET']
+      scopes: ['measurement:read','measurement:readAll']
+    
+    - host: '*'
+      paths: ['/users/:user_id/measurements/bloodglucose/:bloodglucose_id']
+      methods: ['DELETE']
+      scopes: ['measurement:delete','measurement:deleteAll']  
+    ###############################
+
+    ## ENDPOINTS TO MANAGE HEARTRATE TYPE MEASUREMENTS ##
+    - host: '*'
+      paths: ['/users/:user_id/measurements/heartrate']
+      methods: ['POST']
+      scopes: ['measurement:create']
+    
+    - host: '*'
+      paths: ['/users/:user_id/measurements/heartrate/:heartrate_id']
+      methods: ['GET']
+      scopes: ['measurement:read','measurement:readAll']
+    
+    - host: '*'
+      paths: ['/users/:user_id/measurements/heartrate/:heartrate_id']
+      methods: ['DELETE']
+      scopes: ['measurement:delete','measurement:deleteAll']  
+    ###############################
+
+    ## ENDPOINTS TO MANAGE BLOODPRESSURE TYPE MEASUREMENTS ##
+    - host: '*'
+      paths: ['/users/:user_id/measurements/bloodpressure']
+      methods: ['POST']
+      scopes: ['measurement:create']
+    
+    - host: '*'
+      paths: ['/users/:user_id/measurements/bloodpressure/:bloodpressure_id']
+      methods: ['GET']
+      scopes: ['measurement:read','measurement:readAll']
+    
+    - host: '*'
+      paths: ['/users/:user_id/measurements/bloodpressure/:bloodpressure_id']
+      methods: ['DELETE']
+      scopes: ['measurement:delete','measurement:deleteAll']  
+    ###############################
+
+    ## ENDPOINTS TO MANAGE ANTHROPOMETRIC TYPE MEASUREMENTS ##
+    - host: '*'
+      paths: ['/users/:user_id/measurements/anthropometric']
+      methods: ['POST']
+      scopes: ['measurement:create']
+    
+    - host: '*'
+      paths: ['/users/:user_id/measurements/anthropometric/:anthropometric_id']
+      methods: ['GET']
+      scopes: ['measurement:read','measurement:readAll']
+    
+    - host: '*'
+      paths: ['/users/:user_id/measurements/anthropometric/:anthropometric_id']
+      methods: ['DELETE']
+      scopes: ['measurement:delete','measurement:deleteAll']  
+    ###############################
+
+    ## ENDPOINTS TO MANAGE BODYTEMPERATURE TYPE MEASUREMENTS ##
+    - host: '*'
+      paths: ['/users/:user_id/measurements/bodytemperature']
+      methods: ['POST']
+      scopes: ['measurement:create']
+    
+    - host: '*'
+      paths: ['/users/:user_id/measurements/bodytemperature/:bodytemperature_id']
+      methods: ['GET']
+      scopes: ['measurement:read','measurement:readAll']
+    
+    - host: '*'
+      paths: ['/users/:user_id/measurements/bodytemperature/:bodytemperature_id']
+      methods: ['DELETE']
+      scopes: ['measurement:delete','measurement:deleteAll']  
     ###############################
 
 ############### MHEALTH API PRIVATE END ##########################################
