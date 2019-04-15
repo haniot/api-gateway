@@ -1,8 +1,9 @@
 {
-  "name": "ocariot-api-gateway",
+  "name": "haniot-api-gateway",
   "description": "Express Gateway Instance Bootstraped from Command Line",
   "repository": {},
-  "license": "UNLICENSED",
+  "author": "NUTES/UEPB",
+  "license": "MIT",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
