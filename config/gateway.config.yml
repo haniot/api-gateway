@@ -14,6 +14,7 @@ apiEndpoints:
     - host: '*'
       paths: ['/auth']
       methods: ['POST']
+####### ACCOUNT API PUBLIC END ########
 
 ####### ACCOUNT API PRIVATE ########
   accountPrivate:
@@ -256,6 +257,60 @@ apiEndpoints:
 
 ############### EHR API PRIVATE END ##########################################
 
+####### MHEALTH API PRIVATE ########
+  mhealthPrivate:
+    ## ENDPOINTS TO MANAGE DEVICES ##
+    - host: '*'
+      paths: ['/users/:user_id/devices']
+      methods: ['POST']
+      scopes: ['device:create']
+
+    - host: '*'
+      paths: ['/users/:user_id/devices']
+      methods: ['GET']
+      scopes: ['device:readAll'] 
+    
+    - host: '*'
+      paths: ['/users/:user_id/devices/:device_id']
+      methods: ['GET']
+      scopes: ['device:read','device:readAll'] 
+    
+    - host: '*'
+      paths: ['/users/:user_id/devices/:device_id']
+      methods: ['DELETE']
+      scopes: ['device:delete','device:deleteAll']       
+    ###############################
+
+    ## ENDPOINTS TO MANAGE MEASUREMENTS ##
+    - host: '*'
+      paths: ['/measurements']
+      methods: ['GET']
+      scopes: ['measurement:readAll'] 
+
+    - host: '*'
+      paths: ['/users/:user_id/measurements']
+      methods: ['GET']
+      scopes: ['measurement:read','measurement:readAll']     
+   
+    - host: '*'
+      paths: ['/users/:user_id/measurements']
+      methods: ['POST']
+      scopes: ['measurement:create']
+    
+    - host: '*'
+      paths: ['/users/:user_id/measurements/:measurement_id']
+      methods: ['GET']
+      scopes: ['measurement:read','measurement:readAll']
+    
+    - host: '*'
+      paths: ['/users/:user_id/measurements/:measurement_id']
+      methods: ['DELETE']
+      scopes: ['measurement:delete','measurement:deleteAll']  
+    ###############################
+
+############### MHEALTH API PRIVATE END ##########################################
+
+
 ####### SERVICE ENDPOINTS DEFINITIONS ########
 serviceEndpoints:
   accountService:
@@ -263,6 +318,9 @@ serviceEndpoints:
   
   ehrService:
     url: ${EHR_SERVICE:-http://localhost:3000}
+
+  mhealthService:
+    url: ${MHEALTH_SERVICE:-http://localhost:4000}
 
 ####### POLICIES USED IN PIPELINES DEFINITION ########
 policies:
@@ -348,4 +406,23 @@ pipelines:
               stripPath:    false
               changeOrigin: true 
               serviceEndpoint: ehrService
+    ###########################################################################
+
+  ##################### PIPELINE PRIVATE MHEALTH SERVICE ####################
+  - name: privateMHEALTHServicePipeline
+    apiEndpoints:
+      - mhealthPrivate
+    policies: 
+      - haniot-jwt-policy:
+          - action:
+              secretOrPublicKey: ${JWT_SECRET:-haniot123}
+              issuer: ${ISSUER:-haniot}
+      - haniot-jwtScopes-policy:    
+      - proxy:
+          - action:
+              prependPath:  true
+              ignorePath:   false
+              stripPath:    false
+              changeOrigin: true 
+              serviceEndpoint: mhealthService
     ###########################################################################
