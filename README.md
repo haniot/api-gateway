@@ -1,3 +1,9 @@
+# HANIoT API GATEWAY
+
+[![node](https://img.shields.io/badge/node-v10.15.3-red.svg?style=?style=flat-square&logo=node.js)](https://nodejs.org/)
+[![npm](https://img.shields.io/badge/npm-v6.4.1-red.svg?style=flat-square&logo=npm)](https://nodejs.org/)
+[![express-gateway](https://img.shields.io/badge/ExpressGateway-v1.10.2-green.svg?style=flat-square)](https://www.express-gateway.io/)
+
 # Docker
 
 

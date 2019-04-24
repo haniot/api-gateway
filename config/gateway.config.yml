@@ -255,6 +255,87 @@ apiEndpoints:
       scopes: []
     ###############################
 
+    ## ENDPOINTS TO MANAGE SOCIODEMOGRAPHICRECORDS ##
+    - host: '*'
+      paths: ['/patients/:patient_id/sociodemographicrecords']
+      methods: ['POST']
+      scopes: []
+
+    - host: '*'
+      paths: ['/patients/:patient_id/sociodemographicrecords']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/sociodemographicrecords/:sociodemographicrecord_id']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/sociodemographicrecords/:sociodemographicrecord_id']
+      methods: ['PATCH']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/sociodemographicrecords/:sociodemographicrecord_id']
+      methods: ['DELETE']
+      scopes: []
+    ###############################
+
+    ## ENDPOINTS TO MANAGE FAMILYCOHESIONRECORDS ##
+    - host: '*'
+      paths: ['/patients/:patient_id/familycohesionrecords']
+      methods: ['POST']
+      scopes: []
+
+    - host: '*'
+      paths: ['/patients/:patient_id/familycohesionrecords']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/familycohesionrecords/:familycohesionrecord_id']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/familycohesionrecords/:familycohesionrecord_id']
+      methods: ['PATCH']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/familycohesionrecords/:familycohesionrecord_id']
+      methods: ['DELETE']
+      scopes: []
+    ###############################
+
+    ## ENDPOINTS TO MANAGE ORALHEALTHRECORDS ##
+    - host: '*'
+      paths: ['/patients/:patient_id/oralhealthrecords']
+      methods: ['POST']
+      scopes: []
+
+    - host: '*'
+      paths: ['/patients/:patient_id/oralhealthrecords']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/oralhealthrecords/:oralhealthrecord_id']
+      methods: ['GET']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/oralhealthrecords/:oralhealthrecord_id']
+      methods: ['PATCH']
+      scopes: [] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/oralhealthrecords/:oralhealthrecord_id']
+      methods: ['DELETE']
+      scopes: []
+    ###############################
+
 ############### EHR API PRIVATE END ##########################################
 
 ####### MHEALTH API PRIVATE ########
