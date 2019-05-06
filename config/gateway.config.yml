@@ -259,81 +259,81 @@ apiEndpoints:
     - host: '*'
       paths: ['/patients/:patient_id/sociodemographicrecords']
       methods: ['POST']
-      scopes: []
+      scopes: ['forms:create']
 
     - host: '*'
       paths: ['/patients/:patient_id/sociodemographicrecords']
       methods: ['GET']
-      scopes: [] 
+      scopes: ['forms:read'] 
     
     - host: '*'
       paths: ['/patients/:patient_id/sociodemographicrecords/:sociodemographicrecord_id']
       methods: ['GET']
-      scopes: [] 
+      scopes: ['forms:read']
     
     - host: '*'
       paths: ['/patients/:patient_id/sociodemographicrecords/:sociodemographicrecord_id']
       methods: ['PATCH']
-      scopes: [] 
+      scopes: ['forms:update'] 
     
     - host: '*'
       paths: ['/patients/:patient_id/sociodemographicrecords/:sociodemographicrecord_id']
       methods: ['DELETE']
-      scopes: []
+      scopes: ['forms:delete']
     ###############################
 
     ## ENDPOINTS TO MANAGE FAMILYCOHESIONRECORDS ##
     - host: '*'
       paths: ['/patients/:patient_id/familycohesionrecords']
       methods: ['POST']
-      scopes: []
+      scopes: ['forms:create']
 
     - host: '*'
       paths: ['/patients/:patient_id/familycohesionrecords']
       methods: ['GET']
-      scopes: [] 
+      scopes: ['forms:read'] 
     
     - host: '*'
       paths: ['/patients/:patient_id/familycohesionrecords/:familycohesionrecord_id']
       methods: ['GET']
-      scopes: [] 
+      scopes: ['forms:read']
     
     - host: '*'
       paths: ['/patients/:patient_id/familycohesionrecords/:familycohesionrecord_id']
       methods: ['PATCH']
-      scopes: [] 
+      scopes: ['forms:update']
     
     - host: '*'
       paths: ['/patients/:patient_id/familycohesionrecords/:familycohesionrecord_id']
       methods: ['DELETE']
-      scopes: []
+      scopes: ['forms:delete']
     ###############################
 
     ## ENDPOINTS TO MANAGE ORALHEALTHRECORDS ##
     - host: '*'
       paths: ['/patients/:patient_id/oralhealthrecords']
       methods: ['POST']
-      scopes: []
+      scopes: ['forms:create']
 
     - host: '*'
       paths: ['/patients/:patient_id/oralhealthrecords']
       methods: ['GET']
-      scopes: [] 
+      scopes: ['forms:read'] 
     
     - host: '*'
       paths: ['/patients/:patient_id/oralhealthrecords/:oralhealthrecord_id']
       methods: ['GET']
-      scopes: [] 
+      scopes: ['forms:read']
     
     - host: '*'
       paths: ['/patients/:patient_id/oralhealthrecords/:oralhealthrecord_id']
       methods: ['PATCH']
-      scopes: [] 
+      scopes: ['forms:update']
     
     - host: '*'
       paths: ['/patients/:patient_id/oralhealthrecords/:oralhealthrecord_id']
       methods: ['DELETE']
-      scopes: []
+      scopes: ['forms:delete']
     ###############################
 
 ############### EHR API PRIVATE END ##########################################
