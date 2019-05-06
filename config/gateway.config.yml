@@ -344,49 +344,49 @@ apiEndpoints:
     - host: '*'
       paths: ['/users/:user_id/devices']
       methods: ['POST']
-      scopes: []
+      scopes: ['devices:create']
 
     - host: '*'
       paths: ['/users/:user_id/devices']
       methods: ['GET']
-      scopes: [] 
+      scopes: ['devices:read'] 
     
     - host: '*'
       paths: ['/users/:user_id/devices/:device_id']
       methods: ['GET']
-      scopes: [] 
+      scopes: ['devices:read'] 
     
     - host: '*'
       paths: ['/users/:user_id/devices/:device_id']
       methods: ['DELETE']
-      scopes: []       
+      scopes: ['devices:delete']       
     ###############################
 
     ## ENDPOINTS TO MANAGE MEASUREMENTS ##
     - host: '*'
       paths: ['/measurements']
       methods: ['GET']
-      scopes: [] 
+      scopes: ['measurements:readAll'] 
 
     - host: '*'
       paths: ['/users/:user_id/measurements']
       methods: ['GET']
-      scopes: []     
+      scopes: ['measurements:read']     
    
     - host: '*'
       paths: ['/users/:user_id/measurements']
       methods: ['POST']
-      scopes: []
+      scopes: ['measurements:create']
     
     - host: '*'
       paths: ['/users/:user_id/measurements/:measurement_id']
       methods: ['GET']
-      scopes: []
+      scopes: ['measurements:read']
     
     - host: '*'
       paths: ['/users/:user_id/measurements/:measurement_id']
       methods: ['DELETE']
-      scopes: []  
+      scopes: ['measurements:delete']  
     ###############################
 
 ############### MHEALTH API PRIVATE END ##########################################
