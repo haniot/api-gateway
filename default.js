@@ -20,6 +20,4 @@ module.exports = {
     AUTO_GENERATE_SSL_CERTIFICATE: true, // Indicates whether to create the SSL certificate automatically.
     SSL_PRIVATE_KEY_PATH: './.certs/tls.key', // SSL certificate private key
     SSL_CERT_PATH: './.certs/tls.pem', // SSL certificate (public key0)
-    HTTPS_DOMAIN: ['haniot.nutes.uepb.edu.br', 'www.haniot.nutes.uepb.edu.br'], // Domain used to generate HTTPS certificates in production environment
-    HTTPS_MAIL: 'haniot.nutes@nutes.uepb.edu.br' // Email used to generate HTTPS certificates in production environment
 }
