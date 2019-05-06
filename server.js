@@ -16,7 +16,6 @@ const AUTO_GENERATE_SSL = process.env.GENERATE_SELF_SIGNED_CERT || defaults.AUTO
 const NODE_ENV = process.env.NODE_ENV || defaults.NODE_ENV
 let jwt_public_key_interval = undefined
 
-require('le-store-certbot')
 if (AUTO_GENERATE_SSL === 'true') {
     generateSelfSignedSSL()
         .then(res => {
