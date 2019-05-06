@@ -3,7 +3,6 @@ const axios = require('axios');
 const usersSrv = require('express-gateway/lib/services').user;
 
 s.createUser = function (userData) {
-
     return axios.request({
         method: 'POST',
         url: 'http://accountservice:5000/api/v1/users',

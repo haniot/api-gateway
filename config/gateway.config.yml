@@ -1,6 +1,13 @@
 http:
   port: ${PORT_HTTP:-8080}
   hostname: 0.0.0.0
+https:
+  port: ${PORT_HTTPS:-443}
+  hostname: '0.0.0.0'
+  tls:
+    default:
+      key: ${SSL_PRIVATE_KEY_PATH:-.certs/tls.key}
+      cert: ${SSL_CERT_PATH:-.certs/tls.pem}
 
 ####### API ENDPOINTS DEFINITION ########
 apiEndpoints:
