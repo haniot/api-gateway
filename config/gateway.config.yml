@@ -89,7 +89,7 @@ apiEndpoints:
     - host: '*'
       paths: ['/pilotstudies/:pilotstudy_id']
       methods: ['DELETE']
-      scopes: ['pilots:deleteAll']
+      scopes: ['pilots:delete']
     ######################################
     
     ## ENDPOINTS TO GET PILOTSTUDIES ASSOCIED  ##
