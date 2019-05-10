@@ -62,8 +62,31 @@ apiEndpoints:
     - host: '*'
       paths: ['/users/:user_id']
       methods: ['DELETE']
-      scopes: ['admins:delete','healthprofessionals:delete']    
+      scopes: ['admins:delete','healthprofessionals:delete','patients:delete']    
     ###############################
+
+    ## ENDPOINTS TO MANAGE PATIENTS ##
+    - host: '*'
+      paths: ['/users/patients']
+      methods: ['POST']
+      scopes: ['patients:create']
+
+    - host: '*'
+      paths: ['/users/patients']
+      methods: ['GET']
+      scopes: ['patients:readAll']
+
+    - host: '*'
+      paths: ['/users/patients/:patient_id']
+      methods: ['GET']
+      scopes: ['patients:read']
+    
+    - host: '*'
+      paths: ['/users/patients/:patient_id']
+      methods: ['PATCH']
+      scopes: ['patients:update']
+
+    ######################################
 
     ## ENDPOINTS TO MANAGE PILOT STUDIES ##
     - host: '*'
@@ -119,34 +142,6 @@ apiEndpoints:
 
 ####### EHR API PRIVATE ########
   ehrPrivate:
-    ## ENDPOINTS TO MANAGE PATIENTS ##
-    - host: '*'
-      paths: ['/pilotstudies/:pilotstudy_id/patients']
-      methods: ['POST']
-      scopes: ['patients:create']
-
-    - host: '*'
-      paths: ['/pilotstudies/:pilotstudy_id/patients']
-      methods: ['GET']
-      scopes: ['patients:read'] 
-    
-    - host: '*'
-      paths: ['/pilotstudies/:pilotstudy_id/patients/:patient_id']
-      methods: ['GET']
-      scopes: ['patients:read'] 
-    
-    - host: '*'
-      paths: ['/pilotstudies/:pilotstudy_id/patients/:patient_id']
-      methods: ['PATCH']
-      scopes: ['patients:update'] 
-    
-    - host: '*'
-      paths: ['/pilotstudies/:pilotstudy_id/patients/:patient_id']
-      methods: ['DELETE']
-      scopes: ['patients:delete']     
-    
-    ###############################
-
     ## ENDPOINTS TO MANAGE SLEEPHABITS ##
     - host: '*'
       paths: ['/patients/:patient_id/sleephabits']
