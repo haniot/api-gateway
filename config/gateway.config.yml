@@ -386,6 +386,50 @@ apiEndpoints:
 
 ############### MHEALTH API PRIVATE END ##########################################
 
+####### ANALYTICS API PRIVATE ########
+  analyticsPrivate:
+
+    ## ENDPOINTS TO MANAGE EVALUATIONS ##
+    - host: '*'
+      paths: ['/evaluations']
+      methods: ['GET']
+      scopes: ['evaluations:readAll']
+    ###############################
+
+    ## ENDPOINTS TO MANAGE NUTRITION EVALUATIONS ##
+    - host: '*'
+      paths: ['/nutritional/evaluations']
+      methods: ['GET']
+      scopes: ['evaluations:readAll']
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/nutritional/evaluations']
+      methods: ['POST']
+      scopes: ['evaluations:create'] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/nutritional/evaluations']
+      methods: ['GET']
+      scopes: ['evaluations:read'] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/nutritional/evaluations/:evaluation_id']
+      methods: ['PATCH']
+      scopes: ['evaluations:update']
+
+    - host: '*'
+      paths: ['/pilotstudies/:pilotstudy_id/nutritional/evaluations']
+      methods: ['GET']
+      scopes: ['evaluations:read'] 
+
+    - host: '*'
+      paths: ['/healthprofessionals/:healthprofessional_id/nutritional/evaluations']
+      methods: ['GET']
+      scopes: ['evaluations:read']        
+    ###############################
+
+############### ANALYTICS API PRIVATE END ##########################################
+  
 
 ####### SERVICE ENDPOINTS DEFINITIONS ########
 serviceEndpoints:
@@ -397,6 +441,9 @@ serviceEndpoints:
 
   mhealthService:
     url: ${MHEALTH_SERVICE:-http://localhost:4000}
+  
+  analyticsService:
+    url: ${ANALYTICS_SERVICE:-http://localhost:6000}
 
 ####### POLICIES USED IN PIPELINES DEFINITION ########
 policies:
@@ -408,6 +455,7 @@ policies:
   - haniot-auth-policy
   - haniot-body-parser-policy
   - haniot-delete-user-policy
+  - cors
 
 ####### PIPELINES DEFINITION ########
 #### Pipeline no manage data coming from ACCOUNT PRIVATE and PUBLIC APIs ####
@@ -501,4 +549,23 @@ pipelines:
               stripPath:    false
               changeOrigin: true 
               serviceEndpoint: mhealthService
+    ###########################################################################
+
+    ##################### PIPELINE PRIVATE ANALYTIVS SERVICE ####################
+  - name: privateAnalyticsServicePipeline
+    apiEndpoints:
+      - analyticsPrivate
+    policies: 
+      - haniot-jwt-policy:
+          - action:
+              secretOrPublicKey: ${JWT_SECRET:-haniot123}
+              issuer: ${ISSUER:-haniot}
+      - haniot-jwtScopes-policy:    
+      - proxy:
+          - action:
+              prependPath:  true
+              ignorePath:   false
+              stripPath:    false
+              changeOrigin: true 
+              serviceEndpoint: analyticsService
     ###########################################################################
