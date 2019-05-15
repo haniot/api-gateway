@@ -138,6 +138,14 @@ apiEndpoints:
       scopes: ['pilots:update']
     ######################################
 
+    ## ENDPOINTS TO MANAGE PATIENTS ASSOCIATION WITH A PILOT STUDY ##
+    - host: '*'
+      paths: ['/pilotstudies/:pilotstudy_id/patients']
+      methods: ['GET']
+      scopes: ['patients:read']
+    ######################################
+
+
 ################ ACCOUNT API PRIVATE END #####################################
 
 ####### EHR API PRIVATE ########
@@ -455,7 +463,6 @@ policies:
   - haniot-auth-policy
   - haniot-body-parser-policy
   - haniot-delete-user-policy
-  - cors
 
 ####### PIPELINES DEFINITION ########
 #### Pipeline no manage data coming from ACCOUNT PRIVATE and PUBLIC APIs ####
