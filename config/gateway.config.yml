@@ -424,6 +424,11 @@ apiEndpoints:
       paths: ['/patients/:patient_id/nutritional/evaluations/:evaluation_id']
       methods: ['PATCH']
       scopes: ['evaluations:update']
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/nutritional/evaluations/:evaluation_id/counselings']
+      methods: ['POST']
+      scopes: ['evaluations:update'] 
 
     - host: '*'
       paths: ['/pilotstudies/:pilotstudy_id/nutritional/evaluations']
