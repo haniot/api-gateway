@@ -398,18 +398,20 @@ apiEndpoints:
   analyticsPrivate:
 
     ## ENDPOINTS TO MANAGE EVALUATIONS ##
-    - host: '*'
-      paths: ['/evaluations']
-      methods: ['GET']
-      scopes: ['evaluations:readAll']
+    # DEPRECATED
+    # - host: '*'
+    #   paths: ['/evaluations']
+    #   methods: ['GET']
+    #   scopes: ['evaluations:readAll']
     ###############################
 
     ## ENDPOINTS TO MANAGE NUTRITION EVALUATIONS ##
-    - host: '*'
-      paths: ['/nutritional/evaluations']
-      methods: ['GET']
-      scopes: ['evaluations:readAll']
+    # - host: '*'
+    #   paths: ['/nutritional/evaluations']
+    #   methods: ['GET']
+    #   scopes: ['evaluations:readAll']
     
+    ## ENDPOINTS TO MANAGE NUTRITIONAL EVALUATIONS ##
     - host: '*'
       paths: ['/patients/:patient_id/nutritional/evaluations']
       methods: ['POST']
@@ -422,19 +424,32 @@ apiEndpoints:
     
     - host: '*'
       paths: ['/patients/:patient_id/nutritional/evaluations/:evaluation_id']
-      methods: ['PATCH']
-      scopes: ['evaluations:update']
-    
+      methods: ['DELETE']
+      scopes: ['evaluations:delete']
+    ####################################
+
+    ## ENDPOINTS TO MANAGE COUNSELINGS FOR A NUTRITIONAL EVALUATIONS ##
     - host: '*'
       paths: ['/patients/:patient_id/nutritional/evaluations/:evaluation_id/counselings']
       methods: ['POST']
       scopes: ['evaluations:update'] 
+    ####################################
 
+    ## ENDPOINTS TO MANAGE NUTRITIONAL EVALUATIONS FOR A PILOTSTUDY ##
     - host: '*'
       paths: ['/pilotstudies/:pilotstudy_id/nutritional/evaluations']
       methods: ['GET']
       scopes: ['evaluations:read'] 
+    ####################################
 
+    ## ENDPOINTS TO MANAGE ODONTOLOGICAL EVALUATIONS FOR A PILOTSTUDY ##
+    - host: '*'
+      paths: ['/pilotstudies/:pilotstudy_id/odontological/evaluations']
+      methods: ['GET']
+      scopes: ['evaluations:read'] 
+    ####################################
+
+    ## ENDPOINTS TO MANAGE EVALUATIONS FOR A HEALTHPROFESSIONAL ##
     - host: '*'
       paths: ['/healthprofessionals/:healthprofessional_id/nutritional/evaluations']
       methods: ['GET']
