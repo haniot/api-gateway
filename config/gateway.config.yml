@@ -150,6 +150,14 @@ apiEndpoints:
 
 ####### EHR API PRIVATE ########
   ehrPrivate:
+    
+    ## ENDPOINTS TO RECOVER THE LAST QUESTIONNAIRES ##
+    - host: '*'
+      paths: ['/patients/:patient_id/questionnaires']
+      methods: ['GET']
+      scopes: ['forms:read']
+    ##################################################
+
     ## ENDPOINTS TO MANAGE SLEEPHABITS ##
     - host: '*'
       paths: ['/patients/:patient_id/sleephabits']
@@ -343,28 +351,6 @@ apiEndpoints:
 
 ####### MHEALTH API PRIVATE ########
   mhealthPrivate:
-    ## ENDPOINTS TO MANAGE DEVICES ##
-    - host: '*'
-      paths: ['/users/:user_id/devices']
-      methods: ['POST']
-      scopes: ['devices:create']
-
-    - host: '*'
-      paths: ['/users/:user_id/devices']
-      methods: ['GET']
-      scopes: ['devices:read'] 
-    
-    - host: '*'
-      paths: ['/users/:user_id/devices/:device_id']
-      methods: ['GET']
-      scopes: ['devices:read'] 
-    
-    - host: '*'
-      paths: ['/users/:user_id/devices/:device_id']
-      methods: ['DELETE']
-      scopes: ['devices:delete']       
-    ###############################
-
     ## ENDPOINTS TO MANAGE MEASUREMENTS ##
     - host: '*'
       paths: ['/measurements']
@@ -392,6 +378,28 @@ apiEndpoints:
       scopes: ['measurements:delete']  
     ###############################
 
+    ## ENDPOINTS TO MANAGE DEVICES ##
+    - host: '*'
+      paths: ['/users/:user_id/devices']
+      methods: ['POST']
+      scopes: ['devices:create']
+
+    - host: '*'
+      paths: ['/users/:user_id/devices']
+      methods: ['GET']
+      scopes: ['devices:read'] 
+    
+    - host: '*'
+      paths: ['/users/:user_id/devices/:device_id']
+      methods: ['GET']
+      scopes: ['devices:read'] 
+    
+    - host: '*'
+      paths: ['/users/:user_id/devices/:device_id']
+      methods: ['DELETE']
+      scopes: ['devices:delete']       
+    ###############################
+
 ############### MHEALTH API PRIVATE END ##########################################
 
 ####### ANALYTICS API PRIVATE ########
@@ -415,10 +423,15 @@ apiEndpoints:
     - host: '*'
       paths: ['/patients/:patient_id/nutritional/evaluations']
       methods: ['POST']
-      scopes: ['evaluations:create'] 
-    
+      scopes: ['evaluations:create']
+
     - host: '*'
       paths: ['/patients/:patient_id/nutritional/evaluations']
+      methods: ['GET']
+      scopes: ['evaluations:read'] 
+    
+    - host: '*'
+      paths: ['/patients/:patient_id/nutritional/evaluations/:evaluation_id']
       methods: ['GET']
       scopes: ['evaluations:read'] 
     
@@ -442,19 +455,34 @@ apiEndpoints:
       scopes: ['evaluations:read'] 
     ####################################
 
-    ## ENDPOINTS TO MANAGE ODONTOLOGICAL EVALUATIONS FOR A PILOTSTUDY ##
-    - host: '*'
-      paths: ['/pilotstudies/:pilotstudy_id/odontological/evaluations']
-      methods: ['GET']
-      scopes: ['evaluations:read'] 
-    ####################################
-
     ## ENDPOINTS TO MANAGE EVALUATIONS FOR A HEALTHPROFESSIONAL ##
     - host: '*'
       paths: ['/healthprofessionals/:healthprofessional_id/nutritional/evaluations']
       methods: ['GET']
       scopes: ['evaluations:read']        
     ###############################
+
+    ## ENDPOINTS TO MANAGE ODONTOLOGICAL EVALUATIONS FOR A PILOTSTUDY ##
+    - host: '*'
+      paths: ['/pilotstudies/:pilotstudy_id/odontological/evaluations']
+      methods: ['POST']
+      scopes: ['evaluations:create'] 
+
+    - host: '*'
+      paths: ['/pilotstudies/:pilotstudy_id/odontological/evaluations']
+      methods: ['GET']
+      scopes: ['evaluations:read']
+
+    - host: '*'
+      paths: ['/pilotstudies/:pilotstudy_id/odontological/evaluations/:evaluation_id']
+      methods: ['GET']
+      scopes: ['evaluations:read']
+
+    - host: '*'
+      paths: ['/pilotstudies/:pilotstudy_id/odontological/evaluations/:evaluation_id']
+      methods: ['DELETE']
+      scopes: ['evaluations:delete'] 
+    ####################################
 
 ############### ANALYTICS API PRIVATE END ##########################################
   
