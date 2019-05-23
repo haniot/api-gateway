@@ -511,6 +511,7 @@ policies:
   - haniot-auth-policy
   - haniot-body-parser-policy
   - haniot-delete-user-policy
+  - odontological-evaluation-policy
 
 ####### PIPELINES DEFINITION ########
 #### Pipeline no manage data coming from ACCOUNT PRIVATE and PUBLIC APIs ####
@@ -530,9 +531,10 @@ pipelines:
       - haniot-delete-user-policy:
         - 
           condition:
-            name: 'is-delete'
-            #deletepath é uma expressão regular
-            deletepath: '^(\/users\/)[a-fA-F0-9]{24}$'
+            name: 'regex-path-method'
+            #regexpath é uma expressão regular
+            regexpath: '^(\/users\/)[a-fA-F0-9]{24}$'
+            method: 'DELETE'
           action:
             urldeleteservice: ${ACCOUNT_SERVICE:-http://localhost:5000}/users
       - proxy:
@@ -553,8 +555,10 @@ pipelines:
       - haniot-auth-policy:
         - 
           condition:
-            name: 'is-auth'
-            authpath: '/auth'
+            name: 'regex-path-method'
+            #regexpath é uma expressão regular
+            regexpath: '^(/auth)$'
+            method: 'POST'
           action:
             urlauthservice: ${ACCOUNT_SERVICE:-http://localhost:5000}/auth
             secretOrPublicKey: ${JWT_SECRET:-haniot123}
@@ -611,11 +615,20 @@ pipelines:
     apiEndpoints:
       - analyticsPrivate
     policies: 
-      - haniot-jwt-policy:
-          - action:
-              secretOrPublicKey: ${JWT_SECRET:-haniot123}
-              issuer: ${ISSUER:-haniot}
-      - haniot-jwtScopes-policy:    
+      - haniot-body-parser-policy:
+      # - haniot-jwt-policy:
+      #     - action:
+      #         secretOrPublicKey: ${JWT_SECRET:-haniot123}
+      #         issuer: ${ISSUER:-haniot}
+      # - haniot-jwtScopes-policy:
+      - odontological-evaluation-policy:
+        - 
+          condition:
+            name: 'regex-path-method'
+            #regexpath é uma expressão regular
+            regexpath: '^(/pilotstudies/)[a-fA-F0-9]{24}(/odontological/evaluations)$'
+            method: 'POST'
+          action:    
       - proxy:
           - action:
               prependPath:  true
