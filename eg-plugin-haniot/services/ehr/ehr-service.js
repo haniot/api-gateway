@@ -13,7 +13,7 @@ ehr.getLastQuestionnaires = function (patient_id) {
             url: `${EHR_SERVICE}/patients/${patient_id}/questionnaires/last`
         })
         .then(response => Promise.resolve(response.data))
-        .catch(err => Promise.reject(err));
+        .catch(err => Promise.reject(err.response.data));
 }
 
 module.exports = ehr;

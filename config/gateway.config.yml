@@ -153,7 +153,7 @@ apiEndpoints:
     
     ## ENDPOINTS TO RECOVER THE LAST QUESTIONNAIRES ##
     - host: '*'
-      paths: ['/patients/:patient_id/questionnaires']
+      paths: ['/patients/:patient_id/questionnaires/last']
       methods: ['GET']
       scopes: ['forms:read']
     ##################################################

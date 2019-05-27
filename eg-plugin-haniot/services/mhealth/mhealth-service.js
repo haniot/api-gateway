@@ -19,11 +19,7 @@ mhealth.getMeasurements = function (patient_id, date_start, date_end) {
             }
         })
         .then(response => Promise.resolve(response.data))
-        .catch(err => {
-            console.log('Erro em measurements: ');
-            console.log(err);
-            return Promise.reject(err.data);
-        });
+        .catch(err => Promise.reject(err.response.data));
 }
 
 module.exports = mhealth;

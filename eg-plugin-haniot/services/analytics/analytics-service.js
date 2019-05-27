@@ -8,7 +8,6 @@ const ANALYTICS_SERVICE = process.env.ANALYTICS_SERVICE;
 
 
 analytics.createOdontologicalEvaluation = function (patientsInfo) {
-    console.log('POST odontological/evaluantion', patientsInfo);
     return axios.
         request({
             method: 'POST',
@@ -16,7 +15,7 @@ analytics.createOdontologicalEvaluation = function (patientsInfo) {
             data: patientsInfo
         })
         .then(response => Promise.resolve(response.data))
-        .catch(err => Promise.reject(err));
+        .catch(err => Promise.reject(err.response.data));
 }
 
 module.exports = analytics;

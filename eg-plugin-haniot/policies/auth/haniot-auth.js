@@ -2,7 +2,7 @@
  * Login Policy
  */
 const jwt = require('jsonwebtoken');
-let authService = require('../../services/auth/auth-service');
+let accountService = require('../../services/account/account-service');
 let services = require('express-gateway/lib/services');
 const HttpStatus = require('http-status');
 
@@ -49,7 +49,7 @@ module.exports = function (actionParams, authServiceTest, servicesTest) {
         /**
          * Performing user authentication on the account service
          */
-        return authService.auth(actionParams.urlauthservice, req.body)
+        return accountService.auth(actionParams.urlauthservice, req.body)
             .then(response => {
                 /**
                  * Login successfully, create user on Gateway

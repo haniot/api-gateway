@@ -11,28 +11,44 @@ module.exports = function (actionParams) {
         try {
             const pilotstudy = req.body.pilotstudy;
             if (!pilotstudy) {
-                return res.status(404).send({ 'code': 404, 'message': 'PILOTSTUDY NOT FOUND', 'description': 'A pilot study was not found in the body of the requisition.' });
+                throw new Error('PILOTSTUDY_NOTFOUND');
             }
 
             const health_professional_id = req.body.health_professional_id;
             if (!health_professional_id) {
-                throw new Error('HEALTHPROFESSIONALID_NOTFOUND')
+                throw new Error('HEALTHPROFESSIONALID_NOTFOUND');
             }
 
-            let listOfPatients = new Array();
+            const listOfPatientsInformation = new Array();
 
-            let listOfPatientsInformation = new Array();
-
-            listOfPatients = await account.getAllPatientsByPilotStudyId(pilotstudy.id);
+            const listOfPatients = await account.getAllPatientsByPilotStudyId(pilotstudy.id);
 
             if (listOfPatients && listOfPatients.length) {
-                for (let i = 0; i < listOfPatients.length; i++) {
 
-                    const patient = listOfPatients[i];
+                for (let patient in listOfPatients) {
+                    let lastQuestionnaires;
+                    try {
+                        lastQuestionnaires = await ehr.getLastQuestionnaires(patient.id)
+                    }catch (e) {
+                        lastQuestionnaires = {
+                            nutritional: {
+                                feeding_habits_record: {},
+                                sleep_habit: {}
+                            },
+                            odontological: {
+                                sociodemographic_record: {},
+                                family_cohesion_record: {},
+                                oral_health_record: {}
+                            }
+                        }
+                    }
 
-                    const lastQuestionnaires = await ehr.getLastQuestionnaires(patient.id);
-
-                    const measurements = await mhealth.getMeasurements(patient.id, pilotstudy.start, pilotstudy.end);
+                    let measurements;
+                    try {
+                        measurements = await mhealth.getMeasurements(patient.id, pilotstudy.start, pilotstudy.end);
+                    }catch (e) {
+                        measurements = [];
+                    }
 
                     listOfPatientsInformation.push(
                         {
@@ -45,23 +61,53 @@ module.exports = function (actionParams) {
                             oral_health_record: lastQuestionnaires.odontological.oral_health_record,
                             health_professional_id: health_professional_id
                         });
-
-                    if (i === listOfPatients.length - 1) {
-                        return analytics.createOdontologicalEvaluation(listOfPatientsInformation);
-                    }
                 }
+
+                return analytics.createOdontologicalEvaluation(listOfPatientsInformation);
+                
             }
-            /**
-             * TODO: O que retornar se o estudo piloto não tiver nenhum paciente?
-             */
-            return res.status(200).send();
+
+            throw new Error('PILOTSTUDY_EMPTY');
 
         } catch (err) {
 
-            if (err.message === 'PILOTSTUDY_NOTFOUND') return res.status(404).send({ 'code': 404, 'message': 'PILOTSTUDY NOT FOUND', 'description': 'A pilot study was not found in the body of the requisition.' });
-            if (err.message === 'HEALTHPROFESSIONALID_NOTFOUND') return res.status(404).send({ 'code': 404, 'message': 'HEALTHPROFESSIONALID NOT FOUND', 'description': 'The health professional id was not found in the body of the requisition' });
+            if (err && err.message === 'PILOTSTUDY_NOTFOUND') return res.status(404).send(handlerMessageError('PILOTSTUDY_NOTFOUND'));
+            if (err && err.message === 'HEALTHPROFESSIONALID_NOTFOUND') return res.status(404).send(handlerMessageError('HEALTHPROFESSIONALID_NOTFOUND'));
+            if (err && err.message === 'PILOTSTUDY_EMPTY') return res.status(400).send(handlerMessageError('PILOTSTUDY_EMPTY'));
 
             return res.status(500).send(err);
         }
     }
 };
+
+/**
+ * Handler of general error messages.
+ *
+ * @param message
+ * @returns {{code: number, message: string, description: string}}
+ */
+function handlerMessageError(message) {
+    if (message === 'PILOTSTUDY_NOTFOUND') return {
+        'code': 404,
+        'message': 'PILOTSTUDY NOT FOUND',
+        'description': 'A pilot study was not found in the body of the requisition.'
+    }
+
+    else if (message === 'HEALTHPROFESSIONALID_NOTFOUND') return {
+        'code': 404,
+        'message': 'HEALTHPROFESSIONALID NOT FOUND',
+        'description': 'The health professional id was not found in the body of the requisition.'
+    }
+
+    else if (message === 'PILOTSTUDY_EMPTY') return {
+        'code': 400,
+        'message': 'PILOTSTUDY EMPTY',
+        'description': 'It was not possible to generate evaluation because the study does not have registered patients.'
+    }
+
+    return {
+        'code': 500,
+        'message': 'INTERNAL SERVER ERROR',
+        'description': 'An internal server error has occurred.'
+    }
+}

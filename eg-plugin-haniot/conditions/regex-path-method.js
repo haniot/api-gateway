@@ -1,11 +1,15 @@
 /**
- * Condition to verify that the requested meets the regular expression and method configured
+ * Condition to verify that the requested meets the regular expression and method configured.
+ * Only the regexpath parameter is required.
  */
 module.exports = {
     name: 'regex-path-method',
     handler: function (req, conditionConfig) {
         const regex = new RegExp(conditionConfig.regexpath);
-        return (regex.test(req.url) && req.method === conditionConfig.method);
+        if (conditionConfig.method) {
+            return (regex.test(req.url) && req.method === conditionConfig.method);
+        }
+        return regex.test(req.url);
     },
     schema: {
         $id: 'http://express-gateway.io/schemas/conditions/regex-path-method.json',
@@ -18,6 +22,6 @@ module.exports = {
                 type: 'string'
             }
         },
-        required: ['regexpath', 'method']
+        required: ['regexpath']
     }
 };
