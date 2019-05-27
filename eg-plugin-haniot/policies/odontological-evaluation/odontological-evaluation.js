@@ -41,65 +41,56 @@ module.exports = function (actionParams) {
                 for (let index in listOfPatients) {
 
                     const patient = listOfPatients[index];
-                    
-                    let lastQuestionnaires;
+
                     try {
                         /**
                          * I recover the patient's last habits
                          */
-                        lastQuestionnaires = await ehr.getLastQuestionnaires(patient.id);
-                    }catch (e) {
-                        /**
-                         * If there is a problem in the request, disregard the habits.
-                         * So that no problem happens in the assembly of the final object "instancio" a new object of habits.
-                         */
-                        lastQuestionnaires = {
-                            nutritional: {
-                                feeding_habits_record: {},
-                                sleep_habit: {}
-                            },
-                            odontological: {
-                                sociodemographic_record: {},
-                                family_cohesion_record: {},
-                                oral_health_record: {}
-                            }
-                        }
-                    }
-
-                    let measurements;
-                    try {
+                        const lastQuestionnaires = await ehr.getLastQuestionnaires(patient.id);
                         /**
                          * I retrieve patient measurements.
                          */
-                        measurements = await mhealth.getMeasurements(patient.id, pilotstudy.start, pilotstudy.end);
-                    }catch (e) {
+                        const measurements = await mhealth.getMeasurements(patient.id, pilotstudy.start, pilotstudy.end);
+
                         /**
-                         * If there is a problem with the request, disregard the measurements by sending an empty list.
+                        * Assembly of the final object.
+                        */
+                        listOfPatientsInformation.push(
+                            {
+                                patient: patient,
+                                measurements: measurements,
+                                feeding_habits_record: lastQuestionnaires.nutritional.feeding_habits_record,
+                                sleep_habit: lastQuestionnaires.nutritional.sleep_habit,
+                                sociodemographic_record: lastQuestionnaires.odontological.sociodemographic_record,
+                                family_cohesion_record: lastQuestionnaires.odontological.family_cohesion_record,
+                                oral_health_record: lastQuestionnaires.odontological.oral_health_record,
+                                health_professional_id: health_professional_id
+                            });
+                    } catch (e) {
+                        /**
+                         * If a problem occurs in one of the requests, disregard the current patient and go to the next one.
                          */
-                        measurements = [];
+                        continue;
                     }
 
-                    /**
-                     * Assembly of the final object.
-                     */
-                    listOfPatientsInformation.push(
-                        {
-                            patient: patient,
-                            measurements: measurements,
-                            feeding_habits_record: lastQuestionnaires.nutritional.feeding_habits_record,
-                            sleep_habit: lastQuestionnaires.nutritional.sleep_habit,
-                            sociodemographic_record: lastQuestionnaires.odontological.sociodemographic_record,
-                            family_cohesion_record: lastQuestionnaires.odontological.family_cohesion_record,
-                            oral_health_record: lastQuestionnaires.odontological.oral_health_record,
-                            health_professional_id: health_professional_id
-                        });
+
                 }
 
                 /**
                  * After gathering all the information send to the analytics service.
                  */
-                return analytics.createOdontologicalEvaluation(listOfPatientsInformation);
-                
+                return analytics.createOdontologicalEvaluation(listOfPatientsInformation, pilotstudy.id)
+                    .then(response => {
+                        return res.status(response.status).send(response.data);
+                    })
+                    .catch(err => {
+                        
+                        if(err.response && err.response.data){
+                            return res.status(err.response.status).send(err.response.data);
+                        }
+                        return res.status(500).send(handlerMessageError(err.message));
+                    });
+
             }
 
             /**
