@@ -49,7 +49,7 @@ module.exports = function (actionParams, authServiceTest, servicesTest) {
         /**
          * Performing user authentication on the account service
          */
-        return accountService.auth(actionParams.urlauthservice, req.body)
+        return accountService.auth(req.body)
             .then(response => {
                 /**
                  * Login successfully, create user on Gateway
