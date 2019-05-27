@@ -8,6 +8,7 @@ const ANALYTICS_SERVICE = process.env.ANALYTICS_SERVICE;
 
 
 analytics.createOdontologicalEvaluation = function (patientsInfo) {
+    console.log(patientsInfo);
     return axios.
         request({
             method: 'POST',

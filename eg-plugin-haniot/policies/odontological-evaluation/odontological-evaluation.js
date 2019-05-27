@@ -10,26 +10,49 @@ module.exports = function (actionParams) {
 
         try {
             const pilotstudy = req.body.pilotstudy;
+            /**
+             * If the request does not have a pilot study entity, an exception will be issued 'PILOTSTUDY_NOTFOUND';
+             */
             if (!pilotstudy) {
                 throw new Error('PILOTSTUDY_NOTFOUND');
             }
 
             const health_professional_id = req.body.health_professional_id;
+            /**
+             * If the request does not have a pilot study entity, an exception will be issued 'PILOTSTUDY_NOTFOUND';
+             */
             if (!health_professional_id) {
                 throw new Error('HEALTHPROFESSIONALID_NOTFOUND');
             }
 
+            /**
+             * Object used to store all patient information.
+             */
             const listOfPatientsInformation = new Array();
 
+            /**
+             * I retrieve the list with all the patients of the pilot study
+             */
             const listOfPatients = await account.getAllPatientsByPilotStudyId(pilotstudy.id);
-
             if (listOfPatients && listOfPatients.length) {
+                /**
+                 * For each patient I look for their habits and their measurements
+                 */
+                for (let index in listOfPatients) {
 
-                for (let patient in listOfPatients) {
+                    const patient = listOfPatients[index];
+                    
                     let lastQuestionnaires;
                     try {
-                        lastQuestionnaires = await ehr.getLastQuestionnaires(patient.id)
+                        /**
+                         * I recover the patient's last habits
+                         */
+                        lastQuestionnaires = await ehr.getLastQuestionnaires(patient.id);
                     }catch (e) {
+                        /**
+                         * If there is a problem in the request, disregard the habits.
+                         * So that no problem happens in the assembly of the final object "instancio" a new object of habits.
+                         */
                         lastQuestionnaires = {
                             nutritional: {
                                 feeding_habits_record: {},
@@ -45,11 +68,20 @@ module.exports = function (actionParams) {
 
                     let measurements;
                     try {
+                        /**
+                         * I retrieve patient measurements.
+                         */
                         measurements = await mhealth.getMeasurements(patient.id, pilotstudy.start, pilotstudy.end);
                     }catch (e) {
+                        /**
+                         * If there is a problem with the request, disregard the measurements by sending an empty list.
+                         */
                         measurements = [];
                     }
 
+                    /**
+                     * Assembly of the final object.
+                     */
                     listOfPatientsInformation.push(
                         {
                             patient: patient,
@@ -63,19 +95,31 @@ module.exports = function (actionParams) {
                         });
                 }
 
+                /**
+                 * After gathering all the information send to the analytics service.
+                 */
                 return analytics.createOdontologicalEvaluation(listOfPatientsInformation);
                 
             }
 
+            /**
+             * If the pilot study does not contain patients, an exception will be issued 'PILOTSTUDY_EMPTY'
+             */
             throw new Error('PILOTSTUDY_EMPTY');
 
         } catch (err) {
 
+            /**
+             * Check the error type according to the message property and set its return.
+             */
             if (err && err.message === 'PILOTSTUDY_NOTFOUND') return res.status(404).send(handlerMessageError('PILOTSTUDY_NOTFOUND'));
             if (err && err.message === 'HEALTHPROFESSIONALID_NOTFOUND') return res.status(404).send(handlerMessageError('HEALTHPROFESSIONALID_NOTFOUND'));
             if (err && err.message === 'PILOTSTUDY_EMPTY') return res.status(400).send(handlerMessageError('PILOTSTUDY_EMPTY'));
 
-            return res.status(500).send(err);
+            /**
+             * If the error is not mapped in the above options, I return an error 500;
+             */
+            return res.status(500).send(handlerMessageError(err.message));
         }
     }
 };
