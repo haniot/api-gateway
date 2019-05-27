@@ -15,9 +15,7 @@ account.auth = function (credentials) {
             method: 'POST',
             url: `${ACCOUNT_SERVICE}/auth`,
             data: credentials
-        })
-        .then(response => Promise.resolve(response.data))
-        .catch(err => Promise.reject(err.response.data));
+        });
 }
 
 /**
