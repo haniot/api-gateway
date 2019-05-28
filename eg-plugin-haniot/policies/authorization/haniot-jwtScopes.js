@@ -17,8 +17,8 @@ module.exports = function (actionParams) {
             if (expectedScopes.length === 0) {
                 return next();
             }
-            if (!req.user || typeof req.user.scope !== 'string') { return error(res); }
-            var scopes = req.user.scope.split(' ');
+            if (!req.user || typeof req.user.scopes !== 'string') { return error(res); }
+            var scopes = req.user.scopes.split(' ');
             var allowed = expectedScopes.some(function (scope) {
                 return scopes.indexOf(scope) !== -1;
             });
