@@ -6,6 +6,11 @@ const ehr = {};
 const axios = require('axios');
 const EHR_SERVICE = process.env.EHR_SERVICE;
 
+/**
+ * Function used to return the last habits of a patient.
+ * @param patient_id
+ * @returns {Promise<any | never>}
+ */
 ehr.getLastQuestionnaires = function (patient_id) {
     return axios.
         request({

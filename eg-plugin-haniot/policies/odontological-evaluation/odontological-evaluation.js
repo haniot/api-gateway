@@ -3,6 +3,7 @@ const account = require('../../services/account/account-service');
 const ehr = require('../../services/ehr/ehr-service');
 const mhealth = require('../../services/mhealth/mhealth-service');
 const analytics = require('../../services/analytics/analytics-service');
+const HttpStatus = require('http-status');
 
 module.exports = function (actionParams) {
 
@@ -88,7 +89,7 @@ module.exports = function (actionParams) {
                         if(err.response && err.response.data){
                             return res.status(err.response.status).send(err.response.data);
                         }
-                        return res.status(500).send(handlerMessageError(err.message));
+                        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(handlerMessageError(err.message));
                     });
 
             }
@@ -103,14 +104,14 @@ module.exports = function (actionParams) {
             /**
              * Check the error type according to the message property and set its return.
              */
-            if (err && err.message === 'PILOTSTUDY_NOTFOUND') return res.status(404).send(handlerMessageError('PILOTSTUDY_NOTFOUND'));
-            if (err && err.message === 'HEALTHPROFESSIONALID_NOTFOUND') return res.status(404).send(handlerMessageError('HEALTHPROFESSIONALID_NOTFOUND'));
-            if (err && err.message === 'PILOTSTUDY_EMPTY') return res.status(400).send(handlerMessageError('PILOTSTUDY_EMPTY'));
+            if (err && err.message === 'PILOTSTUDY_NOTFOUND') return res.status(HttpStatus.BAD_REQUEST).send(handlerMessageError('PILOTSTUDY_NOTFOUND'));
+            if (err && err.message === 'HEALTHPROFESSIONALID_NOTFOUND') return res.status(HttpStatus.BAD_REQUEST).send(handlerMessageError('HEALTHPROFESSIONALID_NOTFOUND'));
+            if (err && err.message === 'PILOTSTUDY_EMPTY') return res.status(HttpStatus.BAD_REQUEST).send(handlerMessageError('PILOTSTUDY_EMPTY'));
 
             /**
              * If the error is not mapped in the above options, I return an error 500;
              */
-            return res.status(500).send(handlerMessageError(err.message));
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(handlerMessageError(err.message));
         }
     }
 };

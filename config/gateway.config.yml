@@ -5,8 +5,8 @@ http:
 ####### API ENDPOINTS DEFINITION ########
 apiEndpoints:
 
-####### ACCOUNT API PUBLIC ########
-  accountPublic:  
+  ####### ACCOUNT API PUBLIC ########
+  accountPublic:
     - host: '*'
       paths: ['/users/:user_id/password']
       methods: ['PATCH']
@@ -14,9 +14,9 @@ apiEndpoints:
     - host: '*'
       paths: ['/auth']
       methods: ['POST']
-####### ACCOUNT API PUBLIC END ########
+  ####### ACCOUNT API PUBLIC END ########
 
-####### ACCOUNT API PRIVATE ########
+  ####### ACCOUNT API PRIVATE ########
   accountPrivate:
     ## ENDPOINTS TO MANAGE USERS ##
     - host: '*'
@@ -28,22 +28,22 @@ apiEndpoints:
       paths: ['/users/admins']
       methods: ['GET']
       scopes: ['admins:readAll']
-    
+
     - host: '*'
       paths: ['/users/admins/:admin_id']
       methods: ['GET']
       scopes: ['admins:read']
-    
+
     - host: '*'
       paths: ['/users/admins/:admin_id']
       methods: ['PATCH']
-      scopes: ['admins:update']  
+      scopes: ['admins:update']
 
     - host: '*'
       paths: ['/users/healthprofessionals']
       methods: ['POST']
-      scopes: ['healthprofessionals:create']   
-    
+      scopes: ['healthprofessionals:create']
+
     - host: '*'
       paths: ['/users/healthprofessionals']
       methods: ['GET']
@@ -53,16 +53,16 @@ apiEndpoints:
       paths: ['/users/healthprofessionals/:healthprofessional_id']
       methods: ['GET']
       scopes: ['healthprofessionals:read']
-    
+
     - host: '*'
       paths: ['/users/healthprofessionals/:healthprofessional_id']
       methods: ['PATCH']
-      scopes: ['healthprofessionals:update'] 
+      scopes: ['healthprofessionals:update']
 
     - host: '*'
       paths: ['/users/:user_id']
       methods: ['DELETE']
-      scopes: ['admins:delete','healthprofessionals:delete','patients:delete']    
+      scopes: ['admins:delete','healthprofessionals:delete','patients:delete']
     ###############################
 
     ## ENDPOINTS TO MANAGE PATIENTS ##
@@ -80,7 +80,7 @@ apiEndpoints:
       paths: ['/users/patients/:patient_id']
       methods: ['GET']
       scopes: ['patients:read']
-    
+
     - host: '*'
       paths: ['/users/patients/:patient_id']
       methods: ['PATCH']
@@ -103,18 +103,18 @@ apiEndpoints:
       paths: ['/pilotstudies/:pilotstudy_id']
       methods: ['GET']
       scopes: ['pilots:read']
-    
+
     - host: '*'
       paths: ['/pilotstudies/:pilotstudy_id']
       methods: ['PATCH']
       scopes: ['pilots:update']
-    
+
     - host: '*'
       paths: ['/pilotstudies/:pilotstudy_id']
       methods: ['DELETE']
       scopes: ['pilots:delete']
     ######################################
-    
+
     ## ENDPOINTS TO GET PILOTSTUDIES ASSOCIED  ##
     - host: '*'
       paths: ['/users/healthprofessionals/:healthprofessional_id/pilotstudies']
@@ -130,7 +130,7 @@ apiEndpoints:
     - host: '*'
       paths: ['/pilotstudies/:pilotstudy_id/healthprofessionals/:patient_id']
       methods: ['POST']
-      scopes: ['pilots:update']    
+      scopes: ['pilots:update']
 
     - host: '*'
       paths: ['/pilotstudies/:pilotstudy_id/healthprofessionals/:patient_id']
@@ -146,11 +146,11 @@ apiEndpoints:
     ######################################
 
 
-################ ACCOUNT API PRIVATE END #####################################
+  ################ ACCOUNT API PRIVATE END #####################################
 
-####### EHR API PRIVATE ########
+  ####### EHR API PRIVATE ########
   ehrPrivate:
-    
+
     ## ENDPOINTS TO RECOVER THE LAST QUESTIONNAIRES ##
     - host: '*'
       paths: ['/patients/:patient_id/questionnaires/last']
@@ -167,18 +167,18 @@ apiEndpoints:
     - host: '*'
       paths: ['/patients/:patient_id/sleephabits']
       methods: ['GET']
-      scopes: ['forms:read'] 
-    
+      scopes: ['forms:read']
+
     - host: '*'
       paths: ['/patients/:patient_id/sleephabits/:sleephabit_id']
       methods: ['GET']
-      scopes: ['forms:read'] 
-    
+      scopes: ['forms:read']
+
     - host: '*'
       paths: ['/patients/:patient_id/sleephabits/:sleephabit_id']
       methods: ['PATCH']
-      scopes: ['forms:update'] 
-    
+      scopes: ['forms:update']
+
     - host: '*'
       paths: ['/patients/:patient_id/sleephabits/:sleephabit_id']
       methods: ['DELETE']
@@ -194,18 +194,18 @@ apiEndpoints:
     - host: '*'
       paths: ['/patients/:patient_id/physicalactivityhabits']
       methods: ['GET']
-      scopes: ['forms:read'] 
-    
+      scopes: ['forms:read']
+
     - host: '*'
       paths: ['/patients/:patient_id/physicalactivityhabits/:physicalactivityhabits_id']
       methods: ['GET']
-      scopes: ['forms:read'] 
-    
+      scopes: ['forms:read']
+
     - host: '*'
       paths: ['/patients/:patient_id/physicalactivityhabits/:physicalactivityhabits_id']
       methods: ['PATCH']
-      scopes: ['forms:update'] 
-    
+      scopes: ['forms:update']
+
     - host: '*'
       paths: ['/patients/:patient_id/physicalactivityhabits/:physicalactivityhabits_id']
       methods: ['DELETE']
@@ -222,17 +222,17 @@ apiEndpoints:
       paths: ['/patients/:patient_id/feedinghabitsrecords']
       methods: ['GET']
       scopes: ['forms:read']
-    
+
     - host: '*'
       paths: ['/patients/:patient_id/feedinghabitsrecords/:feedinghabitsrecord_id']
       methods: ['GET']
-      scopes: ['forms:read'] 
-    
+      scopes: ['forms:read']
+
     - host: '*'
       paths: ['/patients/:patient_id/feedinghabitsrecords/:feedinghabitsrecord_id']
       methods: ['PATCH']
-      scopes: ['forms:update'] 
-    
+      scopes: ['forms:update']
+
     - host: '*'
       paths: ['/patients/:patient_id/feedinghabitsrecords/:feedinghabitsrecord_id']
       methods: ['DELETE']
@@ -248,18 +248,18 @@ apiEndpoints:
     - host: '*'
       paths: ['/patients/:patient_id/medicalrecords']
       methods: ['GET']
-      scopes: ['forms:read'] 
-    
+      scopes: ['forms:read']
+
     - host: '*'
       paths: ['/patients/:patient_id/medicalrecords/:medicalrecord_id']
       methods: ['GET']
       scopes: ['forms:read']
-    
+
     - host: '*'
       paths: ['/patients/:patient_id/medicalrecords/:medicalrecord_id']
       methods: ['PATCH']
       scopes: ['forms:update']
-    
+
     - host: '*'
       paths: ['/patients/:patient_id/medicalrecords/:medicalrecord_id']
       methods: ['DELETE']
@@ -275,18 +275,18 @@ apiEndpoints:
     - host: '*'
       paths: ['/patients/:patient_id/sociodemographicrecords']
       methods: ['GET']
-      scopes: ['forms:read'] 
-    
+      scopes: ['forms:read']
+
     - host: '*'
       paths: ['/patients/:patient_id/sociodemographicrecords/:sociodemographicrecord_id']
       methods: ['GET']
       scopes: ['forms:read']
-    
+
     - host: '*'
       paths: ['/patients/:patient_id/sociodemographicrecords/:sociodemographicrecord_id']
       methods: ['PATCH']
-      scopes: ['forms:update'] 
-    
+      scopes: ['forms:update']
+
     - host: '*'
       paths: ['/patients/:patient_id/sociodemographicrecords/:sociodemographicrecord_id']
       methods: ['DELETE']
@@ -302,18 +302,18 @@ apiEndpoints:
     - host: '*'
       paths: ['/patients/:patient_id/familycohesionrecords']
       methods: ['GET']
-      scopes: ['forms:read'] 
-    
+      scopes: ['forms:read']
+
     - host: '*'
       paths: ['/patients/:patient_id/familycohesionrecords/:familycohesionrecord_id']
       methods: ['GET']
       scopes: ['forms:read']
-    
+
     - host: '*'
       paths: ['/patients/:patient_id/familycohesionrecords/:familycohesionrecord_id']
       methods: ['PATCH']
       scopes: ['forms:update']
-    
+
     - host: '*'
       paths: ['/patients/:patient_id/familycohesionrecords/:familycohesionrecord_id']
       methods: ['DELETE']
@@ -329,53 +329,53 @@ apiEndpoints:
     - host: '*'
       paths: ['/patients/:patient_id/oralhealthrecords']
       methods: ['GET']
-      scopes: ['forms:read'] 
-    
+      scopes: ['forms:read']
+
     - host: '*'
       paths: ['/patients/:patient_id/oralhealthrecords/:oralhealthrecord_id']
       methods: ['GET']
       scopes: ['forms:read']
-    
+
     - host: '*'
       paths: ['/patients/:patient_id/oralhealthrecords/:oralhealthrecord_id']
       methods: ['PATCH']
       scopes: ['forms:update']
-    
+
     - host: '*'
       paths: ['/patients/:patient_id/oralhealthrecords/:oralhealthrecord_id']
       methods: ['DELETE']
       scopes: ['forms:delete']
     ###############################
 
-############### EHR API PRIVATE END ##########################################
+  ############### EHR API PRIVATE END ##########################################
 
-####### MHEALTH API PRIVATE ########
+  ####### MHEALTH API PRIVATE ########
   mhealthPrivate:
     ## ENDPOINTS TO MANAGE MEASUREMENTS ##
     - host: '*'
       paths: ['/measurements']
       methods: ['GET']
-      scopes: ['measurements:readAll'] 
+      scopes: ['measurements:readAll']
 
     - host: '*'
       paths: ['/users/:user_id/measurements']
       methods: ['GET']
-      scopes: ['measurements:read']     
-   
+      scopes: ['measurements:read']
+
     - host: '*'
       paths: ['/users/:user_id/measurements']
       methods: ['POST']
       scopes: ['measurements:create']
-    
+
     - host: '*'
       paths: ['/users/:user_id/measurements/:measurement_id']
       methods: ['GET']
       scopes: ['measurements:read']
-    
+
     - host: '*'
       paths: ['/users/:user_id/measurements/:measurement_id']
       methods: ['DELETE']
-      scopes: ['measurements:delete']  
+      scopes: ['measurements:delete']
     ###############################
 
     ## ENDPOINTS TO MANAGE DEVICES ##
@@ -387,22 +387,22 @@ apiEndpoints:
     - host: '*'
       paths: ['/users/:user_id/devices']
       methods: ['GET']
-      scopes: ['devices:read'] 
-    
+      scopes: ['devices:read']
+
     - host: '*'
       paths: ['/users/:user_id/devices/:device_id']
       methods: ['GET']
-      scopes: ['devices:read'] 
-    
+      scopes: ['devices:read']
+
     - host: '*'
       paths: ['/users/:user_id/devices/:device_id']
       methods: ['DELETE']
-      scopes: ['devices:delete']       
+      scopes: ['devices:delete']
     ###############################
 
-############### MHEALTH API PRIVATE END ##########################################
+  ############### MHEALTH API PRIVATE END ##########################################
 
-####### ANALYTICS API PRIVATE ########
+  ####### ANALYTICS API PRIVATE ########
   analyticsPrivate:
 
     ## ENDPOINTS TO MANAGE EVALUATIONS ##
@@ -414,11 +414,12 @@ apiEndpoints:
     ###############################
 
     ## ENDPOINTS TO MANAGE NUTRITION EVALUATIONS ##
+    # DEPRECATED
     # - host: '*'
     #   paths: ['/nutritional/evaluations']
     #   methods: ['GET']
     #   scopes: ['evaluations:readAll']
-    
+
     ## ENDPOINTS TO MANAGE NUTRITIONAL EVALUATIONS ##
     - host: '*'
       paths: ['/patients/:patient_id/nutritional/evaluations']
@@ -428,13 +429,13 @@ apiEndpoints:
     - host: '*'
       paths: ['/patients/:patient_id/nutritional/evaluations']
       methods: ['GET']
-      scopes: ['evaluations:read'] 
-    
+      scopes: ['evaluations:read']
+
     - host: '*'
       paths: ['/patients/:patient_id/nutritional/evaluations/:evaluation_id']
       methods: ['GET']
-      scopes: ['evaluations:read'] 
-    
+      scopes: ['evaluations:read']
+
     - host: '*'
       paths: ['/patients/:patient_id/nutritional/evaluations/:evaluation_id']
       methods: ['DELETE']
@@ -445,28 +446,28 @@ apiEndpoints:
     - host: '*'
       paths: ['/patients/:patient_id/nutritional/evaluations/:evaluation_id/counselings']
       methods: ['POST']
-      scopes: ['evaluations:update'] 
+      scopes: ['evaluations:update']
     ####################################
 
     ## ENDPOINTS TO MANAGE NUTRITIONAL EVALUATIONS FOR A PILOTSTUDY ##
     - host: '*'
       paths: ['/pilotstudies/:pilotstudy_id/nutritional/evaluations']
       methods: ['GET']
-      scopes: ['evaluations:read'] 
+      scopes: ['evaluations:read']
     ####################################
 
     ## ENDPOINTS TO MANAGE EVALUATIONS FOR A HEALTHPROFESSIONAL ##
     - host: '*'
       paths: ['/healthprofessionals/:healthprofessional_id/nutritional/evaluations']
       methods: ['GET']
-      scopes: ['evaluations:read']        
+      scopes: ['evaluations:read']
     ###############################
 
     ## ENDPOINTS TO MANAGE ODONTOLOGICAL EVALUATIONS FOR A PILOTSTUDY ##
     - host: '*'
       paths: ['/pilotstudies/:pilotstudy_id/odontological/evaluations']
       methods: ['POST']
-      scopes: ['evaluations:create'] 
+      scopes: ['evaluations:create']
 
     - host: '*'
       paths: ['/pilotstudies/:pilotstudy_id/odontological/evaluations']
@@ -481,23 +482,23 @@ apiEndpoints:
     - host: '*'
       paths: ['/pilotstudies/:pilotstudy_id/odontological/evaluations/:evaluation_id']
       methods: ['DELETE']
-      scopes: ['evaluations:delete'] 
+      scopes: ['evaluations:delete']
     ####################################
 
-############### ANALYTICS API PRIVATE END ##########################################
-  
+  ############### ANALYTICS API PRIVATE END ##########################################
+
 
 ####### SERVICE ENDPOINTS DEFINITIONS ########
 serviceEndpoints:
   accountService:
     url: ${ACCOUNT_SERVICE:-http://localhost:5000}
-  
+
   ehrService:
     url: ${EHR_SERVICE:-http://localhost:3000}
 
   mhealthService:
     url: ${MHEALTH_SERVICE:-http://localhost:4000}
-  
+
   analyticsService:
     url: ${ANALYTICS_SERVICE:-http://localhost:6000}
 
@@ -521,7 +522,7 @@ pipelines:
   - name: privateAcountServicePipeline
     apiEndpoints:
       - accountPrivate
-    policies: 
+    policies:
       - haniot-body-parser-policy:
       - haniot-jwt-policy:
           - action:
@@ -529,20 +530,19 @@ pipelines:
               issuer: ${ISSUER:-haniot}
       - haniot-jwtScopes-policy:
       - haniot-delete-user-policy:
-        - 
-          condition:
-            name: 'regex-path-method'
-            #regexpath é uma expressão regular
-            regexpath: '^(\/users\/)[a-fA-F0-9]{24}$'
-            method: 'DELETE'
-          action:
-            urldeleteservice: ${ACCOUNT_SERVICE:-http://localhost:5000}/users
+          - condition:
+              name: 'regex-path-method'
+              #regexpath é uma expressão regular
+              regexpath: '^(\/users\/)[a-fA-F0-9]{24}$'
+              method: 'DELETE'
+            action:
+              urldeleteservice: ${ACCOUNT_SERVICE:-http://localhost:5000}/users
       - proxy:
           - action:
               prependPath:  true
               ignorePath:   false
               stripPath:    false
-              changeOrigin: true 
+              changeOrigin: true
               serviceEndpoint: accountService
   ###########################################################################
 
@@ -553,22 +553,21 @@ pipelines:
     policies:
       - haniot-body-parser-policy:
       - haniot-auth-policy:
-        - 
-          condition:
-            name: 'regex-path-method'
-            #regexpath é uma expressão regular
-            regexpath: '^(/auth)$'
-            method: 'POST'
-          action:
-            urlauthservice: ${ACCOUNT_SERVICE:-http://localhost:5000}/auth
-            secretOrPublicKey: ${JWT_SECRET:-haniot123}
-            issuer: ${ISSUER:-haniot}
+          - condition:
+              name: 'regex-path-method'
+              #regexpath é uma expressão regular
+              regexpath: '^(/auth)$'
+              method: 'POST'
+            action:
+              urlauthservice: ${ACCOUNT_SERVICE:-http://localhost:5000}/auth
+              secretOrPublicKey: ${JWT_SECRET:-haniot123}
+              issuer: ${ISSUER:-haniot}
       - proxy:
           - action:
               prependPath:  true
               ignorePath:   false
               stripPath:    false
-              changeOrigin: true 
+              changeOrigin: true
               serviceEndpoint: accountService
   ###########################################################################
 
@@ -576,18 +575,18 @@ pipelines:
   - name: privateEHRServicePipeline
     apiEndpoints:
       - ehrPrivate
-    policies: 
+    policies:
       - haniot-jwt-policy:
           - action:
               secretOrPublicKey: ${JWT_SECRET:-haniot123}
               issuer: ${ISSUER:-haniot}
-      - haniot-jwtScopes-policy:    
+      - haniot-jwtScopes-policy:
       - proxy:
           - action:
               prependPath:  true
               ignorePath:   false
               stripPath:    false
-              changeOrigin: true 
+              changeOrigin: true
               serviceEndpoint: ehrService
     ###########################################################################
 
@@ -595,18 +594,18 @@ pipelines:
   - name: privateMHEALTHServicePipeline
     apiEndpoints:
       - mhealthPrivate
-    policies: 
+    policies:
       - haniot-jwt-policy:
           - action:
               secretOrPublicKey: ${JWT_SECRET:-haniot123}
               issuer: ${ISSUER:-haniot}
-      - haniot-jwtScopes-policy:    
+      - haniot-jwtScopes-policy:
       - proxy:
           - action:
               prependPath:  true
               ignorePath:   false
               stripPath:    false
-              changeOrigin: true 
+              changeOrigin: true
               serviceEndpoint: mhealthService
     ###########################################################################
 
@@ -614,26 +613,25 @@ pipelines:
   - name: privateAnalyticsServicePipeline
     apiEndpoints:
       - analyticsPrivate
-    policies: 
+    policies:
       - haniot-body-parser-policy:
-      # - haniot-jwt-policy:
-      #     - action:
-      #         secretOrPublicKey: ${JWT_SECRET:-haniot123}
-      #         issuer: ${ISSUER:-haniot}
-      # - haniot-jwtScopes-policy:
+      - haniot-jwt-policy:
+          - action:
+              secretOrPublicKey: ${JWT_SECRET:-haniot123}
+              issuer: ${ISSUER:-haniot}
+      - haniot-jwtScopes-policy:
       - odontological-evaluation-policy:
-        - 
-          condition:
-            name: 'regex-path-method'
-            #regexpath é uma expressão regular
-            regexpath: '^(/pilotstudies/)[a-fA-F0-9]{24}(/odontological/evaluations)$'
-            method: 'POST'
-          action:    
+          - condition:
+              name: 'regex-path-method'
+              #regexpath é uma expressão regular
+              regexpath: '^(/pilotstudies/)[a-fA-F0-9]{24}(/odontological/evaluations)$'
+              method: 'POST'
+            action:
       - proxy:
           - action:
               prependPath:  true
               ignorePath:   false
               stripPath:    false
-              changeOrigin: true 
+              changeOrigin: true
               serviceEndpoint: analyticsService
     ###########################################################################

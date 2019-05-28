@@ -6,7 +6,7 @@ const axios = require('axios');
 const ACCOUNT_SERVICE = process.env.ACCOUNT_SERVICE;
 
 /**
- * 
+ * Function used to perform authentication
  * @param {*} credentials 
  */
 account.auth = function (credentials) {
@@ -19,7 +19,7 @@ account.auth = function (credentials) {
 }
 
 /**
- * 
+ * Function used to search for a patient
  * @param {*} patient_id 
  */
 account.getPatientById = function (patient_id) {
@@ -33,7 +33,7 @@ account.getPatientById = function (patient_id) {
 }
 
 /**
- * 
+ * Function used to search all patients for a pilot study
  * @param {*} pilotstudy_id 
  */
 account.getAllPatientsByPilotStudyId = function (pilotstudy_id) {
@@ -50,7 +50,7 @@ account.getAllPatientsByPilotStudyId = function (pilotstudy_id) {
 }
 
 /**
- * 
+ * Function used to search for a pilot study
  * @param {*} pilotstudy_id 
  */
 account.getPilotStudyById = function (pilotstudy_id) {
