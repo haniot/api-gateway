@@ -1,6 +1,6 @@
 {
   "name": "eg-plugin-haniot",
-  "version": "1.0.0",
+  "version": "1.2.1",
   "description": "Express gateway plugin for HANIoT project",
   "main": "manifest.js",
   "scripts": {
