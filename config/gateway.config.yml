@@ -6,7 +6,7 @@ https:
   hostname: '0.0.0.0'
   tls:
     default:
-      key: ${SSL_PRIVATE_KEY_PATH:-.certs/server.key}
+      key: ${SSL_KEY_PATH:-.certs/server.key}
       cert: ${SSL_CERT_PATH:-.certs/server.crt}
 
 ####### API ENDPOINTS DEFINITION ########
