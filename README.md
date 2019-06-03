@@ -1,5 +1,27 @@
-# Docker
+# HANIoT API GATEWAY
 
+[![node](https://img.shields.io/badge/node-v10.15.3-red.svg?style=?style=flat-square&logo=node.js)](https://nodejs.org/)
+[![npm](https://img.shields.io/badge/npm-v6.4.1-red.svg?style=flat-square&logo=npm)](https://nodejs.org/)
+[![express-gateway](https://img.shields.io/badge/ExpressGateway-v1.10.2-green.svg?style=flat-square)](https://www.express-gateway.io/)
+[![Swagger](https://img.shields.io/badge/swagger-v3.0-green.svg?longCache=true&style=flat)](https://swagger.io/)
+
+## Installation and Development server
+Requires [Node.js](https://nodejs.org/) v6+ to run.
+Install the dependencies,and start the server.
+```sh
+$ npm install
+$ npm run start
+```
+Navigate to `http://localhost:8080/`.
+
+## Running unit tests
+- Run `npm run test:unit` to run unit tests by [Mocha](https://mochajs.org/).
+
+## Running integration tests
+- Run `npm run test:integration` to run integration tests by [Mocha](https://mochajs.org/).
+
+
+# Docker
 
 ##  How to install
 

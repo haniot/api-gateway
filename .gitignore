@@ -1,3 +1,5 @@
+# .idea
+.idea/
 # Logs
 logs
 *.log
@@ -60,5 +62,23 @@ typings/
 # next.js build output
 .next
 
-# package-lock.json
-package-lock.json
+# IDE
+.idea
+
+# Directory files dist
+dist
+
+# Docs
+docs
+
+# Bash
+bash.exe.stackdump
+
+# Certificate
+.certs
+*.pem
+*.crt
+*.key
+*.csr
+*.cert
+certs

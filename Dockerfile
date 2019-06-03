@@ -1,18 +1,19 @@
-# Download Node image from Docker Hub Repository
-FROM node:8.11.2 
+FROM node:10.15.3
 
-# Create a new folder in the container
+# create and set app directory
 RUN mkdir -p /usr/src/ag 
+WORKDIR /usr/src/ag
 
-WORKDIR /usr/src/ag 
-
+# install app dependencies
 COPY . /usr/src/ag/ 
-RUN npm install 
+RUN npm install
+
+# Bundle app source
 COPY . /usr/src/ag 
+RUN npm run build
 
 EXPOSE 6379
 EXPOSE 9876
 EXPOSE 8080
 
-ENTRYPOINT  npm run start
-
+CMD ["npm", "start"]
