@@ -3,9 +3,8 @@
 const fs = require('fs')
 const gateway = require('express-gateway')
 const path = require('path')
-const dotenv = require('dotenv')
 
-dotenv.config()
+require('dotenv').config()
 
 const SSL_KEY_PATH = process.env.SSL_KEY_PATH
 const SSL_CERT_PATH = process.env.SSL_CERT_PATH
