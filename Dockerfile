@@ -8,9 +8,8 @@ WORKDIR /usr/src/ag
 COPY . /usr/src/ag/ 
 RUN npm install
 
-# Bundle app source
-COPY . /usr/src/ag 
-RUN npm run build
+# Copy app source
+COPY . /usr/src/ag
 
 EXPOSE 6379
 EXPOSE 9876
