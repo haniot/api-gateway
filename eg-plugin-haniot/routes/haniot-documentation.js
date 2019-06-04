@@ -20,7 +20,7 @@ module.exports = function (expressGatewayApp) {
                     display: none;
                 }
                 .swagger-ui .topbar .topbar-wrapper:before { 
-                  content: url(http://nutes.uepb.edu.br/wp-content/uploads/2016/05/footer-N.fw_.png);
+                  content: url(/images/logo-72x72.png);
                   width: 20px;
                   height: 20px;
                   transform: scale(0.05);
@@ -35,7 +35,7 @@ module.exports = function (expressGatewayApp) {
                     font-weight: 700;
                     color: #fff; 
                 }`,
-        customfavIcon: 'http://nutes.uepb.edu.br/wp-content/uploads/2014/01/icon.fw_.png',
+        customfavIcon: '/images/favicon-16x16.png',
         customSiteTitle: `API Reference | HANIoT`
     }
     expressGatewayApp.get('/', (req, res) => {

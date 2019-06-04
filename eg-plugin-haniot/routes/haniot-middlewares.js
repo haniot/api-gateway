@@ -17,6 +17,7 @@ module.exports = function (app) {
     }
 
     app.use(cors(corsOptions))
+    app.use(express.static('assets', {dotfiles: 'allow'}))
 
     // Redirect HTTP to HTTPS
     app.enable('trust proxy')

@@ -524,19 +524,19 @@ apiEndpoints:
 ####### SERVICE ENDPOINTS DEFINITIONS ########
 serviceEndpoints:
   accountService:
-    url: ${ACCOUNT_SERVICE:-http://localhost:5000}
-
-  ehrService:
-    url: ${EHR_SERVICE:-http://localhost:3000}
+    url: ${ACCOUNT_SERVICE:-https://localhost:3001}
 
   mhealthService:
-    url: ${MHEALTH_SERVICE:-http://localhost:4000}
+    url: ${MHEALTH_SERVICE:-https://localhost:4001}
+
+  ehrService:
+    url: ${EHR_SERVICE:-https://localhost:5001}
 
   analyticsService:
-    url: ${ANALYTICS_SERVICE:-http://localhost:6000}
+    url: ${ANALYTICS_SERVICE:-htts://localhost:6001}
 
   notificationService:
-    url: ${NOTIFICATION_SERVICE:-http://localhost:7000}
+    url: ${NOTIFICATION_SERVICE:-https://localhost:7001}
 
 ####### POLICIES USED IN PIPELINES DEFINITION ########
 policies:
@@ -572,7 +572,7 @@ pipelines:
               regexpath: '^(\/users\/)[a-fA-F0-9]{24}$'
               method: 'DELETE'
             action:
-              urldeleteservice: ${ACCOUNT_SERVICE:-http://localhost:5000}/users
+              urldeleteservice: ${ACCOUNT_SERVICE:-https://localhost:3001}/users
       - proxy:
           - action:
               prependPath:  true
@@ -595,7 +595,7 @@ pipelines:
               regexpath: '^(/auth)$'
               method: 'POST'
             action:
-              urlauthservice: ${ACCOUNT_SERVICE:-http://localhost:5000}/auth
+              urlauthservice: ${ACCOUNT_SERVICE:-https://localhost:3001}/auth
               secretOrPublicKey: ${JWT_SECRET:-haniot123}
               issuer: ${ISSUER:-haniot}
       - proxy:
@@ -624,7 +624,7 @@ pipelines:
               stripPath:    false
               changeOrigin: true
               serviceEndpoint: ehrService
-    ###########################################################################
+  ###########################################################################
 
   ##################### PIPELINE PRIVATE MHEALTH SERVICE ####################
   - name: privateMHEALTHServicePipeline
