@@ -9,4 +9,4 @@ module.exports = {
         $id: 'http://express-gateway.io/schemas/policies/odontological-evaluation.json',
         type: 'object'
     }
-};
+}

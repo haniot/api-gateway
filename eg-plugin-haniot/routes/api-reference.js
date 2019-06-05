@@ -11,7 +11,7 @@ module.exports = function (expressGatewayApp) {
         swaggerUrl: 'https://api.swaggerhub.com/apis/haniot/haniot-apigw/v1/swagger.json',
         customCss: `.swagger-ui .topbar { 
                     background-color: #00a594;  
-                    padding: 10px 0; 
+                    padding: 14px 0; 
                 }
                 .swagger-ui .topbar .topbar-wrapper a span { 
                   display: none; 
@@ -20,17 +20,13 @@ module.exports = function (expressGatewayApp) {
                     display: none;
                 }
                 .swagger-ui .topbar .topbar-wrapper:before { 
-                  content: url(/images/logo-72x72.png);
-                  width: 20px;
-                  height: 20px;
-                  transform: scale(0.05);
+                  content: url(/images/logo_nutes_48x48.png);
                   margin-left: -5px;
-                  margin-top: -50px;
               }
                 .swagger-ui .topbar .topbar-wrapper:after {  
-                    content: 'HANIoT';
-                    margin: auto 25px; 
-                    padding: 10px 10px;
+                    content: 'HANIoT'; 
+                    margin: 0;
+                    padding: 0 10px;
                     font-size: 1.7em;
                     font-weight: 700;
                     color: #fff; 

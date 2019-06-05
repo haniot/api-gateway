@@ -2,12 +2,12 @@ http:
   port: ${PORT_HTTP:-8080}
   hostname: '0.0.0.0'
 https:
-  port: ${PORT_HTTPS:-8081}
+  port: ${PORT_HTTPS:-443}
   hostname: '0.0.0.0'
   tls:
-    default:
-      key: ${SSL_KEY_PATH:-.certs/server.key}
-      cert: ${SSL_CERT_PATH:-.certs/server.crt}
+    "default":
+      key: ${SSL_KEY_PATH}
+      cert: ${SSL_CERT_PATH}
 
 ####### API ENDPOINTS DEFINITION ########
 apiEndpoints:
@@ -569,7 +569,7 @@ pipelines:
           - condition:
               name: 'regex-path-method'
               #regexpath é uma expressão regular
-              regexpath: '^(\/users\/)[a-fA-F0-9]{24}$'
+              regexpath: '^(\/users\/)[a-fA-F0-9]{24}\/{0,1}$'
               method: 'DELETE'
             action:
               urldeleteservice: ${ACCOUNT_SERVICE:-https://localhost:3001}/users
@@ -579,6 +579,8 @@ pipelines:
               ignorePath:   false
               stripPath:    false
               changeOrigin: true
+              secure: false
+              timeout: 10000
               serviceEndpoint: accountService
   ###########################################################################
 
@@ -604,6 +606,8 @@ pipelines:
               ignorePath:   false
               stripPath:    false
               changeOrigin: true
+              secure: false
+              timeout: 10000
               serviceEndpoint: accountService
   ###########################################################################
 
@@ -623,6 +627,8 @@ pipelines:
               ignorePath:   false
               stripPath:    false
               changeOrigin: true
+              secure: false
+              timeout: 10000
               serviceEndpoint: ehrService
   ###########################################################################
 
@@ -642,6 +648,8 @@ pipelines:
               ignorePath:   false
               stripPath:    false
               changeOrigin: true
+              secure: false
+              timeout: 10000
               serviceEndpoint: mhealthService
   ###########################################################################
 
@@ -669,6 +677,8 @@ pipelines:
               ignorePath:   false
               stripPath:    false
               changeOrigin: true
+              secure: false
+              timeout: 10000
               serviceEndpoint: analyticsService
   ###########################################################################
 
@@ -688,5 +698,7 @@ pipelines:
               ignorePath:   false
               stripPath:    false
               changeOrigin: true
+              secure: false
+              timeout: 10000
               serviceEndpoint: notificationService
 ###########################################################################

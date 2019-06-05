@@ -59,12 +59,6 @@ account.getPilotStudyById = function (pilotstudy_id) {
  */
 account.deleteUserById = function (user_id) {
     return instance.delete(`${ACCOUNT_SERVICE}/users/${user_id}`)
-        .then(response => {
-            return Promise.resolve(response.data)
-        }).catch(error => {
-            console.error(new Date().toUTCString() + ' | haniot-delete-user | Error removing Account user:' + error.message)
-            return Promise.reject(err.response.data)
-        })
 }
 
 module.exports = account

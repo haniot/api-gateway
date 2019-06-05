@@ -1,61 +1,40 @@
+'use strict'
 
-const account = require('../../services/account/account-service');
-const ehr = require('../../services/ehr/ehr-service');
-const mhealth = require('../../services/mhealth/mhealth-service');
-const analytics = require('../../services/analytics/analytics-service');
-const HttpStatus = require('http-status');
+const account = require('../../services/account/account-service')
+const ehr = require('../../services/ehr/ehr-service')
+const mhealth = require('../../services/mhealth/mhealth-service')
+const analytics = require('../../services/analytics/analytics-service')
 
 module.exports = function (actionParams) {
-
     return async (req, res, next) => {
-
         try {
-            const pilotstudy = req.body.pilotstudy;
-            /**
-             * If the request does not have a pilot study entity, an exception will be issued 'PILOTSTUDY_NOTFOUND';
-             */
-            if (!pilotstudy) {
-                throw new Error('PILOTSTUDY_NOTFOUND');
-            }
+            const pilotstudy = req.body.pilotstudy
 
-            const health_professional_id = req.body.health_professional_id;
-            /**
-             * If the request does not have a pilot study entity, an exception will be issued 'PILOTSTUDY_NOTFOUND';
-             */
-            if (!health_professional_id) {
-                throw new Error('HEALTHPROFESSIONALID_NOTFOUND');
-            }
+            // If the request does not have a pilot study entity, an exception will be issued 'PILOTSTUDY_NOTFOUND';
+            if (!pilotstudy) throw new Error('PILOTSTUDY_NOTFOUND')
 
-            /**
-             * Object used to store all patient information.
-             */
-            const listOfPatientsInformation = new Array();
+            const health_professional_id = req.body.health_professional_id
 
-            /**
-             * I retrieve the list with all the patients of the pilot study
-             */
-            const listOfPatients = await account.getAllPatientsByPilotStudyId(pilotstudy.id);
+            // If the request does not have a pilot study entity, an exception will be issued 'PILOTSTUDY_NOTFOUND';
+            if (!health_professional_id) throw new Error('HEALTHPROFESSIONALID_NOTFOUND')
+
+            // Object used to store all patient information.
+            const listOfPatientsInformation = new Array()
+
+            // I retrieve the list with all the patients of the pilot study
+            const listOfPatients = await account.getAllPatientsByPilotStudyId(pilotstudy.id)
             if (listOfPatients && listOfPatients.length) {
-                /**
-                 * For each patient I look for their habits and their measurements
-                 */
+                // For each patient I look for their habits and their measurements
                 for (let index in listOfPatients) {
-
-                    const patient = listOfPatients[index];
-
+                    const patient = listOfPatients[index]
                     try {
-                        /**
-                         * I recover the patient's last habits
-                         */
-                        const lastQuestionnaires = await ehr.getLastQuestionnaires(patient.id);
-                        /**
-                         * I retrieve patient measurements.
-                         */
-                        const measurements = await mhealth.getMeasurements(patient.id, pilotstudy.start, pilotstudy.end);
+                        // I recover the patient's last habits
+                        const lastQuestionnaires = await ehr.getLastQuestionnaires(patient.id)
 
-                        /**
-                        * Assembly of the final object.
-                        */
+                        // I retrieve patient measurements.
+                        const measurements = await mhealth.getMeasurements(patient.id, pilotstudy.start, pilotstudy.end)
+
+                        // Assembly of the final object.
                         listOfPatientsInformation.push(
                             {
                                 patient: patient,
@@ -66,55 +45,44 @@ module.exports = function (actionParams) {
                                 family_cohesion_record: lastQuestionnaires.odontological.family_cohesion_record,
                                 oral_health_record: lastQuestionnaires.odontological.oral_health_record,
                                 health_professional_id: health_professional_id
-                            });
+                            })
                     } catch (e) {
-                        /**
-                         * If a problem occurs in one of the requests, disregard the current patient and go to the next one.
-                         */
-                        continue;
+                        // If a problem occurs in one of the requests, disregard the current patient and go to the next one.
                     }
-
-
                 }
 
-                /**
-                 * After gathering all the information send to the analytics service.
-                 */
+                // After gathering all the information send to the analytics service.
                 return analytics.createOdontologicalEvaluation(listOfPatientsInformation, pilotstudy.id)
-                    .then(response => {
-                        return res.status(response.status).send(response.data);
-                    })
+                    .then(response => res.status(response.status).send(response.data))
                     .catch(err => {
-                        
-                        if(err.response && err.response.data){
-                            return res.status(err.response.status).send(err.response.data);
+                        if (err.response && err.response.data) {
+                            return res.status(err.response.status).send(err.response.data)
                         }
-                        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(handlerMessageError(err.message));
-                    });
+                        return res.status(500).send(handlerMessageError(err.message))
+                    })
 
             }
-
-            /**
-             * If the pilot study does not contain patients, an exception will be issued 'PILOTSTUDY_EMPTY'
-             */
-            throw new Error('PILOTSTUDY_EMPTY');
-
+            // If the pilot study does not contain patients, an exception will be issued 'PILOTSTUDY_EMPTY'
+            throw new Error('PILOTSTUDY_EMPTY')
         } catch (err) {
+            // Check the error type according to the message property and set its return.
+            if (err && err.message === 'PILOTSTUDY_NOTFOUND') {
+                return res.status(400).send(handlerMessageError('PILOTSTUDY_NOTFOUND'))
+            }
 
-            /**
-             * Check the error type according to the message property and set its return.
-             */
-            if (err && err.message === 'PILOTSTUDY_NOTFOUND') return res.status(HttpStatus.BAD_REQUEST).send(handlerMessageError('PILOTSTUDY_NOTFOUND'));
-            if (err && err.message === 'HEALTHPROFESSIONALID_NOTFOUND') return res.status(HttpStatus.BAD_REQUEST).send(handlerMessageError('HEALTHPROFESSIONALID_NOTFOUND'));
-            if (err && err.message === 'PILOTSTUDY_EMPTY') return res.status(HttpStatus.BAD_REQUEST).send(handlerMessageError('PILOTSTUDY_EMPTY'));
+            if (err && err.message === 'HEALTHPROFESSIONALID_NOTFOUND') {
+                return res.status(400).send(handlerMessageError('HEALTHPROFESSIONALID_NOTFOUND'))
+            }
 
-            /**
-             * If the error is not mapped in the above options, I return an error 500;
-             */
-            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(handlerMessageError(err.message));
+            if (err && err.message === 'PILOTSTUDY_EMPTY') {
+                return res.status(400).send(handlerMessageError('PILOTSTUDY_EMPTY'))
+            }
+
+            // If the error is not mapped in the above options, I return an error 500;
+            return res.status(500).send(handlerMessageError(err.message))
         }
     }
-};
+}
 
 /**
  * Handler of general error messages.
