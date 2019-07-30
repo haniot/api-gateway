@@ -589,6 +589,14 @@ pipelines:
     apiEndpoints:
       - accountPublic
     policies:
+      - rate-limit:
+          - action:
+              max: 5
+              windowMs: 3600000
+              rateLimitBy: "${req.hostname} ${req.ip}"
+              statusCode: 429
+              message: 'The fee limit for requests has been exceeded. Try again after 1 hour.'
+              headers: true
       - haniot-body-parser-policy:
       - haniot-auth-policy:
           - condition:
