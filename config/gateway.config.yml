@@ -562,7 +562,7 @@ pipelines:
       - haniot-body-parser-policy:
       - haniot-jwt-policy:
           - action:
-              secretOrPublicKey: ${JWT_SECRET:-haniot123}
+              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
               issuer: ${ISSUER:-haniot}
       - haniot-jwtScopes-policy:
       - haniot-delete-user-policy:
@@ -606,7 +606,7 @@ pipelines:
               method: 'POST'
             action:
               urlauthservice: ${ACCOUNT_SERVICE:-https://localhost:3001}/auth
-              secretOrPublicKey: ${JWT_SECRET:-haniot123}
+              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
               issuer: ${ISSUER:-haniot}
       - proxy:
           - action:
@@ -626,7 +626,7 @@ pipelines:
     policies:
       - haniot-jwt-policy:
           - action:
-              secretOrPublicKey: ${JWT_SECRET:-haniot123}
+              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
               issuer: ${ISSUER:-haniot}
       - haniot-jwtScopes-policy:
       - proxy:
@@ -647,7 +647,7 @@ pipelines:
     policies:
       - haniot-jwt-policy:
           - action:
-              secretOrPublicKey: ${JWT_SECRET:-haniot123}
+              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
               issuer: ${ISSUER:-haniot}
       - haniot-jwtScopes-policy:
       - proxy:
@@ -669,7 +669,7 @@ pipelines:
       - haniot-body-parser-policy:
       - haniot-jwt-policy:
           - action:
-              secretOrPublicKey: ${JWT_SECRET:-haniot123}
+              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
               issuer: ${ISSUER:-haniot}
       - haniot-jwtScopes-policy:
       - odontological-evaluation-policy:
@@ -697,7 +697,7 @@ pipelines:
     policies:
       - haniot-jwt-policy:
           - action:
-              secretOrPublicKey: ${JWT_SECRET:-haniot123}
+              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
               issuer: ${ISSUER:-haniot}
       - haniot-jwtScopes-policy:
       - proxy:

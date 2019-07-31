@@ -27,7 +27,10 @@ module.exports = function (actionParams, authServiceTest, servicesTest) {
                 fs.readFileSync(actionParams.secretOrPublicKeyFile, 'utf8') : actionParams.secretOrPublicKey
 
             // 3. Checks whether the token obtained matches the public key.
-            const decode = await jwt.verify(accessToken, secretOrKey, {issuer: actionParams.issuer})
+            const decode = await jwt.verify(accessToken, secretOrKey, {
+                algorithms: ['RS256'],
+                issuer: actionParams.issuer
+            })
             // 3.1 Checks if the user ID to whom the token belongs is present. 'sub' is required.
             if (!decode.sub) throw new Error('UNAUTHORIZED')
 
@@ -41,6 +44,11 @@ module.exports = function (actionParams, authServiceTest, servicesTest) {
 
             return res.status(200).send(authResponse.data)
         } catch (err) {
+            /* Report in logs that JWT has an invalid signature */
+            if (err.name === 'JsonWebTokenError' && err.message === 'invalid signature') {
+                console.error(`[haniot-auth-policy] error: Invalid JWT Signature!`)
+            }
+
             if (err.response && err.response.data) {
                 return res.status(err.response.status).send(err.response.data)
             }
@@ -70,4 +78,3 @@ function handlerMessageError(code) {
         'description': 'An internal server error has occurred.'
     }
 }
-
