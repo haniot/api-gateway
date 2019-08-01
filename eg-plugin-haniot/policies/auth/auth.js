@@ -19,7 +19,7 @@ module.exports = function (actionParams, authServiceTest, servicesTest) {
 
         try {
             // 1. Run authentication on the account-service
-            const authResponse = await accountService.auth(req.body)
+            const authResponse = await accountService.auth(actionParams.urlauthservice, req.body)
             const accessToken = authResponse.data.access_token
 
             // 2. Read JWT public key

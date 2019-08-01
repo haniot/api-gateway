@@ -12,6 +12,7 @@ module.exports = function (app) {
         origin: '*',
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEADER', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+        exposedHeaders: ['x-ratelimit-limit', 'x-ratelimit-remaining'],
         credentials: true,
         preflightContinue: false,
         optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204

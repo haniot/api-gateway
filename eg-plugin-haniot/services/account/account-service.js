@@ -7,7 +7,6 @@ const axios = require('axios')
 const https = require('https')
 
 const account = {}
-const ACCOUNT_SERVICE = process.env.ACCOUNT_SERVICE
 
 const instance = axios.create({
     httpsAgent: new https.Agent({
@@ -19,8 +18,8 @@ const instance = axios.create({
  * Function used to perform authentication
  * @param {*} credentials
  */
-account.auth = function (credentials) {
-    return instance.post(`${ACCOUNT_SERVICE}/auth`, credentials)
+account.auth = function (authPath, credentials) {
+    return instance.post(authPath, credentials)
 }
 
 /**
