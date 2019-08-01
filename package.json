@@ -13,6 +13,6 @@
   "dependencies": {
     "dotenv": "^8.0.0",
     "eg-plugin-haniot": "file:eg-plugin-haniot",
-    "express-gateway": "^1.16.4"
+    "express-gateway": "^1.16.7"
   }
 }

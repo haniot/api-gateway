@@ -82,3 +82,6 @@ bash.exe.stackdump
 *.csr
 *.cert
 certs
+
+# package-lock.json
+package-lock.json
