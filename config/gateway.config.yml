@@ -490,7 +490,7 @@ pipelines:
           - condition:
               name: 'regex-path-method'
               #regexpath é uma expressão regular
-              regexpath: '^(/auth)$'
+              regexpath: '^(/v1/auth)$'
               method: 'POST'
             action:
               urlauthservice: ${ACCOUNT_SERVICE:-https://localhost:3001}/v1/auth
