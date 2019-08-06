@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "dotenv": "^8.0.0",
-    "eg-plugin-haniot": "file:eg-plugin-haniot",
-    "express-gateway": "^1.16.4"
+    "express-apigw-base-plugin": "git+https://github.com/nutes-uepb/express-apigw-base-plugin.git",
+    "express-gateway": "^1.16.7",
+    "swagger-ui-express": "^4.0.7"
   }
 }
