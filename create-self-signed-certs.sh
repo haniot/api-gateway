@@ -60,7 +60,7 @@ openssl req \
   -days 120 \
   -nodes \
   -x509 \
-  -subj "//C=BR\ST=PB\L=HANIoT\O=HANIoT CA" \
+  -subj "/C=BR/ST=PB/L=HANIoT/O=HANIoT CA" \
   -keyout "${DIR}/ca.key" \
   -out "${DIR}/ca.crt"
 # For each server/service you want to secure with your CA, repeat the

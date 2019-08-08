@@ -446,14 +446,14 @@ pipelines:
       - body-parser-policy:
       - jwt-policy:
           - action:
-              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
+              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.pem}
               issuer: ${ISSUER:-haniot}
       - jwtScopes-policy:
       - delete-user-policy:
           - condition:
               name: 'regex-path-method'
               #regexPath é uma expressão regular
-              regexPath: '^(\/v1/users\/)[a-fA-F0-9]{24}\/{0,1}$'
+              regexPath: '^(\/v1\/users\/)[a-fA-F0-9]{24}\/{0,1}$'
               method: 'DELETE'
             action:
               urlDeleteService: ${ACCOUNT_SERVICE:-https://localhost:3001}/v1/users
@@ -490,7 +490,7 @@ pipelines:
           - condition:
               name: 'regex-path-method'
               #regexPath é uma expressão regular
-              regexPath: '^(/v1/auth)$'
+              regexPath: '^(\/v1\/auth\/{0,1})$'
               method: 'POST'
             action:
               urlAuthService: ${ACCOUNT_SERVICE:-https://localhost:3001}/v1/auth
@@ -541,7 +541,7 @@ pipelines:
               message: ${req.method} ${req.originalUrl}
       - jwt-policy:
           - action:
-              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
+              secretOrPublicKey: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
               issuer: ${ISSUER:-haniot}
       - jwtScopes-policy:
       - proxy:
