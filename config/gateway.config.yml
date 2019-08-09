@@ -223,7 +223,7 @@ apiEndpoints:
       scopes: ['forms:create']
 
     - host: '*'
-      paths: ['/v1/patients/:patient_id/nutritional/questionnaires']
+      paths: ['/v1/patients/:patient_id/odontological/questionnaires']
       methods: ['GET']
       scopes: ['forms:read']
 
@@ -494,7 +494,7 @@ pipelines:
               method: 'POST'
             action:
               urlAuthService: ${ACCOUNT_SERVICE:-https://localhost:3001}/v1/auth
-              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
+              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.key.pub}
               issuer: ${ISSUER:-haniot}
       - proxy:
           - action:
@@ -517,7 +517,7 @@ pipelines:
               message: ${req.method} ${req.originalUrl}
       - jwt-policy:
           - action:
-              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
+              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.key.pub}
               issuer: ${ISSUER:-haniot}
       - jwtScopes-policy:
       - proxy:
@@ -541,7 +541,7 @@ pipelines:
               message: ${req.method} ${req.originalUrl}
       - jwt-policy:
           - action:
-              secretOrPublicKey: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
+              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.key.pub}
               issuer: ${ISSUER:-haniot}
       - jwtScopes-policy:
       - proxy:
@@ -566,7 +566,7 @@ pipelines:
       - body-parser-policy:
       - jwt-policy:
           - action:
-              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
+              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.key.pub}
               issuer: ${ISSUER:-haniot}
       - jwtScopes-policy:
       - proxy:
@@ -590,7 +590,7 @@ pipelines:
               message: ${req.method} ${req.originalUrl}
       - jwt-policy:
           - action:
-              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
+              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.key.pub}
               issuer: ${ISSUER:-haniot}
       - jwtScopes-policy:
       - proxy:
