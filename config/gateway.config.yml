@@ -432,6 +432,7 @@ policies:
   - auth-policy
   - body-parser-policy
   - delete-user-policy
+  - recaptcha-policy
 
 ####### PIPELINES DEFINITION ########
 pipelines:
@@ -485,7 +486,15 @@ pipelines:
               statusCode: 429
               message: 'The fee limit for requests has been exceeded. Try again after 1 hour.'
               headers: true
-
+      - recaptcha-policy:
+          - condition:
+              name: 'regex-path-method'
+              #regexPath é uma expressão regular
+              regexPath: '^(\/v1\/auth\/{0,1})$'
+              method: 'POST'
+            action:
+              serverKey: ${RECAPTCHA_SERVER_KEY}
+              recaptchaResponse: '${req.body.recaptchaResponse}'
       - auth-policy:
           - condition:
               name: 'regex-path-method'
