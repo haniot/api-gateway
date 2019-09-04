@@ -177,7 +177,7 @@ apiEndpoints:
     - host: '*'
       paths: ['/v1/pilotstudies/:pilotstudy_id/patients/:patient_id']
       methods: ['DELETE']
-      scopes: ['pilots:delete']
+      scopes: ['pilots:update']
     ######################################
 
   ################ ACCOUNT API PRIVATE END #####################################
