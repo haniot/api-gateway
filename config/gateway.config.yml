@@ -670,7 +670,7 @@ pipelines:
               serviceEndpoint: mhealthService
   ###########################################################################
 
-  ##################### PIPELINE PRIVATE ANALYTIVS SERVICE ####################
+  ##################### PIPELINE PRIVATE ANALYTICS SERVICE ####################
   - name: privateAnalyticsServicePipeline
     apiEndpoints:
       - analyticsPrivate
@@ -764,7 +764,7 @@ pipelines:
       - jwt-policy:
           - action:
               secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
-              issuer: ${ISSUER:-ocariot}
+              issuer: ${ISSUER:-haniot}
       - jwtScopes-policy:
       - request-transformer:
           - action:
