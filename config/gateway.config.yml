@@ -112,6 +112,18 @@ apiEndpoints:
       scopes: ['patients:update']
     ######################################
 
+    ## ENDPOINTS TO MANAGE PATIENT GOALS ##
+    - host: '*'
+      paths: ['/v1/patients/:patient_id/goals']
+      methods: ['GET']
+      scopes: ['patients:read']
+
+    - host: '*'
+      paths: ['/v1/patients/:patient_id/goals']
+      methods: ['PATCH']
+      scopes: ['patients:update']
+    ######################################
+
     ## ENDPOINT TO RECOVER ALL PILOTS FROM PATIENT ##
     - host: '*'
       paths: ['/v1/patients/:patient_id/pilotstudies']
@@ -261,11 +273,6 @@ apiEndpoints:
   mhealthPrivate:
     ## ENDPOINTS TO MANAGE MEASUREMENTS ##
     - host: '*'
-      paths: ['/v1/measurements']
-      methods: ['GET']
-      scopes: ['measurements:readAll']
-
-    - host: '*'
       paths: ['/v1/measurements/types']
       methods: ['GET']
       scopes: ['measurements:read']
@@ -294,6 +301,50 @@ apiEndpoints:
       paths: ['/v1/patients/:patient_id/measurements/:measurement_id']
       methods: ['DELETE']
       scopes: ['measurements:delete']
+    ###############################
+
+    ## ENDPOINTS TO MANAGE PATIENTS.PHYSICALACTIVITIES ##
+    - host: '*'
+      paths: ['/v1/patients/:patient_id/physicalactivities']
+      methods: ['POST']
+      scopes: ['activities:create']
+
+    - host: '*'
+      paths: ['/v1/patients/:patient_id/physicalactivities']
+      methods: ['GET']
+      scopes: ['activities:read']
+
+    - host: '*'
+      paths: ['/v1/patients/:patient_id/physicalactivities/:physicalactivity_id']
+      methods: ['GET']
+      scopes: ['activities:read']
+
+    - host: '*'
+      paths: ['/v1/patients/:patient_id/physicalactivities/:physicalactivity_id']
+      methods: ['DELETE']
+      scopes: ['activities:delete']
+    ###############################
+
+    ## ENDPOINTS TO MANAGE PATIENTS.SLEEP ##
+    - host: '*'
+      paths: ['/v1/patients/:patient_id/sleep']
+      methods: ['POST']
+      scopes: ['sleep:create']
+
+    - host: '*'
+      paths: ['/v1/patients/:patient_id/sleep']
+      methods: ['GET']
+      scopes: ['sleep:read']
+
+    - host: '*'
+      paths: ['/v1/patients/:patient_id/sleep/:sleep_id']
+      methods: ['GET']
+      scopes: ['sleep:read']
+
+    - host: '*'
+      paths: ['/v1/patients/:patient_id/sleep/:sleep_id']
+      methods: ['DELETE']
+      scopes: ['sleep:delete']
     ###############################
 
     ## ENDPOINTS TO MANAGE DEVICES ##
@@ -401,9 +452,39 @@ apiEndpoints:
       paths: ['/v1/users/:user_id/emails/:email_id']
       methods: ['DELETE']
       scopes: ['notifications:delete']
-    ####################################
+    ############### NOTIFICATION API PRIVATE END #######################################
 
-  ############### NOTIFICATION API PRIVATE END ##########################################
+    ############### DATA SYNC AGENT API START #######################################
+  dsAgentPublic:
+    ### FITBIT.SUBSCRIBER ###
+    - host: '*'
+      paths: ['/v1/fitbit/subscriber']
+      methods: ['GET', 'POST']
+
+  dsAgentPrivate:
+    ### FITBIT ###
+    - host: '*'
+      paths: ['/v1/fitbit']
+      methods: ['GET']
+      scopes: ['external:sync']
+
+    ### USERS.FITBIT.AUTH ###
+    - host: '*'
+      paths: ['/v1/users/:user_id/fitbit/auth']
+      methods: ['POST', 'GET']
+      scopes: ['external:sync']
+
+    - host: '*'
+      paths: ['/v1/users/:user_id/fitbit/auth/revoke']
+      methods: ['POST']
+      scopes: ['external:sync']
+
+    ### USERS.FITBIT.SYNC ###
+    - host: '*'
+      paths: ['/v1/users/:user_id/fitbit/sync']
+      methods: ['POST']
+      scopes: ['external:sync']
+    ############### DATA SYNC AGENT API END #######################################
 
 ####### SERVICE ENDPOINTS DEFINITIONS ########
 serviceEndpoints:
@@ -422,6 +503,9 @@ serviceEndpoints:
   notificationService:
     url: ${NOTIFICATION_SERVICE:-https://localhost:7001}
 
+  dsAgentService:
+    url: ${DS_AGENT_SERVICE:-https://localhost:8001}
+
 ####### POLICIES USED IN PIPELINES DEFINITION ########
 policies:
   - log
@@ -433,6 +517,7 @@ policies:
   - body-parser-policy
   - delete-user-policy
   - recaptcha-policy
+  - request-transformer
 
 ####### PIPELINES DEFINITION ########
 pipelines:
@@ -458,6 +543,13 @@ pipelines:
               method: 'DELETE'
             action:
               urlDeleteService: ${ACCOUNT_SERVICE:-https://localhost:3001}/v1/users
+      - request-transformer:
+          - action:
+              headers:
+                add:
+                  Haniot-User-Id: req.user.sub
+                  Haniot-User-type: req.user.sub_type
+                  Haniot-User-Scope: req.user.scope
       - proxy:
           - action:
               prependPath:  true
@@ -529,6 +621,13 @@ pipelines:
               secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.key.pub}
               issuer: ${ISSUER:-haniot}
       - jwtScopes-policy:
+      - request-transformer:
+          - action:
+              headers:
+                add:
+                  Haniot-User-Id: req.user.sub
+                  Haniot-User-type: req.user.sub_type
+                  Haniot-User-Scope: req.user.scope
       - proxy:
           - action:
               prependPath:  true
@@ -553,6 +652,13 @@ pipelines:
               secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.key.pub}
               issuer: ${ISSUER:-haniot}
       - jwtScopes-policy:
+      - request-transformer:
+          - action:
+              headers:
+                add:
+                  Haniot-User-Id: req.user.sub
+                  Haniot-User-type: req.user.sub_type
+                  Haniot-User-Scope: req.user.scope
       - proxy:
           - action:
               prependPath:  true
@@ -564,7 +670,7 @@ pipelines:
               serviceEndpoint: mhealthService
   ###########################################################################
 
-  ##################### PIPELINE PRIVATE ANALYTIVS SERVICE ####################
+  ##################### PIPELINE PRIVATE ANALYTICS SERVICE ####################
   - name: privateAnalyticsServicePipeline
     apiEndpoints:
       - analyticsPrivate
@@ -578,6 +684,13 @@ pipelines:
               secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.key.pub}
               issuer: ${ISSUER:-haniot}
       - jwtScopes-policy:
+      - request-transformer:
+          - action:
+              headers:
+                add:
+                  Haniot-User-Id: req.user.sub
+                  Haniot-User-type: req.user.sub_type
+                  Haniot-User-Scope: req.user.scope
       - proxy:
           - action:
               prependPath:  true
@@ -602,6 +715,13 @@ pipelines:
               secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.key.pub}
               issuer: ${ISSUER:-haniot}
       - jwtScopes-policy:
+      - request-transformer:
+          - action:
+              headers:
+                add:
+                  Haniot-User-Id: req.user.sub
+                  Haniot-User-type: req.user.sub_type
+                  Haniot-User-Scope: req.user.scope
       - proxy:
           - action:
               prependPath:  true
@@ -612,3 +732,54 @@ pipelines:
               timeout: 10000
               serviceEndpoint: notificationService
 ###########################################################################
+
+  ##################### PIPELINE PUBLIC DS AGENT SERVICE ####################
+  - name: publicDsAgentServicePipeline
+    apiEndpoints:
+      - dsAgentPublic
+    policies:
+      - log:
+          action:
+            message: ${req.connection.remoteAddress} - "${req.method} ${req.originalUrl} HTTP/${req.httpVersion}" - "${req.headers['user-agent']}"
+      - proxy:
+          - action:
+              prependPath:  true
+              ignorePath:   false
+              stripPath:    false
+              changeOrigin: true
+              secure: false
+              timeout: 10000
+              serviceEndpoint: dsAgentService
+  ###########################################################################
+
+  ##################### PIPELINE PRIVATE DS AGENT SERVICE ####################
+  - name: privateDsAgentServicePipeline
+    apiEndpoints:
+      - dsAgentPrivate
+    policies:
+      - log:
+          action:
+            message: ${req.connection.remoteAddress} - "${req.method} ${req.originalUrl} HTTP/${req.httpVersion}" - "${req.headers['user-agent']}"
+      - body-parser-policy:
+      - jwt-policy:
+          - action:
+              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
+              issuer: ${ISSUER:-haniot}
+      - jwtScopes-policy:
+      - request-transformer:
+          - action:
+              headers:
+                add:
+                  Haniot-User-Id: req.user.sub
+                  Haniot-User-type: req.user.sub_type
+                  Haniot-User-Scope: req.user.scope
+      - proxy:
+          - action:
+              prependPath:  true
+              ignorePath:   false
+              stripPath:    false
+              changeOrigin: true
+              secure: false
+              timeout: 10000
+              serviceEndpoint: dsAgentService
+  ###########################################################################
