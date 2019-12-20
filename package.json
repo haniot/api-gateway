@@ -11,9 +11,9 @@
     "test:integration": "mocha --opts test/eg-plugin-haniot/integration/mocha.opts test/**/integration/**/eg-plugin-haniot-spec.js"
   },
   "dependencies": {
-    "dotenv": "^8.0.0",
+    "dotenv": "^8.2.0",
     "express-apigw-base-plugin": "git+https://github.com/nutes-uepb/express-apigw-base-plugin.git",
-    "express-gateway": "^1.16.7",
-    "swagger-ui-express": "^4.0.7"
+    "express-gateway": "^1.16.10",
+    "swagger-ui-express": "^4.1.2"
   }
 }
