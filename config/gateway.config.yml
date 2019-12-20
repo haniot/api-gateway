@@ -543,6 +543,13 @@ pipelines:
               method: 'DELETE'
             action:
               urlDeleteService: ${ACCOUNT_SERVICE:-https://localhost:3001}/v1/users
+      - request-transformer:
+          - action:
+              headers:
+                add:
+                  Haniot-User-Id: req.user.sub
+                  Haniot-User-type: req.user.sub_type
+                  Haniot-User-Scope: req.user.scope
       - proxy:
           - action:
               prependPath:  true
@@ -614,6 +621,13 @@ pipelines:
               secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.key.pub}
               issuer: ${ISSUER:-haniot}
       - jwtScopes-policy:
+      - request-transformer:
+          - action:
+              headers:
+                add:
+                  Haniot-User-Id: req.user.sub
+                  Haniot-User-type: req.user.sub_type
+                  Haniot-User-Scope: req.user.scope
       - proxy:
           - action:
               prependPath:  true
@@ -638,6 +652,13 @@ pipelines:
               secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.key.pub}
               issuer: ${ISSUER:-haniot}
       - jwtScopes-policy:
+      - request-transformer:
+          - action:
+              headers:
+                add:
+                  Haniot-User-Id: req.user.sub
+                  Haniot-User-type: req.user.sub_type
+                  Haniot-User-Scope: req.user.scope
       - proxy:
           - action:
               prependPath:  true
@@ -663,6 +684,13 @@ pipelines:
               secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.key.pub}
               issuer: ${ISSUER:-haniot}
       - jwtScopes-policy:
+      - request-transformer:
+          - action:
+              headers:
+                add:
+                  Haniot-User-Id: req.user.sub
+                  Haniot-User-type: req.user.sub_type
+                  Haniot-User-Scope: req.user.scope
       - proxy:
           - action:
               prependPath:  true
@@ -687,6 +715,13 @@ pipelines:
               secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.key.pub}
               issuer: ${ISSUER:-haniot}
       - jwtScopes-policy:
+      - request-transformer:
+          - action:
+              headers:
+                add:
+                  Haniot-User-Id: req.user.sub
+                  Haniot-User-type: req.user.sub_type
+                  Haniot-User-Scope: req.user.scope
       - proxy:
           - action:
               prependPath:  true
@@ -735,9 +770,9 @@ pipelines:
           - action:
               headers:
                 add:
-                  Ocariot-User-Id: req.user.sub
-                  Ocariot-User-type: req.user.sub_type
-                  Ocariot-User-Scope: req.user.scope
+                  Haniot-User-Id: req.user.sub
+                  Haniot-User-type: req.user.sub_type
+                  Haniot-User-Scope: req.user.scope
       - proxy:
           - action:
               prependPath:  true
