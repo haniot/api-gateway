@@ -27,7 +27,8 @@ Application settings are defined by environment variables. To define the setting
 | `EHR_SERVICE` | URI used to connect to the EHR service. | `https://localhost:5001` |
 | `ANALYTICS_SERVICE` | URI used to connect to the Analytics service. | `https://localhost:6001` |
 | `NOTIFICATION_SERVICE` | URI used to connect to the Notification service. | `https://localhost:7001` |
-| `DS_AGENT_SERVICE` | URI used to connect to the DS Agent service. | `https://localhost:8001` |
+| `TIME_SERIES_SERVICE` | URI used to connect to the Time Series service. | `https://localhost:8001` |
+| `DS_AGENT_SERVICE` | URI used to connect to the DS Agent service. | `https://localhost:9001` |
 | `EMULATE_REDIS` | Signals whether the redis bank will be emulated or not. | `true` |
 | `PORT_REDIS` | Redis instance port. | `6379` |
 | `HOST_REDIS` | Redis instance hostname. | `localhost` |

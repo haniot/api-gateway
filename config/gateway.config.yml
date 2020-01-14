@@ -452,9 +452,36 @@ apiEndpoints:
       paths: ['/v1/users/:user_id/emails/:email_id']
       methods: ['DELETE']
       scopes: ['notifications:delete']
-    ############### NOTIFICATION API PRIVATE END #######################################
+  ############### NOTIFICATION API PRIVATE END #######################################
 
-    ############### DATA SYNC AGENT API START #######################################
+  ############### TIME SERIES API START #######################################
+  timeSeriesPrivate:
+    ### PATIENTS.TIMESERIES ###
+    - host: '*'
+      paths: ['/v1/patients/:patient_id/date/:start_date/:end_date/timeseries']
+      methods: ['GET']
+      scopes: ['series:read']
+
+    ### PATIENTS.RESOURCE.TIMESERIES ###
+    - host: '*'
+      paths: ['/v1/patients/:patient_id/:resource/date/:start_date/:end_date/timeseries']
+      methods: ['GET']
+      scopes: ['series:read']
+
+    ### PATIENTS.RESOURCE.INTERVAL.TIMESERIES ###
+    - host: '*'
+      paths: ['/v1/patients/:patient_id/:resource/date/:date/interval/:interval/timeseries']
+      methods: ['GET']
+      scopes: ['series:read']
+
+    ### PATIENTS.RESOURCE.TIME.INTERVAL.TIMESERIES ###
+    - host: '*'
+      paths: ['/v1/patients/:patient_id/:resource/date/:start_date/:end_date/time/:start_time/:end_time/interval/:interval/timeseries']
+      methods: ['GET']
+      scopes: ['series:read']
+  ############### TIME SERIES API END #######################################
+
+  ############### DATA SYNC AGENT API START #######################################
   dsAgentPublic:
     ### FITBIT.SUBSCRIBER ###
     - host: '*'
@@ -484,7 +511,7 @@ apiEndpoints:
       paths: ['/v1/users/:user_id/fitbit/sync']
       methods: ['POST']
       scopes: ['external:sync']
-    ############### DATA SYNC AGENT API END #######################################
+  ############### DATA SYNC AGENT API END #######################################
 
 ####### SERVICE ENDPOINTS DEFINITIONS ########
 serviceEndpoints:
@@ -503,8 +530,11 @@ serviceEndpoints:
   notificationService:
     url: ${NOTIFICATION_SERVICE:-https://localhost:7001}
 
+  timeSeriesService:
+    url: ${TIME_SERIES_SERVICE:-https://localhost:8001}
+
   dsAgentService:
-    url: ${DS_AGENT_SERVICE:-https://localhost:8001}
+    url: ${DS_AGENT_SERVICE:-https://localhost:9001}
 
 ####### POLICIES USED IN PIPELINES DEFINITION ########
 policies:
@@ -521,7 +551,7 @@ policies:
 
 ####### PIPELINES DEFINITION ########
 pipelines:
-  ##################### PIPELINE PRIVATE ACCOUNT SERVICE ####################
+  ##################### PRIVATE PIPELINE ACCOUNT SERVICE ####################
   - name: privateAcountServicePipeline
     apiEndpoints:
       - accountPrivate
@@ -561,7 +591,7 @@ pipelines:
               serviceEndpoint: accountService
   ###########################################################################
 
-  ##################### PIPELINE PUBLIC ACCOUNT SERVICE ####################
+  ##################### PUBLIC PIPELINE ACCOUNT SERVICE ####################
   - name: publicAccountServicePipeline
     apiEndpoints:
       - accountPublic
@@ -608,7 +638,7 @@ pipelines:
               serviceEndpoint: accountService
   ###########################################################################
 
-  ##################### PIPELINE PRIVATE EHR SERVICE ####################
+  ##################### PRIVATE PIPELINE EHR SERVICE ####################
   - name: privateEHRServicePipeline
     apiEndpoints:
       - ehrPrivate
@@ -639,7 +669,7 @@ pipelines:
               serviceEndpoint: ehrService
   ###########################################################################
 
-  ##################### PIPELINE PRIVATE MHEALTH SERVICE ####################
+  ##################### PRIVATE PIPELINE MHEALTH SERVICE ####################
   - name: privateMHEALTHServicePipeline
     apiEndpoints:
       - mhealthPrivate
@@ -670,7 +700,7 @@ pipelines:
               serviceEndpoint: mhealthService
   ###########################################################################
 
-  ##################### PIPELINE PRIVATE ANALYTICS SERVICE ####################
+  ##################### PRIVATE PIPELINE ANALYTICS SERVICE ####################
   - name: privateAnalyticsServicePipeline
     apiEndpoints:
       - analyticsPrivate
@@ -702,7 +732,7 @@ pipelines:
               serviceEndpoint: analyticsService
   ###########################################################################
 
-  ##################### PIPELINE PRIVATE NOTIFICATION SERVICE ####################
+  ##################### PRIVATE PIPELINE NOTIFICATION SERVICE ####################
   - name: privateNotificationServicePipeline
     apiEndpoints:
       - notificationPrivate
@@ -731,9 +761,41 @@ pipelines:
               secure: false
               timeout: 10000
               serviceEndpoint: notificationService
-###########################################################################
+  ##############################################################################
 
-  ##################### PIPELINE PUBLIC DS AGENT SERVICE ####################
+  ##################### PRIVATE PIPELINE TIME SERIES SERVICE ####################
+  - name: privateTimeSeriesServicePipeline
+    apiEndpoints:
+      - timeSeriesPrivate
+    policies:
+      - log:
+          action:
+            message: ${req.connection.remoteAddress} - "${req.method} ${req.originalUrl} HTTP/${req.httpVersion}" - "${req.headers['user-agent']}"
+      - body-parser-policy:
+      - jwt-policy:
+          - action:
+              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
+              issuer: ${ISSUER:-haniot}
+      - jwtScopes-policy:
+      - request-transformer:
+          - action:
+              headers:
+                add:
+                  Haniot-User-Id: req.user.sub
+                  Haniot-User-type: req.user.sub_type
+                  Haniot-User-Scope: req.user.scope
+      - proxy:
+          - action:
+              prependPath:  true
+              ignorePath:   false
+              stripPath:    false
+              changeOrigin: true
+              secure: false
+              timeout: 10000
+              serviceEndpoint: timeSeriesService
+  ##############################################################################
+
+  ##################### PUBLIC PIPELINE DS AGENT SERVICE ####################
   - name: publicDsAgentServicePipeline
     apiEndpoints:
       - dsAgentPublic
@@ -752,7 +814,7 @@ pipelines:
               serviceEndpoint: dsAgentService
   ###########################################################################
 
-  ##################### PIPELINE PRIVATE DS AGENT SERVICE ####################
+  ##################### PRIVATE PIPELINE DS AGENT SERVICE ####################
   - name: privateDsAgentServicePipeline
     apiEndpoints:
       - dsAgentPrivate
