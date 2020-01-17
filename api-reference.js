@@ -8,7 +8,7 @@ const swaggerUi = require('swagger-ui-express')
 module.exports = function (expressGatewayApp) {
 
     const options = {
-        swaggerUrl: 'https://api.swaggerhub.com/apis/haniot/api-gateway/v1/swagger.json',
+        swaggerUrl: 'https://api.swaggerhub.com/apis/haniot/api-gateway/v2/swagger.json',
         customCss: `.swagger-ui .topbar { 
                     background-color: #00a594;  
                     padding: 14px 0; 
