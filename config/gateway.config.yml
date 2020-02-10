@@ -482,12 +482,6 @@ apiEndpoints:
   ############### TIME SERIES API END #######################################
 
   ############### DATA SYNC AGENT API START #######################################
-  dsAgentPublic:
-    ### FITBIT.SUBSCRIBER ###
-    - host: '*'
-      paths: ['/v1/fitbit/subscriber']
-      methods: ['GET', 'POST']
-
   dsAgentPrivate:
     ### FITBIT ###
     - host: '*'
@@ -506,6 +500,7 @@ apiEndpoints:
       methods: ['POST']
       scopes: ['external:sync']
 
+  dsAgentFitbitSyncPrivate:
     ### USERS.FITBIT.SYNC ###
     - host: '*'
       paths: ['/v1/users/:user_id/fitbit/sync']
@@ -795,25 +790,6 @@ pipelines:
               serviceEndpoint: timeSeriesService
   ##############################################################################
 
-  ##################### PUBLIC PIPELINE DS AGENT SERVICE ####################
-  - name: publicDsAgentServicePipeline
-    apiEndpoints:
-      - dsAgentPublic
-    policies:
-      - log:
-          action:
-            message: ${req.connection.remoteAddress} - "${req.method} ${req.originalUrl} HTTP/${req.httpVersion}" - "${req.headers['user-agent']}"
-      - proxy:
-          - action:
-              prependPath:  true
-              ignorePath:   false
-              stripPath:    false
-              changeOrigin: true
-              secure: false
-              timeout: 10000
-              serviceEndpoint: dsAgentService
-  ###########################################################################
-
   ##################### PRIVATE PIPELINE DS AGENT SERVICE ####################
   - name: privateDsAgentServicePipeline
     apiEndpoints:
@@ -835,6 +811,47 @@ pipelines:
                   Haniot-User-Id: req.user.sub
                   Haniot-User-type: req.user.sub_type
                   Haniot-User-Scope: req.user.scope
+      - proxy:
+          - action:
+              prependPath:  true
+              ignorePath:   false
+              stripPath:    false
+              changeOrigin: true
+              secure: false
+              timeout: 10000
+              serviceEndpoint: dsAgentService
+  ###########################################################################
+
+  ##################### PRIVATE PIPELINE DS AGENT SERVICE - FITBIT SYNC ####################
+  - name: privateDsAgentFitbitSyncPipeline
+    apiEndpoints:
+      - dsAgentFitbitSyncPrivate
+    policies:
+      - log:
+          action:
+            message: ${req.connection.remoteAddress} - "${req.method} ${req.originalUrl} HTTP/${req.httpVersion}" - "${req.headers['user-agent']}"
+      - body-parser-policy:
+      - jwt-policy:
+          - action:
+              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
+              issuer: ${ISSUER:-haniot}
+      - jwtScopes-policy:
+      - request-transformer:
+          - action:
+              headers:
+                add:
+                  Haniot-User-Id: req.user.sub
+                  Haniot-User-type: req.user.sub_type
+                  Haniot-User-Scope: req.user.scope
+      - rate-limit:
+          - action:
+              max: 10
+              windowMs: 3600000
+              rateLimitBy: "${req.hostname} ${req.params.user_id}"
+              statusCode: 429
+              message: 'Synchronization limit per hour exceeded for patient. Please try again later...'
+              headers: true
+              delayMs: 0
       - proxy:
           - action:
               prependPath:  true
