@@ -508,28 +508,29 @@ apiEndpoints:
       scopes: ['external:sync']
   ############### DATA SYNC AGENT API END #######################################
 
+  ############################ WEB APP START ####################################
+  webApp:
+    host: ${WEB_APP_HOSTNAME}
+  ############################# WEB APP END #####################################
+
 ####### SERVICE ENDPOINTS DEFINITIONS ########
 serviceEndpoints:
   accountService:
     url: ${ACCOUNT_SERVICE:-https://localhost:3001}
-
   mhealthService:
     url: ${MHEALTH_SERVICE:-https://localhost:4001}
-
   ehrService:
     url: ${EHR_SERVICE:-https://localhost:5001}
-
   analyticsService:
     url: ${ANALYTICS_SERVICE:-htts://localhost:6001}
-
   notificationService:
     url: ${NOTIFICATION_SERVICE:-https://localhost:7001}
-
   timeSeriesService:
     url: ${TIME_SERIES_SERVICE:-https://localhost:8001}
-
   dsAgentService:
     url: ${DS_AGENT_SERVICE:-https://localhost:9001}
+  webAppService:
+    url: ${WEB_APP_SERVICE:-http://localhost:4200}
 
 ####### POLICIES USED IN PIPELINES DEFINITION ########
 policies:
@@ -546,63 +547,22 @@ policies:
 
 ####### PIPELINES DEFINITION ########
 pipelines:
-  ##################### PRIVATE PIPELINE ACCOUNT SERVICE ####################
-  - name: privateAcountServicePipeline
-    apiEndpoints:
-      - accountPrivate
-    policies:
-      - log:
-          - action:
-              message: ${req.method} ${req.originalUrl}
-      - body-parser-policy:
-      - jwt-policy:
-          - action:
-              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.pem}
-              issuer: ${ISSUER:-haniot}
-      - jwtScopes-policy:
-      - delete-user-policy:
-          - condition:
-              name: 'regex-path-method'
-              #regexPath é uma expressão regular
-              regexPath: '^(\/v1\/users\/)[a-fA-F0-9]{24}\/{0,1}$'
-              method: 'DELETE'
-            action:
-              urlDeleteService: ${ACCOUNT_SERVICE:-https://localhost:3001}/v1/users
-      - request-transformer:
-          - action:
-              headers:
-                add:
-                  Haniot-User-Id: req.user.sub
-                  Haniot-User-type: req.user.sub_type
-                  Haniot-User-Scope: req.user.scope
-      - proxy:
-          - action:
-              prependPath:  true
-              ignorePath:   false
-              stripPath:    false
-              changeOrigin: true
-              secure: false
-              timeout: 10000
-              serviceEndpoint: accountService
-  ###########################################################################
-
-  ##################### PUBLIC PIPELINE ACCOUNT SERVICE ####################
-  - name: publicAccountServicePipeline
+  publicAccountServicePipeline:
     apiEndpoints:
       - accountPublic
     policies:
-      - log:
+      - log: &log
           - action:
-              message: '${req.method} ${req.originalUrl} Hostname:${req.hostname} IP:${req.ip}'
-      - body-parser-policy:
+              message: ${req.connection.remoteAddress} - "${req.method} ${req.originalUrl} HTTP/${req.httpVersion}" - "${req.headers['user-agent']}"
       - rate-limit:
           - action:
-              max: 5
-              windowMs: 3600000
-              rateLimitBy: "${req.hostname} ${req.body.email}"
-              statusCode: 429
-              message: 'The fee limit for requests has been exceeded. Try again after 1 hour.'
+              max: 10
+              windowMs: 1800000 # 30 minutes
+              delayMs: 0
+              rateLimitBy: "${req.hostname} ${req.ip}"
+              message: "Many requests. Please try later after 30 minutes."
               headers: true
+      - body-parser-policy:
       - recaptcha-policy:
           - condition:
               name: 'regex-path-method'
@@ -623,7 +583,7 @@ pipelines:
               secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.key.pub}
               issuer: ${ISSUER:-haniot}
       - proxy:
-          - action:
+          - action: &proxy
               prependPath:  true
               ignorePath:   false
               stripPath:    false
@@ -631,22 +591,27 @@ pipelines:
               secure: false
               timeout: 10000
               serviceEndpoint: accountService
-  ###########################################################################
 
-  ##################### PRIVATE PIPELINE EHR SERVICE ####################
-  - name: privateEHRServicePipeline
+  privateAcountServicePipeline:
     apiEndpoints:
-      - ehrPrivate
+      - accountPrivate
     policies:
-      - log:
+      - log: *log
+      - body-parser-policy:
+      - jwt-policy: &jwt-policy
           - action:
-              message: ${req.method} ${req.originalUrl}
-      - jwt-policy:
-          - action:
-              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.key.pub}
+              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.pem}
               issuer: ${ISSUER:-haniot}
       - jwtScopes-policy:
-      - request-transformer:
+      - delete-user-policy:
+          - condition:
+              name: 'regex-path-method'
+              #regexPath é uma expressão regular
+              regexPath: '^(\/v1\/users\/)[a-fA-F0-9]{24}\/{0,1}$'
+              method: 'DELETE'
+            action:
+              urlDeleteService: ${ACCOUNT_SERVICE:-https://localhost:3001}/v1/users
+      - request-transformer: &req-transformer
           - action:
               headers:
                 add:
@@ -655,210 +620,120 @@ pipelines:
                   Haniot-User-Scope: req.user.scope
       - proxy:
           - action:
-              prependPath:  true
-              ignorePath:   false
-              stripPath:    false
-              changeOrigin: true
-              secure: false
-              timeout: 10000
-              serviceEndpoint: ehrService
-  ###########################################################################
+              <<: *proxy
+              serviceEndpoint: accountService
 
-  ##################### PRIVATE PIPELINE MHEALTH SERVICE ####################
-  - name: privateMHEALTHServicePipeline
+  privateMHEALTHServicePipeline:
     apiEndpoints:
       - mhealthPrivate
     policies:
-      - log:
-          - action:
-              message: ${req.method} ${req.originalUrl}
-      - jwt-policy:
-          - action:
-              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.key.pub}
-              issuer: ${ISSUER:-haniot}
+      - log: *log
+      - jwt-policy: *jwt-policy
       - jwtScopes-policy:
-      - request-transformer:
-          - action:
-              headers:
-                add:
-                  Haniot-User-Id: req.user.sub
-                  Haniot-User-type: req.user.sub_type
-                  Haniot-User-Scope: req.user.scope
+      - request-transformer: *req-transformer
       - proxy:
           - action:
-              prependPath:  true
-              ignorePath:   false
-              stripPath:    false
-              changeOrigin: true
-              secure: false
-              timeout: 10000
+              <<: *proxy
               serviceEndpoint: mhealthService
-  ###########################################################################
 
-  ##################### PRIVATE PIPELINE ANALYTICS SERVICE ####################
-  - name: privateAnalyticsServicePipeline
+  privateEHRServicePipeline:
+    apiEndpoints:
+      - ehrPrivate
+    policies:
+      - log: *log
+      - jwt-policy: *jwt-policy
+      - jwtScopes-policy:
+      - request-transformer: *req-transformer
+      - proxy:
+          - action:
+              <<: *proxy
+              serviceEndpoint: ehrService
+
+  privateAnalyticsServicePipeline:
     apiEndpoints:
       - analyticsPrivate
     policies:
-      - log:
-          - action:
-              message: ${req.method} ${req.originalUrl}
+      - log: *log
       - body-parser-policy:
-      - jwt-policy:
-          - action:
-              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.key.pub}
-              issuer: ${ISSUER:-haniot}
+      - jwt-policy: *jwt-policy
       - jwtScopes-policy:
-      - request-transformer:
-          - action:
-              headers:
-                add:
-                  Haniot-User-Id: req.user.sub
-                  Haniot-User-type: req.user.sub_type
-                  Haniot-User-Scope: req.user.scope
+      - request-transformer: *req-transformer
       - proxy:
           - action:
-              prependPath:  true
-              ignorePath:   false
-              stripPath:    false
-              changeOrigin: true
-              secure: false
-              timeout: 10000
+              <<: *proxy
               serviceEndpoint: analyticsService
-  ###########################################################################
 
-  ##################### PRIVATE PIPELINE NOTIFICATION SERVICE ####################
-  - name: privateNotificationServicePipeline
+  privateNotificationServicePipeline:
     apiEndpoints:
       - notificationPrivate
     policies:
-      - log:
-          - action:
-              message: ${req.method} ${req.originalUrl}
-      - jwt-policy:
-          - action:
-              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-.certs/jwt.key.pub}
-              issuer: ${ISSUER:-haniot}
+      - log: *log
+      - jwt-policy: *jwt-policy
       - jwtScopes-policy:
-      - request-transformer:
-          - action:
-              headers:
-                add:
-                  Haniot-User-Id: req.user.sub
-                  Haniot-User-type: req.user.sub_type
-                  Haniot-User-Scope: req.user.scope
+      - request-transformer: *req-transformer
       - proxy:
           - action:
-              prependPath:  true
-              ignorePath:   false
-              stripPath:    false
-              changeOrigin: true
-              secure: false
-              timeout: 10000
+              <<: *proxy
               serviceEndpoint: notificationService
-  ##############################################################################
 
-  ##################### PRIVATE PIPELINE TIME SERIES SERVICE ####################
-  - name: privateTimeSeriesServicePipeline
+  privateTimeSeriesServicePipeline:
     apiEndpoints:
       - timeSeriesPrivate
     policies:
-      - log:
-          action:
-            message: ${req.connection.remoteAddress} - "${req.method} ${req.originalUrl} HTTP/${req.httpVersion}" - "${req.headers['user-agent']}"
+      - log: *log
       - body-parser-policy:
-      - jwt-policy:
-          - action:
-              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
-              issuer: ${ISSUER:-haniot}
+      - jwt-policy: *jwt-policy
       - jwtScopes-policy:
-      - request-transformer:
-          - action:
-              headers:
-                add:
-                  Haniot-User-Id: req.user.sub
-                  Haniot-User-type: req.user.sub_type
-                  Haniot-User-Scope: req.user.scope
+      - request-transformer: *req-transformer
       - proxy:
           - action:
-              prependPath:  true
-              ignorePath:   false
-              stripPath:    false
-              changeOrigin: true
-              secure: false
-              timeout: 10000
+              <<: *proxy
               serviceEndpoint: timeSeriesService
-  ##############################################################################
 
-  ##################### PRIVATE PIPELINE DS AGENT SERVICE ####################
-  - name: privateDsAgentServicePipeline
+  privateDsAgentServicePipeline:
     apiEndpoints:
       - dsAgentPrivate
     policies:
-      - log:
-          action:
-            message: ${req.connection.remoteAddress} - "${req.method} ${req.originalUrl} HTTP/${req.httpVersion}" - "${req.headers['user-agent']}"
+      - log: *log
       - body-parser-policy:
-      - jwt-policy:
-          - action:
-              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
-              issuer: ${ISSUER:-haniot}
+      - jwt-policy: *jwt-policy
       - jwtScopes-policy:
-      - request-transformer:
-          - action:
-              headers:
-                add:
-                  Haniot-User-Id: req.user.sub
-                  Haniot-User-type: req.user.sub_type
-                  Haniot-User-Scope: req.user.scope
+      - request-transformer: *req-transformer
       - proxy:
           - action:
-              prependPath:  true
-              ignorePath:   false
-              stripPath:    false
-              changeOrigin: true
-              secure: false
-              timeout: 10000
+              <<: *proxy
               serviceEndpoint: dsAgentService
-  ###########################################################################
 
   ##################### PRIVATE PIPELINE DS AGENT SERVICE - FITBIT SYNC ####################
-  - name: privateDsAgentFitbitSyncPipeline
+  privateDsAgentFitbitSyncPipeline:
     apiEndpoints:
       - dsAgentFitbitSyncPrivate
     policies:
-      - log:
-          action:
-            message: ${req.connection.remoteAddress} - "${req.method} ${req.originalUrl} HTTP/${req.httpVersion}" - "${req.headers['user-agent']}"
+      - log: *log
       - body-parser-policy:
-      - jwt-policy:
-          - action:
-              secretOrPublicKeyFile: ${JWT_PUBLIC_KEY_PATH:-./.certs/jwt.pem}
-              issuer: ${ISSUER:-haniot}
+      - jwt-policy: *jwt-policy
       - jwtScopes-policy:
-      - request-transformer:
-          - action:
-              headers:
-                add:
-                  Haniot-User-Id: req.user.sub
-                  Haniot-User-type: req.user.sub_type
-                  Haniot-User-Scope: req.user.scope
+      - request-transformer: *req-transformer
       - rate-limit:
           - action:
               max: 10
-              windowMs: 3600000
-              rateLimitBy: "${req.hostname} ${req.params.user_id}"
-              statusCode: 429
-              message: 'Synchronization limit per hour exceeded for patient. Please try again later...'
-              headers: true
+              windowMs: 3600000 # 1h
               delayMs: 0
+              rateLimitBy: "${req.hostname} ${req.params.user_id}"
+              message: 'Synchronization limit per hour exceeded for patient.  Please try later after 1 hour.'
+              headers: true
       - proxy:
           - action:
-              prependPath:  true
-              ignorePath:   false
-              stripPath:    false
-              changeOrigin: true
-              secure: false
-              timeout: 10000
+              <<: *proxy
               serviceEndpoint: dsAgentService
+
+  webAppPipeline:
+    apiEndpoints:
+      - webApp
+    policies:
+      - proxy:
+          - action:
+              <<: *proxy
+              serviceEndpoint: webAppService
+
   ###########################################################################
