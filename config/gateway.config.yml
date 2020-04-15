@@ -531,6 +531,8 @@ serviceEndpoints:
     url: ${DS_AGENT_SERVICE:-https://localhost:9001}
   webAppService:
     url: ${WEB_APP_SERVICE:-http://localhost:4200}
+  rabbitManagementService:
+    url: ${RABBIT_MGT_SERVICE:-https://localhost:15671}
 
 ####### POLICIES USED IN PIPELINES DEFINITION ########
 policies:
@@ -731,9 +733,18 @@ pipelines:
     apiEndpoints:
       - webApp
     policies:
+      - log: *log
       - proxy:
           - action:
               <<: *proxy
               serviceEndpoint: webAppService
 
-  ###########################################################################
+  rabbitPipeline:
+    apiEndpoints:
+      - rabbit
+    policies:
+      - log: *log
+      - proxy:
+          - action:
+              <<: *proxy
+              serviceEndpoint: rabbitManagementService

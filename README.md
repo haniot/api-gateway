@@ -14,9 +14,11 @@ Application settings are defined by environment variables. To define the setting
 | VARIABLE | DESCRIPTION  | DEFAULT |
 |-----|-----|-----|
 | `NODE_ENV` | Defines the environment in which the application runs. You can set: `test` _(in this environment, the database defined in `MONGODB_URI_TEST` is used and the logs are disabled for better visualization of the test output)_, `development` _(in this environment, all log levels are enabled)_ and `production` _(in this environment, only the warning and error logs are enabled)_. | `development` |
-| `API_GATEWAY_SERVICE` | URI used to connect to the API Gateway public API.  | `https://localhost:443` |
 | `PORT_HTTP` | Port used by the API GATEWAY service to listen for HTTP request. | `80` |
 | `PORT_HTTPS` | Port used by the API GATEWAY service to listen for HTTPS request. | `443` |
+| `API_GATEWAY_HOSTNAME` | API Gateway hostname. | `localhost` |
+| `WEB_APP_HOSTNAME` |  Web Application hostname. | `app.localhost` | 
+| `RABBIT_MGT_HOSTNAME` |  RabbitMQ Management  hostname. | `rabbit.localhost` | 
 | `RECAPTCHA_SERVER_KEY` | Server key used for reCaptcha. | `s3rv3rk3y` |
 | `ISSUER` | The issuer used to validate the JWT token sent for requests. The value must be provided by the Account service that generates the token. | `haniot` |
 | `SSL_KEY_PATH` | SSL/TLS certificate private key. | `.certs/server.key` |
@@ -29,6 +31,8 @@ Application settings are defined by environment variables. To define the setting
 | `NOTIFICATION_SERVICE` | URI used to connect to the Notification service. | `https://localhost:7001` |
 | `TIME_SERIES_SERVICE` | URI used to connect to the Time Series service. | `https://localhost:8001` |
 | `DS_AGENT_SERVICE` | URI used to connect to the DS Agent service. | `https://localhost:9001` |
+| `WEB_APP_SERVICE` |  Web Application URL. | `https://localhost:4001` |
+| `RABBIT_MGT_SERVICE` |  RabbitMQ Management URL. | `http://localhost:15672` |
 | `EMULATE_REDIS` | Signals whether the redis bank will be emulated or not. | `true` |
 | `PORT_REDIS` | Redis instance port. | `6379` |
 | `HOST_REDIS` | Redis instance hostname. | `localhost` |
