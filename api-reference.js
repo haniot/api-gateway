@@ -34,11 +34,15 @@ module.exports = function (expressGatewayApp) {
         customfavIcon: '/images/favicon-16x16.png',
         customSiteTitle: `API Reference | HANIoT`
     }
-    expressGatewayApp.get('/', (req, res) => {
-        res.redirect('/api/v1/reference')
+
+    expressGatewayApp.get('/', (req, res, next) => {
+        if (req.hostname === (process.env.API_GATEWAY_HOSTNAME || '')) {
+            return res.redirect('/v1/reference')
+        }
+        next()
     })
 
-    expressGatewayApp.use('/api/v1/reference', swaggerUi.serve, (req, res) => {
+    expressGatewayApp.use('/v1/reference', swaggerUi.serve, (req, res) => {
         swaggerUi.setup(null, options)(req, res)
     })
 }
