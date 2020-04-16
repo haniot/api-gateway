@@ -9,9 +9,7 @@ https:
       key: ${SSL_KEY_PATH}
       cert: ${SSL_CERT_PATH}
 
-####### API ENDPOINTS DEFINITION ########
 apiEndpoints:
-  ####### ACCOUNT API PUBLIC ########
   accountPublic:
     - host: '*'
       paths: ['/v1/auth']
@@ -28,18 +26,13 @@ apiEndpoints:
     - host: '*'
       paths: ['/v1/auth/password']
       methods: ['PATCH']
-  ####### ACCOUNT API PUBLIC END ########
 
-  ####### ACCOUNT API PRIVATE ########
   accountPrivate:
-    ## ENDPOINT TO DELETE USERS ##
     - host: '*'
       paths: ['/v1/users/:user_id']
       methods: ['DELETE']
       scopes: ['admins:delete','healthprofessionals:delete','patients:delete']
-    ###############################
 
-    ## ENDPOINTS TO MANAGE ADMIN TYPE USERS ##
     - host: '*'
       paths: ['/v1/admins']
       methods: ['POST']
@@ -59,9 +52,7 @@ apiEndpoints:
       paths: ['/v1/admins/:admin_id']
       methods: ['PATCH']
       scopes: ['admins:update']
-    ###############################
 
-    ## ENDPOINTS TO MANAGE HEALTHPROFESSIONAL TYPE USERS ##
     - host: '*'
       paths: ['/v1/healthprofessionals']
       methods: ['POST']
@@ -81,16 +72,12 @@ apiEndpoints:
       paths: ['/v1/healthprofessionals/:healthprofessional_id']
       methods: ['PATCH']
       scopes: ['healthprofessionals:update']
-    ###############################
 
-    ## ENDPOINT TO RECOVER PILOTSTUDIES ASSOCIED  ##
     - host: '*'
       paths: ['/v1/healthprofessionals/:healthprofessional_id/pilotstudies']
       methods: ['GET']
       scopes: ['pilots:read']
-    ###############################
 
-    ## ENDPOINTS TO MANAGE PATIENTS ##
     - host: '*'
       paths: ['/v1/patients']
       methods: ['POST']
@@ -110,9 +97,7 @@ apiEndpoints:
       paths: ['/v1/patients/:patient_id']
       methods: ['PATCH']
       scopes: ['patients:update']
-    ######################################
 
-    ## ENDPOINTS TO MANAGE PATIENT GOALS ##
     - host: '*'
       paths: ['/v1/patients/:patient_id/goals']
       methods: ['GET']
@@ -122,16 +107,12 @@ apiEndpoints:
       paths: ['/v1/patients/:patient_id/goals']
       methods: ['PATCH']
       scopes: ['patients:update']
-    ######################################
 
-    ## ENDPOINT TO RECOVER ALL PILOTS FROM PATIENT ##
     - host: '*'
       paths: ['/v1/patients/:patient_id/pilotstudies']
       methods: ['GET']
       scopes: ['pilots:read']
-    ######################################
 
-    ## ENDPOINTS TO MANAGE PILOT STUDIES ##
     - host: '*'
       paths: ['/v1/pilotstudies']
       methods: ['POST']
@@ -156,9 +137,7 @@ apiEndpoints:
       paths: ['/v1/pilotstudies/:pilotstudy_id']
       methods: ['DELETE']
       scopes: ['pilots:delete']
-    ######################################
 
-    ## ENDPOINTS TO MANAGE HEALTH PROFESSIONALS ASSOCIATION WITH A PILOT STUDY ##
     - host: '*'
       paths: ['/v1/pilotstudies/:pilotstudy_id/healthprofessionals']
       methods: ['GET']
@@ -173,9 +152,7 @@ apiEndpoints:
       paths: ['/v1/pilotstudies/:pilotstudy_id/healthprofessionals/:healthprofessional_id']
       methods: ['DELETE']
       scopes: ['pilots:update']
-    ######################################
 
-    ## ENDPOINTS TO MANAGE PATIENTS ASSOCIATION WITH A PILOT STUDY ##
     - host: '*'
       paths: ['/v1/pilotstudies/:pilotstudy_id/patients']
       methods: ['GET']
@@ -190,13 +167,8 @@ apiEndpoints:
       paths: ['/v1/pilotstudies/:pilotstudy_id/patients/:patient_id']
       methods: ['DELETE']
       scopes: ['pilots:update']
-    ######################################
 
-  ################ ACCOUNT API PRIVATE END #####################################
-
-  ####### EHR API PRIVATE ########
   ehrPrivate:
-    ## ENDPOINTS TO MANAGE NUTRITION QUESTIONNAIRES ##
     - host: '*'
       paths: ['/v1/patients/:patient_id/nutritional/questionnaires']
       methods: ['POST']
@@ -226,9 +198,7 @@ apiEndpoints:
       paths: ['/v1/patients/:patient_id/nutritional/questionnaires/:questionnaire_id/:resource_name']
       methods: ['PUT']
       scopes: ['forms:update']
-    ###############################
 
-    ## ENDPOINTS TO MANAGE ODONTOLOGICAL QUESTIONNAIRES ##
     - host: '*'
       paths: ['/v1/patients/:patient_id/odontological/questionnaires']
       methods: ['POST']
@@ -258,20 +228,13 @@ apiEndpoints:
       paths: ['/v1/patients/:patient_id/odontological/questionnaires/:questionnaire_id/:resource_name']
       methods: ['PUT']
       scopes: ['forms:update']
-    ###############################
 
-    ## ENDPOINT TO RECOVER ALL QUESTIONNAIRES TYPES ##
     - host: '*'
       paths: ['/v1/questionnaires/types']
       methods: ['GET']
       scopes: ['forms:read']
-    ###############################
 
-  ############### EHR API PRIVATE END ##########################################
-
-  ####### MHEALTH API PRIVATE ########
   mhealthPrivate:
-    ## ENDPOINTS TO MANAGE MEASUREMENTS ##
     - host: '*'
       paths: ['/v1/measurements/types']
       methods: ['GET']
@@ -301,9 +264,7 @@ apiEndpoints:
       paths: ['/v1/patients/:patient_id/measurements/:measurement_id']
       methods: ['DELETE']
       scopes: ['measurements:delete']
-    ###############################
 
-    ## ENDPOINTS TO MANAGE PATIENTS.PHYSICALACTIVITIES ##
     - host: '*'
       paths: ['/v1/patients/:patient_id/physicalactivities']
       methods: ['POST']
@@ -323,9 +284,7 @@ apiEndpoints:
       paths: ['/v1/patients/:patient_id/physicalactivities/:physicalactivity_id']
       methods: ['DELETE']
       scopes: ['activities:delete']
-    ###############################
 
-    ## ENDPOINTS TO MANAGE PATIENTS.SLEEP ##
     - host: '*'
       paths: ['/v1/patients/:patient_id/sleep']
       methods: ['POST']
@@ -345,9 +304,7 @@ apiEndpoints:
       paths: ['/v1/patients/:patient_id/sleep/:sleep_id']
       methods: ['DELETE']
       scopes: ['sleep:delete']
-    ###############################
 
-    ## ENDPOINTS TO MANAGE DEVICES ##
     - host: '*'
       paths: ['/v1/patients/:patient_id/devices']
       methods: ['POST']
@@ -367,13 +324,8 @@ apiEndpoints:
       paths: ['/v1/patients/:patient_id/devices/:device_id']
       methods: ['DELETE']
       scopes: ['devices:delete']
-    ###############################
 
-  ############### MHEALTH API PRIVATE END ##########################################
-
-  ####### ANALYTICS API PRIVATE ########
   analyticsPrivate:
-    ## ENDPOINTS TO MANAGE NUTRITIONAL EVALUATIONS ##
     - host: '*'
       paths: ['/v1/patients/:patient_id/nutritional/evaluations']
       methods: ['POST']
@@ -393,30 +345,22 @@ apiEndpoints:
       paths: ['/v1/patients/:patient_id/nutritional/evaluations/:evaluation_id']
       methods: ['DELETE']
       scopes: ['evaluations:delete']
-    ####################################
 
-    ## ENDPOINTS TO MANAGE COUNSELINGS FOR A NUTRITIONAL EVALUATIONS ##
     - host: '*'
       paths: ['/v1/patients/:patient_id/nutritional/evaluations/:evaluation_id/counselings']
       methods: ['POST']
       scopes: ['evaluations:update']
-    ####################################
 
-    ## ENDPOINT TO RECOVER ALL NUTRITIONAL EVALUATIONS FOR A PILOTSTUDY ##
     - host: '*'
       paths: ['/v1/pilotstudies/:pilotstudy_id/nutritional/evaluations']
       methods: ['GET']
       scopes: ['evaluations:read']
-    ####################################
 
-    ## ENDPOINT TO RECOVER ALL EVALUATIONS FOR A HEALTHPROFESSIONAL ##
     - host: '*'
       paths: ['/v1/healthprofessionals/:healthprofessional_id/nutritional/evaluations']
       methods: ['GET']
       scopes: ['evaluations:read']
-    ###############################
 
-    ## ENDPOINTS TO MANAGE EVALUATIONS DATA FOR A PILOTSTUDY ##
     - host: '*'
       paths: ['/v1/pilotstudies/:pilotstudy_id/data']
       methods: ['POST']
@@ -426,13 +370,8 @@ apiEndpoints:
       paths: ['/v1/pilotstudies/:pilotstudy_id/data']
       methods: ['GET']
       scopes: ['evaluations:read']
-    ####################################
 
-  ############### ANALYTICS API PRIVATE END ##########################################
-
-  ####### NOTIFICATION API PRIVATE ########
   notificationPrivate:
-    ## ENDPOINTS TO MANAGE E-MAIL NOTIFICATION ##
     - host: '*'
       paths: ['/v1/users/:user_id/emails']
       methods: ['POST']
@@ -452,44 +391,34 @@ apiEndpoints:
       paths: ['/v1/users/:user_id/emails/:email_id']
       methods: ['DELETE']
       scopes: ['notifications:delete']
-  ############### NOTIFICATION API PRIVATE END #######################################
 
-  ############### TIME SERIES API START #######################################
   timeSeriesPrivate:
-    ### PATIENTS.TIMESERIES ###
     - host: '*'
       paths: ['/v1/patients/:patient_id/date/:start_date/:end_date/timeseries']
       methods: ['GET']
       scopes: ['series:read']
 
-    ### PATIENTS.RESOURCE.TIMESERIES ###
     - host: '*'
       paths: ['/v1/patients/:patient_id/:resource/date/:start_date/:end_date/timeseries']
       methods: ['GET']
       scopes: ['series:read']
 
-    ### PATIENTS.RESOURCE.INTERVAL.TIMESERIES ###
     - host: '*'
       paths: ['/v1/patients/:patient_id/:resource/date/:date/interval/:interval/timeseries']
       methods: ['GET']
       scopes: ['series:read']
 
-    ### PATIENTS.RESOURCE.TIME.INTERVAL.TIMESERIES ###
     - host: '*'
       paths: ['/v1/patients/:patient_id/:resource/date/:start_date/:end_date/time/:start_time/:end_time/interval/:interval/timeseries']
       methods: ['GET']
       scopes: ['series:read']
-  ############### TIME SERIES API END #######################################
 
-  ############### DATA SYNC AGENT API START #######################################
   dsAgentPrivate:
-    ### FITBIT ###
     - host: '*'
       paths: ['/v1/fitbit']
       methods: ['GET']
       scopes: ['external:sync']
 
-    ### USERS.FITBIT.AUTH ###
     - host: '*'
       paths: ['/v1/users/:user_id/fitbit/auth']
       methods: ['POST', 'GET']
@@ -501,19 +430,17 @@ apiEndpoints:
       scopes: ['external:sync']
 
   dsAgentFitbitSyncPrivate:
-    ### USERS.FITBIT.SYNC ###
     - host: '*'
       paths: ['/v1/users/:user_id/fitbit/sync']
       methods: ['POST']
       scopes: ['external:sync']
-  ############### DATA SYNC AGENT API END #######################################
 
-  ############################ WEB APP START ####################################
   webApp:
     host: ${WEB_APP_HOSTNAME}
-  ############################# WEB APP END #####################################
 
-####### SERVICE ENDPOINTS DEFINITIONS ########
+  rabbit:
+    host: ${RABBIT_MGT_HOSTNAME}
+
 serviceEndpoints:
   accountService:
     url: ${ACCOUNT_SERVICE:-https://localhost:3001}
@@ -534,7 +461,6 @@ serviceEndpoints:
   rabbitManagementService:
     url: ${RABBIT_MGT_SERVICE:-https://localhost:15671}
 
-####### POLICIES USED IN PIPELINES DEFINITION ########
 policies:
   - log
   - proxy
@@ -547,7 +473,6 @@ policies:
   - recaptcha-policy
   - request-transformer
 
-####### PIPELINES DEFINITION ########
 pipelines:
   publicAccountServicePipeline:
     apiEndpoints:
@@ -556,19 +481,18 @@ pipelines:
       - log: &log
           - action:
               message: ${req.connection.remoteAddress} - "${req.method} ${req.originalUrl} HTTP/${req.httpVersion}" - "${req.headers['user-agent']}"
+      - body-parser-policy:
       - rate-limit:
           - action:
               max: 10
               windowMs: 1800000 # 30 minutes
               delayMs: 0
-              rateLimitBy: "${req.hostname} ${req.ip}"
+              rateLimitBy: "${req.hostname} ${req.body.email}"
               message: "Many requests. Please try later after 30 minutes."
               headers: true
-      - body-parser-policy:
       - recaptcha-policy:
           - condition:
               name: 'regex-path-method'
-              #regexPath é uma expressão regular
               regexPath: '^(\/v1\/auth\/{0,1})$'
               method: 'POST'
             action:
@@ -577,7 +501,6 @@ pipelines:
       - auth-policy:
           - condition:
               name: 'regex-path-method'
-              #regexPath é uma expressão regular
               regexPath: '^(\/v1\/auth\/{0,1})$'
               method: 'POST'
             action:
@@ -608,7 +531,6 @@ pipelines:
       - delete-user-policy:
           - condition:
               name: 'regex-path-method'
-              #regexPath é uma expressão regular
               regexPath: '^(\/v1\/users\/)[a-fA-F0-9]{24}\/{0,1}$'
               method: 'DELETE'
             action:
@@ -706,7 +628,6 @@ pipelines:
               <<: *proxy
               serviceEndpoint: dsAgentService
 
-  ##################### PRIVATE PIPELINE DS AGENT SERVICE - FITBIT SYNC ####################
   privateDsAgentFitbitSyncPipeline:
     apiEndpoints:
       - dsAgentFitbitSyncPrivate
