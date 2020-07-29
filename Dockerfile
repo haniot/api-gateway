@@ -1,18 +1,18 @@
-FROM node:12.13.1
+FROM node:12-alpine
+RUN apk --no-cache add bash curl grep git
 
 # create and set app directory
-RUN mkdir -p /usr/src/ag 
-WORKDIR /usr/src/ag
+RUN mkdir -p /usr/src/gtw
+WORKDIR /usr/src/gtw
 
 # install app dependencies
-COPY . /usr/src/ag/ 
+COPY . /usr/src/gtw/
 RUN npm install
 
 # Copy app source
-COPY . /usr/src/ag
+COPY . /usr/src/gtw
 
-EXPOSE 6379
-EXPOSE 9876
-EXPOSE 8080
+EXPOSE 80
+EXPOSE 443
 
 CMD ["npm", "start"]

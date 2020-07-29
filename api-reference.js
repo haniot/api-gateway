@@ -20,7 +20,7 @@ module.exports = function (expressGatewayApp) {
                     display: none;
                 }
                 .swagger-ui .topbar .topbar-wrapper:before { 
-                  content: url(/images/logo_nutes_48x48.png);
+                  content: url(https://i.imgur.com/9Ro5dhd.png);
                   margin-left: -5px;
               }
                 .swagger-ui .topbar .topbar-wrapper:after {  
@@ -31,7 +31,7 @@ module.exports = function (expressGatewayApp) {
                     font-weight: 700;
                     color: #fff; 
                 }`,
-        customfavIcon: '/images/favicon-16x16.png',
+        customfavIcon: 'https://i.imgur.com/EhQrKFB.png',
         customSiteTitle: `API Reference | HANIoT`
     }
 

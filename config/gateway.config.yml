@@ -16,16 +16,17 @@ apiEndpoints:
       methods: ['POST']
 
     - host: '*'
-      paths: ['/v1/auth/forgot']
-      methods: ['POST']
-
-    - host: '*'
       paths: ['/v1/auth/verify-email']
       methods: ['POST']
 
     - host: '*'
       paths: ['/v1/auth/password']
       methods: ['PATCH']
+
+  accountForgotPublic:
+    - host: '*'
+      paths: ['/v1/auth/forgot']
+      methods: ['POST']
 
   accountPrivate:
     - host: '*'
@@ -487,7 +488,7 @@ pipelines:
               max: 10
               windowMs: 1800000 # 30 minutes
               delayMs: 0
-              rateLimitBy: "${req.hostname} ${req.body.email}"
+              rateLimitBy: "${req.hostname} ${req.ip} ${req.body.email}"
               message: "Many requests. Please try later after 30 minutes."
               headers: true
       - recaptcha-policy:
@@ -515,6 +516,25 @@ pipelines:
               changeOrigin: true
               secure: false
               timeout: 10000
+              serviceEndpoint: accountService
+
+  publicAccountForgotPipeline:
+    apiEndpoints:
+      - accountForgotPublic
+    policies:
+      - log: *log
+      - body-parser-policy:
+      - rate-limit:
+          - action:
+              max: 3
+              windowMs: 3600000 # 60 minutes
+              delayMs: 0
+              rateLimitBy: "${req.hostname} ${req.body.email}"
+              message: "Many requests. 3 requests per hour are allowed."
+              headers: true
+      - proxy:
+          - action:
+              <<: *proxy
               serviceEndpoint: accountService
 
   privateAcountServicePipeline:
@@ -639,11 +659,11 @@ pipelines:
       - request-transformer: *req-transformer
       - rate-limit:
           - action:
-              max: 10
+              max: 1
               windowMs: 3600000 # 1h
               delayMs: 0
               rateLimitBy: "${req.hostname} ${req.params.user_id}"
-              message: 'Synchronization limit per hour exceeded for patient.  Please try later after 1 hour.'
+              message: "Synchronization limit per hour exceeded for patient.  Please try later after 1 hour."
               headers: true
       - proxy:
           - action:
