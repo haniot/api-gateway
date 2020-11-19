@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  redis:
+    image: redis
+    container_name: haniot-redis
+    ports:
+      - 6379:6379
+    restart: always
+    volumes:
+      - haniot-redis-data:/data
+    networks:
+      - haniot-network
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+volumes:
+  haniot-redis-data:
+    name: haniot-redis
+
+networks:
+  haniot-network:
+    name: haniot-network
+    driver: bridge
